@@ -1,0 +1,28 @@
+﻿@using Blazored.LocalStorage
+@inject ILocalStorageService localStorage
+@inject NavigationManager Navigation
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var isLoggedIn = await localStorage.GetItemAsync<string>("isLoggedIn");
+
+        // Redirect to login if not authenticated
+        if (isLoggedIn != "true")
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+}

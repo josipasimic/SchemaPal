@@ -1,0 +1,49 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <div>
+        <label for="username">Username:</label>
+        <InputText @bind-Value="loginModel.Username" />
+    </div>
+    <div>
+        <label for="password">Password:</label>
+        <InputText @bind-Value="loginModel.Password" type="password" />
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</EditForm>
+
+<p>@loginMessage</p>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private string loginMessage = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        // Check credentials (this is just a simple hardcoded example)
+        if (loginModel.Username == "admin" && loginModel.Password == "password")
+        {
+            // Set a simple authentication flag
+            await localStorage.SetItemAsync("isLoggedIn", "true");
+
+            // Redirect to the home page after successful login
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            loginMessage = "Invalid username or password.";
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+}
