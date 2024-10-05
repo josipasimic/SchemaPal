@@ -2,6 +2,10 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+h1 {
+    color: rgb(133, 6, 6, 0.7);
+}
+
 h1:focus {
     outline: none;
 }

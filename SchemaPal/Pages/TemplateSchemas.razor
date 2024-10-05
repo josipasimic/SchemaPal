@@ -1,0 +1,44 @@
+﻿@inject NavigationManager Navigation
+@using SchemaPal.Models
+
+@code {
+    private List<DatabaseScheme> templates = new List<DatabaseScheme>
+    {
+        new DatabaseScheme { Name = "Music Streaming", Id = 1 },
+        new DatabaseScheme { Name = "Retail Chain", Id = 2 },
+        new DatabaseScheme { Name = "Taxi Service", Id = 3 },
+    };
+
+    private void OpenTemplateSchema(DatabaseScheme template)
+    {
+        // Logic to open the schema maker canvas with the selected template
+        Navigation.NavigateTo("/schemaMaker?template=" + template.Name);
+    }
+}
+
+<div class="template-grid">
+    @foreach (var template in templates)
+    {
+        <div class="template-item" @onclick="() => OpenTemplateSchema(template)">
+            <h4>@template.Name</h4>
+        </div>
+    }
+</div>
+
+<style>
+    .template-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .template-item {
+        padding: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .template-item:hover {
+            background-color: #f0f0f0; /* Change this to a darker shade */
+        }
+</style>

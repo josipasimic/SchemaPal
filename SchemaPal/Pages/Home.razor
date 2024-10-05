@@ -1,7 +1,75 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
-<PageTitle>Home</PageTitle>
+<PageTitle>SchemaPal</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-grid">
+    <div class="sidebar">
+        <h3>Pozdrav, @GetUserName()!</h3>
+        <ul class="nav-buttons">
+            <li @onclick="ShowNewSchema">Izradi novu shemu</li>
+            <li @onclick="ShowTemplateSchemas">Izradi shemu iz predloška</li>
+            @if (!isGuest)
+            {
+                <li @onclick="ShowMySchemas">Moje sheme</li>
+            }
+            <li @onclick="ShowImportSchema">Uvezi shemu</li>
+        </ul>
+    </div>
+    <div class="main-content">
+        @if (currentView == ViewType.NewSchema)
+        {
+            <button @onclick="OpenSchemaMakerCanvas">+</button>
+            <h3>Izradi novu shemu</h3>
+        }
+        else if (currentView == ViewType.TemplateSchemas)
+        {
+            <TemplateSchemas />
+        }
+        else if (currentView == ViewType.MySchemas)
+        {
+            <MySchemas />
+        }
+        else if (currentView == ViewType.ImportSchema)
+        {
+            <ImportSchema />
+        }
+    </div>
+</div>
 
-Welcome to your new app.
+@code {
+    private enum ViewType { NewSchema, TemplateSchemas, MySchemas, ImportSchema }
+    private ViewType currentView = ViewType.NewSchema;
+    private string userName = "User"; // Replace with actual user data
+    private bool isGuest = false;
+    private bool isLoggedInUser = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Check user login status
+        isGuest = await sessionStorage.GetItemAsync<bool>("isGuest");
+        isLoggedInUser = await sessionStorage.GetItemAsync<bool>("isLoggedIn");
+
+        if (!isGuest 
+            && !isLoggedInUser)
+        {
+            Navigation.NavigateTo("/loginRedirect");
+        }
+    }
+
+    private void ShowNewSchema() => currentView = ViewType.NewSchema;
+    private void ShowTemplateSchemas() => currentView = ViewType.TemplateSchemas;
+    private void ShowMySchemas() => currentView = ViewType.MySchemas;
+    private void ShowImportSchema() => currentView = ViewType.ImportSchema;
+
+    private void OpenSchemaMakerCanvas()
+    {
+        Navigation.NavigateTo("/schemaMaker");
+    }
+
+    private string GetUserName()
+    {
+        return isGuest ? "Gost" : userName;
+    }
+}

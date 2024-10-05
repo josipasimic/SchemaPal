@@ -1,0 +1,24 @@
+﻿@code {
+    private void ImportDDL()
+    {
+        // Logic for importing DDL
+    }
+
+    private void ImportSchemaPalJson()
+    {
+        // Logic for importing SchemaPal exported scheme JSON file
+    }
+}
+
+<div class="import-options">
+    <button @onclick="ImportDDL">Import a database using a DDL file</button>
+    <button @onclick="ImportSchemaPalJson">Import a SchemaPal exported scheme JSON file</button>
+</div>
+
+<style>
+    .import-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+</style>

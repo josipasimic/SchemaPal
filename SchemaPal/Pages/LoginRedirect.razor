@@ -1,0 +1,32 @@
+﻿@page "/loginRedirect"
+
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+<PageTitle>SchemaPal</PageTitle>
+
+<div class="main-content">
+    <div class="auth-options">
+        <button class="btn btn-primary" @onclick="Login">Prijavi se</button>
+        <button class="btn btn-secondary" @onclick="SignUp">Registriraj se</button>
+        <button class="btn btn-outline-dark" @onclick="ContinueAsGuest">Nastavi kao gost</button>
+    </div>
+</div>
+
+@code {
+    private void Login()
+    {
+        NavigationManager.NavigateTo("/login"); // Redirect to login page
+    }
+
+    private void SignUp()
+    {
+        NavigationManager.NavigateTo("/signup"); // Redirect to sign-up page
+    }
+
+    private async void ContinueAsGuest()
+    {
+        await sessionStorage.SetItemAsync<bool>("isGuest", true);
+        NavigationManager.NavigateTo("/"); // Navigate to home page
+    }
+}

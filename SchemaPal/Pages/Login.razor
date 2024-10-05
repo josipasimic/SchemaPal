@@ -2,6 +2,8 @@
 @inject NavigationManager Navigation
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 
+<PageTitle>Prijava</PageTitle>
+
 <h3>Login</h3>
 
 <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
@@ -30,7 +32,7 @@
         if (loginModel.Username == "admin" && loginModel.Password == "password")
         {
             // Set a simple authentication flag
-            await localStorage.SetItemAsync("isLoggedIn", "true");
+            await localStorage.SetItemAsync<bool>("isLoggedIn", true);
 
             // Redirect to the home page after successful login
             Navigation.NavigateTo("/");

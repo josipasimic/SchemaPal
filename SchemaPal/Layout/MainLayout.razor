@@ -1,18 +1,28 @@
-﻿@inject Blazored.LocalStorage.ILocalStorageService localStorage
+﻿@inherits LayoutComponentBase
 
-@inherits LayoutComponentBase
-<div class="page">
-@*     <div class="sidebar">
-        <NavMenu />
+<PageTitle>SchemaPal</PageTitle>
+
+<div class="top-strip">
+    <img src="images/logo.png" alt="Logo" class="logo" /> <!-- Add your logo here -->
+    <div class="app-name" onclick="RedirectToHome()">
+        SchemaPal
     </div>
- *@
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
 </div>
+
+<div class="main-content">
+    @Body
+</div>
+
+<footer class="footer">
+    <p>Izradila: Josipa Šimić</p>
+    <p>PMF Zagreb, Matematički odsjek</p>
+</footer>
+
+@code {
+
+    private void RedirectToHome()
+    {
+        
+    }
+    // You can add any code you need here, like state management if necessary.
+}

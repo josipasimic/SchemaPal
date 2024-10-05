@@ -1,77 +1,55 @@
-.page {
-    position: relative;
+/* Top strip styling */
+.top-strip {
+    background: linear-gradient(to right, rgb(172, 54, 33, 0.18), rgb(133, 6, 6, 0.7)); /* Gradient between two shades of red with low opacity */
+    padding: 15px;
     display: flex;
-    flex-direction: column;
-}
-
-main {
-    flex: 1;
-}
-
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
-}
-
-.top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
-    height: 3.5rem;
-    display: flex;
+    justify-content: flex-start; /* Push the application name to the right */
     align-items: center;
+    color: white; /* Change text color for contrast */
+    font-size: 3rem;
+    font-weight: bold;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
-
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
-
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-@media (max-width: 640.98px) {
-    .top-row {
-        justify-content: space-between;
-    }
-
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
-    }
+.top-strip .logo {
+    width: 3rem;
+    padding-bottom: 8px;
 }
 
-@media (min-width: 641px) {
-    .page {
-        flex-direction: row;
+/* Application name styling */
+.app-name {
+    margin-right: 20px; /* Optional spacing from the right */
+    color: dimgray;
+    padding: 0px;
+}
+
+/* Main content area */
+.main-content {
+    background-color: rgb(164, 12, 12, 0.06); /* Static red background with lower opacity */
+    min-height: calc(100vh - 130px); /* Adjust height for top strip and footer */
+    display: flex;
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    color: white; /* Change text color if needed */
+}
+
+/* Footer styling */
+.footer {
+    background-color: rgba(0, 0, 0, 0.15); /* Semi-transparent black background */
+    color: white; /* Text color */
+    text-align: center; /* Center text */
+    padding: 10px;
+    position: relative; /* Optional */
+    bottom: 0; /* Stay at the bottom */
+    width: 100%; /* Full width */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .top-strip, .footer {
+        font-size: 1rem; /* Adjust font size for smaller screens */
     }
 
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
-    .top-row {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-    }
-
-    .top-row.auth ::deep a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
-
-    .top-row, article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
+    .app-name {
+        font-size: 1.2rem; /* Smaller name size on mobile */
     }
 }
