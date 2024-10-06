@@ -16,17 +16,17 @@
 @code {
     private void Login()
     {
-        NavigationManager.NavigateTo("/login"); // Redirect to login page
+        NavigationManager.NavigateTo("/login"); 
     }
 
     private void SignUp()
     {
-        NavigationManager.NavigateTo("/signup"); // Redirect to sign-up page
+        NavigationManager.NavigateTo("/signup"); 
     }
 
     private async void ContinueAsGuest()
     {
         await sessionStorage.SetItemAsync<bool>("isGuest", true);
-        NavigationManager.NavigateTo("/"); // Navigate to home page
+        NavigationManager.NavigateTo("/"); 
     }
 }

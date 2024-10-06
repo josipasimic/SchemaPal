@@ -1,14 +1,14 @@
 ﻿.home-grid {
     display: flex;
     width: 80%;
-    height: 550px; /* Occupy full height */
+    height: 550px; 
     border-radius: 10px;
     color: rgb(133, 6, 6, 0.7);
     background-color: rgb(164, 12, 12, 0.07);
 }
 
     .home-grid .sidebar {
-        width: 30%; /* Adjust width as needed */
+        width: 30%; 
         padding: 30px;
         color: rgb(133, 6, 6, 0.7);
         border-right: 1px dashed;
@@ -16,31 +16,29 @@
     }
 
         .home-grid .sidebar .nav-buttons {
-            list-style-type: none; /* Removes bullet points */
+            list-style-type: none; 
             padding: 0;
             margin-top: 20px;
             margin-bottom: 20px;
         }
 
-/* Style individual list items to look like buttons */
         .home-grid .sidebar .nav-buttons li {
-            background-color: #f0f0f0; /* Light background color */
-            border: 1px solid #ccc; /* Add a border */
-            border-radius: 5px; /* Rounded corners */
-            padding: 10px 20px; /* Padding for spacing */
-            margin-bottom: 10px; /* Spacing between buttons */
-            cursor: pointer; /* Change cursor to pointer on hover */
-            text-align: center; /* Center-align the text */
-            font-size: 16px; /* Adjust font size */
-            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+            background-color: #f0f0f0;
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            padding: 10px 20px; 
+            margin-bottom: 10px; 
+            cursor: pointer; 
+            text-align: center; 
+            font-size: 16px; 
+            transition: background-color 0.3s ease; 
         }
 
             .home-grid .sidebar .nav-buttons li:hover {
-                background-color: #d6d6d6; /* Darker background on hover */
-                border-color: #aaa; /* Slightly darker border on hover */
+                background-color: #d6d6d6; 
+                border-color: #aaa; 
             }
 
-        /* Optional: Add more visual feedback when the user clicks */
             .home-grid .sidebar .nav-buttons li:active {
                 background-color: #ccc;
                 border-color: #888;
@@ -48,7 +46,7 @@
 
 
     .home-grid .main-content {
-        flex: 1; /* Take remaining space */
+        flex: 1;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -56,44 +54,19 @@
         color: rgb(133, 6, 6, 0.7);
     }
 
-        /*.home-grid .main-content button {
-            background-color: #f0f0f0;*/ /* Light background color */
-            /*border: 1px solid #ccc;*/ /* Add a border */
-            /*border-radius: 5px;*/ /* Rounded corners */
-            /*padding: 20px 20px;*/ /* Padding for spacing */
-            /*margin-bottom: 10px;*/ /* Spacing between buttons */
-            /*cursor: pointer;*/ /* Change cursor to pointer on hover */
-            /*text-align: center;*/ /* Center-align the text */
-            /*font-size: 70px;*/ /* Adjust font size */
-            /*width: 25%;
-            height: 35%;
-            color: rgb(133, 6, 6, 0.4);
-            transition: background-color 0.3s ease;*/ /* Smooth transition for hover effect */
-        /*}
-
-            .home-grid .main-content button:hover {
-                background-color: #d6d6d6;*/ /* Darker background on hover */
-                /*border-color: #aaa;*/ /* Slightly darker border on hover */
-            /*}
-
-            .home-grid .main-content button:active {
-                background-color: #ccc;
-                border-color: #888;
-            }*/
-
     .home-grid button {
-        background-color: #f0f0f0; /* Light background color */
-        border: 1px solid #ccc; /* Add a border */
-        border-radius: 5px; /* Rounded corners */
-        padding: 20px 20px; /* Padding for spacing */
-        margin-bottom: 10px; /* Spacing between buttons */
-        cursor: pointer; /* Change cursor to pointer on hover */
-        text-align: center; /* Center-align the text */
-        font-size: 70px; /* Adjust font size */
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px; 
+        padding: 20px 20px; 
+        margin-bottom: 10px; 
+        cursor: pointer; 
+        text-align: center;
+        font-size: 70px; 
         width: 25%;
         height: 35%;
         color: rgb(133, 6, 6, 0.4);
-        transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        transition: background-color 0.3s ease;
     }
 
         .home-grid button:hover{

@@ -1,0 +1,146 @@
+﻿.layout-grid {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+    .layout-grid .sidebar {
+        width: 20%;
+        height: 100%;
+        background-color: #f4f4f4;
+        padding: 10px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 2px;
+        margin-right: 0;
+    }
+
+    .layout-grid button.btn {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        position: sticky;
+    }
+
+        button.btn:hover {
+            background-color: #0056b3;
+        }
+
+    .layout-grid .canvas-container {
+        flex-grow: 1;
+        position: relative;
+        overflow: auto;
+        background-color: #fff;
+        border: 1px solid black;
+        margin: 2px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        width: 80%;
+        height: 100%;
+    }
+
+
+        .layout-grid .canvas-container .canvas-content {
+            width: 2000px;
+            height: 2000px;
+            background-color: #fafafa;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            transform-origin: 0 0;
+            transition: transform 0.2s ease-in-out;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+            .layout-grid .canvas-container .canvas-content .table-wrapper {
+                position: absolute;
+            }
+
+                .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border {
+                    position: absolute;
+                    top: -5px; 
+                    left: -5px; 
+                    width: calc(100% + 10px); 
+                    height: calc(100%); 
+                    border: 2px dashed transparent;
+                    pointer-events: none;
+                }
+
+                    .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border .connection-point {
+                        border-radius: 50%;
+                        background-color: #bbb;
+                        position: absolute;
+                        width: 10px; 
+                        height: 10px; 
+                        cursor: crosshair; 
+                        pointer-events: all; 
+                    }
+
+                        .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border .connection-point:hover {
+                            background-color: rgb(133, 6, 6, 0.7);
+                        }
+
+                        .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border .connection-point:active {
+                            background-color: rgb(133, 6, 6, 0.7);
+                        }
+
+            .layout-grid .canvas-container .canvas-content .connection-lines {
+                width: 2000px;
+                height: 2000px;
+                color: black;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            .layout-grid .canvas-container .canvas-content svg line {
+                stroke: rgb(133, 6, 6, 0.7);
+                stroke-width: 2px;
+                pointer-events: none; 
+            }
+
+                .layout-grid .canvas-container .canvas-content .table-wrapper .table {
+                    width: 150px;
+                    background-color: lightgray;
+                    border: 1px solid #bbb;
+                    border-radius: 5px;
+                    padding: 10px;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                    cursor: grab;
+                    transition: box-shadow 0.2s;
+                }
+
+                    .layout-grid .canvas-container .canvas-content .table-wrapper .table:active {
+                        cursor: grabbing;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                    }
+
+                    .layout-grid .canvas-container .canvas-content .table-wrapper .column {
+                        background-color: #ffffff;
+                        border: 1px solid #ccc;
+                        padding: 5px;
+                        margin-top: 5px;
+                        border-radius: 3px;
+                        font-size: 14px;
+                    }
+
+        .layout-grid .canvas-container .zoom-controls {
+            position: sticky; 
+            top: 10px; 
+            left: 10px; 
+            padding: 5px;
+            border-radius: 5px;
+            z-index: 100000000;
+        }
+
+            .layout-grid .canvas-container .zoom-controls button {
+                margin: 2px; 
+            }

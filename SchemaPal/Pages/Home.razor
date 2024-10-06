@@ -41,13 +41,12 @@
 @code {
     private enum ViewType { NewSchema, TemplateSchemas, MySchemas, ImportSchema }
     private ViewType currentView = ViewType.NewSchema;
-    private string userName = "User"; // Replace with actual user data
+    private string userName = "User";
     private bool isGuest = false;
     private bool isLoggedInUser = false;
 
     protected override async Task OnInitializedAsync()
     {
-        // Check user login status
         isGuest = await sessionStorage.GetItemAsync<bool>("isGuest");
         isLoggedInUser = await sessionStorage.GetItemAsync<bool>("isLoggedIn");
 

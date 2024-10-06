@@ -1,28 +1,26 @@
-﻿/* Centering the buttons */
-.auth-options {
+﻿.auth-options {
     display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    height: 100%; /* Take full height of the parent */
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
     background: inherit;
 }
 
-    /* Button styling */
     .auth-options button {
         margin: 10px;
         padding: 10px 20px;
         font-size: 1.2rem;
-        width: 200px; /* Optional: set a fixed width for buttons */
+        width: 200px;
     }
 
     .auth-options .btn-primary {
-        background-color: rgb(133, 6, 6, 0.7); /* Indigo for the login button */
+        background-color: rgb(133, 6, 6, 0.7);
         border-color: rgb(133, 6, 6, 0.7);
     }
 
     .auth-options .btn-secondary {
-        background-color: rgb(172, 54, 33, 0.3); /* Light purple for sign up */
+        background-color: rgb(172, 54, 33, 0.3);
         border-color: rgb(172, 54, 33, 0.3);
     }
 

@@ -1,0 +1,236 @@
+﻿@page "/schemaMaker"
+
+@using SchemaPal.Models;
+@using SchemaMakerHelpers;
+@using SchemaMakerEnums;
+
+<div class="layout-grid">
+    <div class="sidebar">
+        <button class="btn btn-primary" @onclick="AddNewTable">Dodaj novu tablicu</button>
+    </div>
+    <div class="canvas-container"
+         ondragover="event.preventDefault();"
+         @ondrop="OnDrop">
+        <div class="zoom-controls">
+            <button class="btn btn-secondary" @onclick="ZoomIn">+</button>
+            <button class="btn btn-secondary" @onclick="ZoomOut">-</button>
+        </div>
+        <div class="canvas-content"
+             style="transform: scale(@ZoomLevel);">
+            <svg class="connection-lines">
+                @foreach (var relationship in Relationships)
+                {
+                    <line x1="@relationship.X1" y1="@relationship.Y1"
+                          x2="@relationship.X2" y2="@relationship.Y2" />
+                }
+            </svg>
+            @foreach (var table in Tables)
+            {
+                <div class="table-wrapper" style="top: @table.TopPx; left: @table.LeftPx;">
+                    <div class="connection-border">
+                        @foreach(var column in table.Columns)
+                        {
+                            <div class="connection-point"
+                                style="left: 0; top: @GetColumnPointPositionCss(column.Id, table);"
+                                @onclick="() => OnConnectionPointClick(table.Id, column.Id)"></div>
+                            <div class="connection-point"
+                                style="right: 0; top: @GetColumnPointPositionCss(column.Id, table);"
+                                @onclick="() => OnConnectionPointClick(table.Id, column.Id)"></div>
+                        }
+                    </div>
+
+                    <div class="table"
+                         draggable="true"
+                         @ondragstart="(e => OnTableDragStart(e, table.Id))">
+                        <strong>@table.Name</strong>
+                        @foreach (var column in table.Columns)
+                        {
+                            <div class="column">@column.Name</div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Table> Tables = new List<Table>();
+    private List<Relationship> Relationships = new List<Relationship>();
+
+    private double ZoomLevel = 1.0; 
+
+    private DragAndDropHelper DragAndDropTableData = new DragAndDropHelper();
+    private RelationshipHelper RelationshipColumnsData = new RelationshipHelper();
+
+    private void AddNewTable()
+    {
+        var columnCounter = 0;
+        var tableId = Tables.Count + 1;
+        Tables.Add(new Table
+        {
+            Id = tableId,
+            Name = $"Table {tableId}",
+            Columns = new List<Column> { new Column(++columnCounter, "Id"), new Column(++columnCounter, "Name"), new Column(++columnCounter, "Description") },
+            CoordinateX = 50,
+            CoordinateY = 100
+        });
+    }
+
+    #region zooming
+
+    private void ZoomIn()
+    {
+        ZoomLevel = Math.Clamp(ZoomLevel + 0.1, 0.5, 3.0); 
+    }
+
+    private void ZoomOut()
+    {
+        ZoomLevel = Math.Clamp(ZoomLevel - 0.1, 0.5, 3.0); 
+    }
+
+    #endregion
+
+    #region drag and drop table
+
+    private void OnTableDragStart(DragEventArgs e, int tableId)
+    {
+        DragAndDropTableData.TableId = tableId;
+        DragAndDropTableData.StartingClientX = e.ClientX;
+        DragAndDropTableData.StartingClientY = e.ClientY;
+    }
+
+    private void OnDrop(DragEventArgs e)
+    {
+        var draggedTable = Tables.FirstOrDefault(x => x.Id == DragAndDropTableData.TableId);
+
+        if (draggedTable is null)
+        {
+            return;
+        }
+
+        draggedTable.CoordinateX = draggedTable.CoordinateX + (e.ClientX - DragAndDropTableData.StartingClientX) / ZoomLevel;
+        draggedTable.CoordinateY = draggedTable.CoordinateY + (e.ClientY - DragAndDropTableData.StartingClientY) / ZoomLevel;
+
+        DragAndDropTableData.Reset();
+
+        UpdateRelationshipPositions();
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region create relationships
+
+    private void OnConnectionPointClick(int tableId, int columnId)
+    {
+        if (!RelationshipColumnsData.IsDrawingLine)
+        {
+            RelationshipColumnsData.CurrentRelationship = new Relationship
+            {
+                SourceTableId = tableId,
+                SourceColumnId = columnId
+            };
+
+            RelationshipColumnsData.IsDrawingLine = true;
+        }
+        else
+        {
+            if (RelationshipColumnsData.CurrentRelationship != null)
+            {
+                if (RelationshipColumnsData.CurrentRelationship.SourceTableId == tableId)
+                {
+                    return;
+                }
+
+                RelationshipColumnsData.CurrentRelationship.DestinationTableId = tableId;
+                RelationshipColumnsData.CurrentRelationship.DestinationColumnId = columnId;
+
+                Relationships.Add(RelationshipColumnsData.CurrentRelationship);
+                RelationshipColumnsData.IsDrawingLine = false;
+                RelationshipColumnsData.CurrentRelationship = null;
+            }
+        }
+
+        UpdateRelationshipPositions();
+
+        StateHasChanged();
+    }
+
+    private void UpdateRelationshipPositions()
+    {
+        foreach (var relationship in Relationships)
+        {
+            var sourceTable = Tables.First(t => t.Id == relationship.SourceTableId);
+            var destinationTable = Tables.First(t => t.Id == relationship.DestinationTableId);
+
+            var firstTableSide = TableSide.None;
+            var secondTableSide = TableSide.None;
+
+            if (sourceTable.CoordinateX <= destinationTable.CoordinateX
+                && destinationTable.CoordinateX + 150 <= sourceTable.CoordinateX + 150
+                || destinationTable.CoordinateX > sourceTable.CoordinateX + 150)
+            {
+                secondTableSide = TableSide.Left;
+            }
+            else
+            {
+                secondTableSide = TableSide.Right;
+            }
+
+            if (destinationTable.CoordinateX <= sourceTable.CoordinateX
+                && sourceTable.CoordinateX + 150 <= destinationTable.CoordinateX + 150
+                || sourceTable.CoordinateX > destinationTable.CoordinateX + 150)
+            {
+                firstTableSide = TableSide.Left;
+            }
+            else
+            {
+                firstTableSide = TableSide.Right;
+            }
+
+            relationship.X1 = GetConnectionPointX(sourceTable, firstTableSide);
+            relationship.Y1 = GetConnectionPointY(sourceTable, relationship.SourceColumnId);
+
+            relationship.X2 = GetConnectionPointX(destinationTable, secondTableSide);
+            relationship.Y2 = GetConnectionPointY(destinationTable, relationship.DestinationColumnId);
+        }
+    }
+
+    private double GetConnectionPointX(Table table, TableSide side)
+    {
+        return side == TableSide.Left
+            ? table.CoordinateX  
+            : table.CoordinateX + 150;
+    }
+
+    private double GetConnectionPointY(Table table, int columnId)
+    {
+        var column = table.Columns.FirstOrDefault(x => x.Id == columnId);
+
+        if (column is null)
+            return 0; 
+
+        var columnIndex = table.Columns.IndexOf(column);
+        var columnPointPosition = GetColumnPointPosition(column.Id, table);
+
+        return table.CoordinateY + columnPointPosition + 2.5; 
+    }
+
+    private double GetColumnPointPosition(int columnId, Table table)
+    {
+        var columnsCount = table.Columns.Count;
+
+        var columnIndex = table.Columns.IndexOf(table.Columns.First(c => c.Id == columnId));
+
+        var spaceBetweenPoints = 100.0 / columnsCount; 
+        return (columnIndex + 1) * spaceBetweenPoints + 30;
+    }
+
+    private string GetColumnPointPositionCss(int columnId, Table table)
+    {
+        return $"{GetColumnPointPosition(columnId, table)}px";
+    }
+
+    #endregion
+}

@@ -1,55 +1,50 @@
-/* Top strip styling */
 .top-strip {
-    background: linear-gradient(to right, rgb(172, 54, 33, 0.18), rgb(133, 6, 6, 0.7)); /* Gradient between two shades of red with low opacity */
+    background: linear-gradient(to right, rgb(172, 54, 33, 0.18), rgb(133, 6, 6, 0.7));
     padding: 15px;
     display: flex;
-    justify-content: flex-start; /* Push the application name to the right */
+    justify-content: flex-start; 
     align-items: center;
-    color: white; /* Change text color for contrast */
+    color: white;
     font-size: 3rem;
     font-weight: bold;
 }
 
-.top-strip .logo {
-    width: 3rem;
-    padding-bottom: 8px;
-}
+    .top-strip .logo {
+        width: 3rem;
+        padding-bottom: 8px;
+    }
 
-/* Application name styling */
 .app-name {
-    margin-right: 20px; /* Optional spacing from the right */
+    margin-right: 20px; 
     color: dimgray;
     padding: 0px;
 }
 
-/* Main content area */
 .main-content {
-    background-color: rgb(164, 12, 12, 0.06); /* Static red background with lower opacity */
-    min-height: calc(100vh - 130px); /* Adjust height for top strip and footer */
+    background-color: rgb(164, 12, 12, 0.06); 
+    min-height: calc(100vh - 130px); 
     display: flex;
-    justify-content: center; /* Center the content horizontally */
-    align-items: center; /* Center the content vertically */
-    color: white; /* Change text color if needed */
+    justify-content: center; 
+    align-items: center; 
+    color: white; 
 }
 
-/* Footer styling */
 .footer {
-    background-color: rgba(0, 0, 0, 0.15); /* Semi-transparent black background */
-    color: white; /* Text color */
-    text-align: center; /* Center text */
+    background-color: rgba(0, 0, 0, 0.15); 
+    color: white; 
+    text-align: center; 
     padding: 10px;
-    position: relative; /* Optional */
-    bottom: 0; /* Stay at the bottom */
-    width: 100%; /* Full width */
+    position: relative;
+    bottom: 0; 
+    width: 100%; 
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .top-strip, .footer {
-        font-size: 1rem; /* Adjust font size for smaller screens */
+        font-size: 1rem; 
     }
 
     .app-name {
-        font-size: 1.2rem; /* Smaller name size on mobile */
+        font-size: 1.2rem; 
     }
 }

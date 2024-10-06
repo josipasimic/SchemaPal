@@ -5,7 +5,7 @@ namespace SchemaPal.Services
 {
     public class LoginService : ILoginService
     {
-        private readonly ISessionStorageService _sessionStorage; // Use session storage
+        private readonly ISessionStorageService _sessionStorage; 
         private readonly HttpClient _httpClient;
 
         public LoginService(ISessionStorageService sessionStorage, HttpClient httpClient)
@@ -16,12 +16,10 @@ namespace SchemaPal.Services
 
         public async Task<bool> Login(string username, string password)
         {
-            // Call your authentication API
             var response = await _httpClient.PostAsJsonAsync("api/login", new { username, password });
 
             if (response.IsSuccessStatusCode)
             {
-                // Successful login, set isLoggedIn in sessionStorage
                 await _sessionStorage.SetItemAsync("isLoggedIn", true);
                 return true;
             }
