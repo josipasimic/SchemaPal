@@ -62,6 +62,8 @@
 
             .layout-grid .canvas-container .canvas-content .table-wrapper {
                 position: absolute;
+                z-index: 100000000000000;
+                opacity: 1;
             }
 
                 .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border {
@@ -76,21 +78,14 @@
 
                     .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border .connection-point {
                         border-radius: 50%;
-                        background-color: #bbb;
                         position: absolute;
-                        width: 10px; 
-                        height: 10px; 
-                        cursor: crosshair; 
-                        pointer-events: all; 
+                        width: 15px;
+                        height: 15px;
+                        cursor: crosshair;
+                        pointer-events: all;
+                        z-index: 100000000000000;
+                        opacity: 1;
                     }
-
-                        .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border .connection-point:hover {
-                            background-color: rgb(133, 6, 6, 0.7);
-                        }
-
-                        .layout-grid .canvas-container .canvas-content .table-wrapper .connection-border .connection-point:active {
-                            background-color: rgb(133, 6, 6, 0.7);
-                        }
 
             .layout-grid .canvas-container .canvas-content .connection-lines {
                 width: 2000px;
@@ -101,18 +96,25 @@
                 left: 0;
             }
 
-            .layout-grid .canvas-container .canvas-content svg line {
+                .layout-grid .canvas-container .canvas-content .connection-lines .relationship-type {
+                    fill: rgb(133, 6, 6, 0.7);
+                    font-weight: bold;
+                    font-size: 17px;
+                    position: relative;
+                    z-index: 1000000000000000000;
+                }
+
+            .layout-grid .canvas-container .canvas-content svg path {
                 stroke: rgb(133, 6, 6, 0.7);
                 stroke-width: 2px;
-                pointer-events: none; 
+                pointer-events: none;
+                fill: none;
             }
 
                 .layout-grid .canvas-container .canvas-content .table-wrapper .table {
-                    width: 150px;
                     background-color: lightgray;
                     border: 1px solid #bbb;
                     border-radius: 5px;
-                    padding: 10px;
                     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
                     cursor: grab;
                     transition: box-shadow 0.2s;
@@ -126,10 +128,7 @@
                     .layout-grid .canvas-container .canvas-content .table-wrapper .column {
                         background-color: #ffffff;
                         border: 1px solid #ccc;
-                        padding: 5px;
-                        margin-top: 5px;
                         border-radius: 3px;
-                        font-size: 14px;
                     }
 
         .layout-grid .canvas-container .zoom-controls {

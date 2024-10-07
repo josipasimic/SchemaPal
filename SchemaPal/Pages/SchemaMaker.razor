@@ -1,12 +1,14 @@
 ﻿@page "/schemaMaker"
 
-@using SchemaPal.Models;
+@using SchemaPal.DataTransferObjects;
+@using SchemaPal.DataTransferObjects.Enums;
 @using SchemaMakerHelpers;
 @using SchemaMakerEnums;
 
 <div class="layout-grid">
     <div class="sidebar">
-        <button class="btn btn-primary" @onclick="AddNewTable">Dodaj novu tablicu</button>
+        <button class="btn btn-primary" 
+            @onclick="AddNewTable">Dodaj novu tablicu</button>
     </div>
     <div class="canvas-container"
          ondragover="event.preventDefault();"
@@ -20,32 +22,53 @@
             <svg class="connection-lines">
                 @foreach (var relationship in Relationships)
                 {
-                    <line x1="@relationship.X1" y1="@relationship.Y1"
-                          x2="@relationship.X2" y2="@relationship.Y2" />
+                    <g @key="Relationships.IndexOf(relationship)">
+                        <path id="@("relationship_" + Convert.ToString(Relationships.IndexOf(relationship)))"
+                              d="M @relationship.X1 @relationship.Y1 L @relationship.MidX @relationship.MidY1 L @relationship.MidX @relationship.MidY2 L @relationship.X2 @relationship.Y2"/>
+
+                        <text class="relationship-type">
+                            <textPath href="@("#relationship_" + Convert.ToString(Relationships.IndexOf(relationship)))"
+                                      startOffset="50%"
+                                      text-anchor="middle">
+                                @(RelationshipTypeTranslator.MapToTagText(relationship.RelationshipType))
+                            </textPath>
+                        </text>
+                    </g>
                 }
             </svg>
             @foreach (var table in Tables)
             {
-                <div class="table-wrapper" style="top: @table.TopPx; left: @table.LeftPx;">
+                <div class="table-wrapper" 
+                    style="top: @table.TopPx; left: @table.LeftPx;">
                     <div class="connection-border">
                         @foreach(var column in table.Columns)
                         {
-                            <div class="connection-point"
-                                style="left: 0; top: @GetColumnPointPositionCss(column.Id, table);"
-                                @onclick="() => OnConnectionPointClick(table.Id, column.Id)"></div>
-                            <div class="connection-point"
-                                style="right: 0; top: @GetColumnPointPositionCss(column.Id, table);"
-                                @onclick="() => OnConnectionPointClick(table.Id, column.Id)"></div>
+                            <g @key="column.Id">
+                                <div class="connection-point connection-point-hover"
+                                     style="left: 0; top: @GetColumnPointPositionCss(column.Id, table); background-color: @ColumnRelationshipPointColors.GetValueOrDefault((table.Id, column.Id, TableSide.Left));"
+                                     @onmouseover="() => SetColumnRelationshipPointColorOnMouseOver(table.Id, column.Id, TableSide.Left)"
+                                     @onmouseout="() => SetColumnRelationshipPointColorOnMouseOut(table.Id, column.Id, TableSide.Left)"
+                                     @onclick="() => OnConnectionPointClick(table.Id, column.Id, TableSide.Left)"></div>
+                                <div class="connection-point connection-point-hover"
+                                     style="right: 0; top: @GetColumnPointPositionCss(column.Id, table); background-color: @ColumnRelationshipPointColors.GetValueOrDefault((table.Id, column.Id, TableSide.Right));"
+                                     @onmouseover="() => SetColumnRelationshipPointColorOnMouseOver(table.Id, column.Id, TableSide.Right)"
+                                     @onmouseout="() => SetColumnRelationshipPointColorOnMouseOut(table.Id, column.Id, TableSide.Right)"
+                                    @onclick="() => OnConnectionPointClick(table.Id, column.Id, TableSide.Right)"></div>
+                            </g>
                         }
                     </div>
 
                     <div class="table"
-                         draggable="true"
-                         @ondragstart="(e => OnTableDragStart(e, table.Id))">
+                        style="width: @SchemaMakerConstants.TableWidthPx; padding: @SchemaMakerConstants.TablePaddingPx; font-size: @SchemaMakerConstants.TableFontSizePx; opacity: @(RelationshipColumnsData.IsDrawingLine ? "0.6" : "1");"
+                        draggable="@(!RelationshipColumnsData.IsDrawingLine ? "true" : "false")"
+                        @ondragstart="(e => OnTableDragStart(e, table.Id))">
                         <strong>@table.Name</strong>
                         @foreach (var column in table.Columns)
                         {
-                            <div class="column">@column.Name</div>
+                            <div class="column"
+                                 style="margin-top: @SchemaMakerConstants.ColumnTopMarginPx;  padding: @SchemaMakerConstants.ColumnPaddingPx; font-size: @SchemaMakerConstants.ColumnFontSizePx;">
+                                @column.Name
+                            </div>
                         }
                     </div>
                 </div>
@@ -63,18 +86,28 @@
     private DragAndDropHelper DragAndDropTableData = new DragAndDropHelper();
     private RelationshipHelper RelationshipColumnsData = new RelationshipHelper();
 
+    private Dictionary<(int TableId, int ColumnId, TableSide TableSide), string> ColumnRelationshipPointColors = new Dictionary<(int TableId, int ColumnId, TableSide TableSide), string>();
+
     private void AddNewTable()
     {
         var columnCounter = 0;
         var tableId = Tables.Count + 1;
-        Tables.Add(new Table
+
+        var newTable = new Table
         {
             Id = tableId,
             Name = $"Table {tableId}",
             Columns = new List<Column> { new Column(++columnCounter, "Id"), new Column(++columnCounter, "Name"), new Column(++columnCounter, "Description") },
             CoordinateX = 50,
             CoordinateY = 100
-        });
+        };
+        Tables.Add(newTable);
+
+        foreach (var column in newTable.Columns)
+        {
+            ColumnRelationshipPointColors[(tableId, column.Id, TableSide.Left)] = "#bbb";
+            ColumnRelationshipPointColors[(tableId, column.Id, TableSide.Right)] = "#bbb";
+        }
     }
 
     #region zooming
@@ -95,6 +128,11 @@
 
     private void OnTableDragStart(DragEventArgs e, int tableId)
     {
+        if (RelationshipColumnsData.IsDrawingLine)
+        {
+            return;
+        }
+
         DragAndDropTableData.TableId = tableId;
         DragAndDropTableData.StartingClientX = e.ClientX;
         DragAndDropTableData.StartingClientY = e.ClientY;
@@ -102,6 +140,11 @@
 
     private void OnDrop(DragEventArgs e)
     {
+        if (RelationshipColumnsData.IsDrawingLine)
+        {
+            return;
+        }
+
         var draggedTable = Tables.FirstOrDefault(x => x.Id == DragAndDropTableData.TableId);
 
         if (draggedTable is null)
@@ -122,17 +165,20 @@
 
     #region create relationships
 
-    private void OnConnectionPointClick(int tableId, int columnId)
+    private void OnConnectionPointClick(int tableId, int columnId, TableSide tableSide)
     {
         if (!RelationshipColumnsData.IsDrawingLine)
         {
             RelationshipColumnsData.CurrentRelationship = new Relationship
             {
                 SourceTableId = tableId,
-                SourceColumnId = columnId
+                SourceColumnId = columnId,
+                RelationshipType = RelationshipType.OneToMany
             };
 
             RelationshipColumnsData.IsDrawingLine = true;
+
+            ColumnRelationshipPointColors[(tableId, columnId, tableSide)] = "red";
         }
         else
         {
@@ -147,12 +193,11 @@
                 RelationshipColumnsData.CurrentRelationship.DestinationColumnId = columnId;
 
                 Relationships.Add(RelationshipColumnsData.CurrentRelationship);
-                RelationshipColumnsData.IsDrawingLine = false;
-                RelationshipColumnsData.CurrentRelationship = null;
+                RelationshipColumnsData.Reset();
             }
-        }
 
-        UpdateRelationshipPositions();
+            UpdateRelationshipPositions();
+        }
 
         StateHasChanged();
     }
@@ -167,41 +212,133 @@
             var firstTableSide = TableSide.None;
             var secondTableSide = TableSide.None;
 
-            if (sourceTable.CoordinateX <= destinationTable.CoordinateX
-                && destinationTable.CoordinateX + 150 <= sourceTable.CoordinateX + 150
-                || destinationTable.CoordinateX > sourceTable.CoordinateX + 150)
-            {
-                secondTableSide = TableSide.Left;
-            }
-            else
-            {
-                secondTableSide = TableSide.Right;
-            }
+            var doTablesOverlap = CheckWhetherTablesInterlap(sourceTable, destinationTable);
 
-            if (destinationTable.CoordinateX <= sourceTable.CoordinateX
-                && sourceTable.CoordinateX + 150 <= destinationTable.CoordinateX + 150
-                || sourceTable.CoordinateX > destinationTable.CoordinateX + 150)
-            {
-                firstTableSide = TableSide.Left;
-            }
-            else
-            {
-                firstTableSide = TableSide.Right;
-            }
+            var tableSides = DetermineConnectionSide(sourceTable.CoordinateX, destinationTable.CoordinateX, doTablesOverlap);
+
+            firstTableSide = tableSides.FirstTableSide;
+            secondTableSide = tableSides.SecondTableSide;
 
             relationship.X1 = GetConnectionPointX(sourceTable, firstTableSide);
             relationship.Y1 = GetConnectionPointY(sourceTable, relationship.SourceColumnId);
 
             relationship.X2 = GetConnectionPointX(destinationTable, secondTableSide);
             relationship.Y2 = GetConnectionPointY(destinationTable, relationship.DestinationColumnId);
+
+            relationship.MidX = CalculateMidX(relationship, (doTablesOverlap, firstTableSide));
+
+            relationship.MidY1 = relationship.Y1;
+            relationship.MidY2 = relationship.Y2;
+
+            if (Math.Abs(relationship.MidY1 - relationship.MidY2) < 35)
+            {
+                var halfwayY = (relationship.MidY1 + relationship.MidY2) / 2;
+                relationship.MidY1 = relationship.MidY2 = halfwayY;
+            }
+
+            relationship.StartingPointSide = firstTableSide;
+            relationship.EndingPointSide = secondTableSide;
+
+            var firstPointColor = GetColumnRelationshipPointColor(relationship.SourceTableId, relationship.SourceColumnId, firstTableSide);
+            ColumnRelationshipPointColors[(relationship.SourceTableId, relationship.SourceColumnId, firstTableSide)] = firstPointColor;
+
+            var oppositeFirstTableSide = firstTableSide == TableSide.Left ? TableSide.Right : TableSide.Left;
+            var oppositeFirstPointColor = GetColumnRelationshipPointColor(relationship.SourceTableId, relationship.SourceColumnId, oppositeFirstTableSide);
+            ColumnRelationshipPointColors[(relationship.SourceTableId, relationship.SourceColumnId, oppositeFirstTableSide)] = oppositeFirstPointColor;
+
+            var secondPointColor = GetColumnRelationshipPointColor(relationship.DestinationTableId, relationship.DestinationColumnId, secondTableSide);
+            ColumnRelationshipPointColors[(relationship.DestinationTableId, relationship.DestinationColumnId, secondTableSide)] = secondPointColor;
+
+            var oppositeSecondTableSide = secondTableSide == TableSide.Left ? TableSide.Right : TableSide.Left;
+            var oppositeSecondPointColor = GetColumnRelationshipPointColor(relationship.DestinationTableId, relationship.DestinationColumnId, oppositeSecondTableSide);
+            ColumnRelationshipPointColors[(relationship.DestinationTableId, relationship.DestinationColumnId, oppositeSecondTableSide)] = oppositeSecondPointColor;
         }
     }
 
     private double GetConnectionPointX(Table table, TableSide side)
     {
-        return side == TableSide.Left
-            ? table.CoordinateX  
-            : table.CoordinateX + 150;
+        switch (side)
+        {
+            case TableSide.Left:
+                return table.CoordinateX;
+            case TableSide.Right:
+                return table.CoordinateX + SchemaMakerConstants.TableWidth;
+            case TableSide.None:
+            default:
+                return 0;
+        }
+    }
+
+    private bool CheckWhetherTablesInterlap(Table firstTable, Table secondTable)
+    {
+        var doTablesInterlap = firstTable.CoordinateX <= secondTable.CoordinateX + SchemaMakerConstants.TableWidth
+            && secondTable.CoordinateX <= firstTable.CoordinateX + SchemaMakerConstants.TableWidth;
+
+        return doTablesInterlap;
+    }
+
+    private double CalculateMidX(
+        Relationship relationship,
+        (bool DoTablesInterlap, TableSide InterlapSide) tablesInterlapInfo)
+    {
+        var tables = new List<int> { relationship.SourceTableId, relationship.DestinationTableId };
+
+        var relationshipsBetweenTables = Relationships
+            .Where(x => tables.Contains(x.SourceTableId)
+                     && tables.Contains(x.DestinationTableId))
+            .Distinct()
+            .ToList();
+
+        var allRelationshipsCount = relationshipsBetweenTables.Count();
+        var indexOfTheCurrentConnection = relationshipsBetweenTables.IndexOf(relationship);
+
+        var x1 = relationship.X1;
+        var x2 = relationship.X2;
+
+        var startingPoint = Math.Min(x1, x2);
+
+        var distanceBetweenPointsX = Math.Abs(x1 - x2);
+
+        var currentPointShiftX = (indexOfTheCurrentConnection + 1) * distanceBetweenPointsX / (allRelationshipsCount + 1);
+
+        if (!tablesInterlapInfo.DoTablesInterlap)
+        {
+            return startingPoint + currentPointShiftX;
+        }
+
+        var shiftDirection = 1;
+        if (tablesInterlapInfo.InterlapSide == TableSide.Left)
+        {
+            shiftDirection = -1;
+        }
+
+        var complementaryDistance = Math.Abs((x1 + SchemaMakerConstants.TableWidth) - x2);
+        if (tablesInterlapInfo.InterlapSide == TableSide.Right)
+        {
+            complementaryDistance = Math.Abs(x1 - (x2 + SchemaMakerConstants.TableWidth));
+        }
+
+        currentPointShiftX = Math.Min(distanceBetweenPointsX, complementaryDistance)
+            + (indexOfTheCurrentConnection + 1) * 20;
+
+        return startingPoint + shiftDirection * currentPointShiftX;
+    }
+
+    private (TableSide FirstTableSide, TableSide SecondTableSide) DetermineConnectionSide(double x1, double x2, bool doTablesInterlap)
+    {
+        if (doTablesInterlap)
+        {
+            return x1 < x2
+                ? (TableSide.Right, TableSide.Right)
+                : (TableSide.Left, TableSide.Left);
+        }
+
+        if (x1 < x2)
+        {
+            return (TableSide.Right, TableSide.Left);
+        }
+
+        return (TableSide.Left, TableSide.Right);
     }
 
     private double GetConnectionPointY(Table table, int columnId)
@@ -219,17 +356,67 @@
 
     private double GetColumnPointPosition(int columnId, Table table)
     {
-        var columnsCount = table.Columns.Count;
-
         var columnIndex = table.Columns.IndexOf(table.Columns.First(c => c.Id == columnId));
 
-        var spaceBetweenPoints = 100.0 / columnsCount; 
-        return (columnIndex + 1) * spaceBetweenPoints + 30;
+        var columnHeight = SchemaMakerConstants.ColumnFontSize
+            + 2 * SchemaMakerConstants.ColumnPadding;
+
+        var spaceBetweenPoints = columnHeight
+            + SchemaMakerConstants.ColumnTopMargin
+            + 10; // Buffer za prostor ispod i iznad teksta
+
+        var additionalStartingLength = SchemaMakerConstants.TableFontSize
+            + SchemaMakerConstants.TablePadding
+            + SchemaMakerConstants.ColumnTopMargin;
+
+        return columnIndex * spaceBetweenPoints + additionalStartingLength + columnHeight;
     }
 
     private string GetColumnPointPositionCss(int columnId, Table table)
     {
         return $"{GetColumnPointPosition(columnId, table)}px";
+    }
+
+    private string GetColumnRelationshipPointColor(int tableId, int columnId, TableSide tableSide)
+    {
+        var defaultColor = "#bbb";
+        var activeColor = "rgb(133, 6, 6, 0.7)";
+
+        var isColumnConnectedOnTheGivenSide = 
+            Relationships
+                .Any(x => x.SourceTableId == tableId && x.SourceColumnId == columnId && x.StartingPointSide == tableSide)
+            || Relationships
+                .Any(x => x.DestinationTableId == tableId && x.DestinationColumnId == columnId && x.EndingPointSide == tableSide);
+
+        return isColumnConnectedOnTheGivenSide ? activeColor : defaultColor;
+    }
+
+    private void SetColumnRelationshipPointColorOnMouseOver(int tableId, int columnId, TableSide tableSide)
+    {
+        if (RelationshipColumnsData.IsDrawingLine)
+        {
+            return;
+        }
+
+        var hoverColor = "red";
+
+        ColumnRelationshipPointColors[(tableId, columnId, tableSide)] = hoverColor;
+
+        StateHasChanged();
+    }
+
+    private void SetColumnRelationshipPointColorOnMouseOut(int tableId, int columnId, TableSide tableSide)
+    {
+        if (RelationshipColumnsData.IsDrawingLine)
+        {
+            return;
+        }
+
+        var color = GetColumnRelationshipPointColor(tableId, columnId, tableSide);
+
+        ColumnRelationshipPointColors[(tableId, columnId, tableSide)] = color;
+
+        StateHasChanged();
     }
 
     #endregion

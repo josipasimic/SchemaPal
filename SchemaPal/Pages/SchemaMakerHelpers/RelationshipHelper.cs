@@ -1,4 +1,4 @@
-﻿using SchemaPal.Models;
+﻿using SchemaPal.DataTransferObjects;
 
 namespace SchemaPal.Pages.SchemaMakerHelpers
 {

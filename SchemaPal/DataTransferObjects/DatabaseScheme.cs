@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.Models
+﻿namespace SchemaPal.DataTransferObjects
 {
     public class DatabaseScheme
     {

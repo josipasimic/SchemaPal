@@ -1,4 +1,7 @@
-﻿namespace SchemaPal.Models
+﻿using SchemaPal.DataTransferObjects.Enums;
+using SchemaPal.Pages.SchemaMakerEnums;
+
+namespace SchemaPal.DataTransferObjects
 {
     public class Relationship
     {
@@ -12,9 +15,21 @@
 
         public int DestinationColumnId { get; set; }
 
+        public RelationshipType RelationshipType { get; set; }
+
+        public TableSide StartingPointSide { get; set; }
+
+        public TableSide EndingPointSide { get; set; }
+
         public double X1 { get; set; }
 
         public double Y1 { get; set; }
+
+        public double MidX { get; set; }
+
+        public double MidY1 { get; set; }
+
+        public double MidY2 { get; set; }
 
         public double X2 { get; set; }
 
