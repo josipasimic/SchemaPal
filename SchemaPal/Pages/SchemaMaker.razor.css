@@ -29,7 +29,7 @@
         position: sticky;
     }
 
-        button.btn:hover {
+        .layout-grid button.btn:hover {
             background-color: #0056b3;
         }
 
@@ -45,7 +45,6 @@
         width: 80%;
         height: 100%;
     }
-
 
         .layout-grid .canvas-container .canvas-content {
             width: 2000px;

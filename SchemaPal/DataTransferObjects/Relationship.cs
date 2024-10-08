@@ -5,7 +5,7 @@ namespace SchemaPal.DataTransferObjects
 {
     public class Relationship
     {
-        public int RelationshipId { get; set; }
+        public int Id { get; set; }
 
         public int SourceTableId { get; set; }
 
@@ -21,13 +21,17 @@ namespace SchemaPal.DataTransferObjects
 
         public TableSide EndingPointSide { get; set; }
 
+        public (string Start, string End) ConnectionPointIds { get; set; }
+
         public double X1 { get; set; }
 
         public double Y1 { get; set; }
 
-        public double MidX { get; set; }
+        public double MidX1 { get; set; }
 
         public double MidY1 { get; set; }
+
+        public double MidX2 { get; set; }
 
         public double MidY2 { get; set; }
 

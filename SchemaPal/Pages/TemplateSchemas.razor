@@ -2,14 +2,14 @@
 @using SchemaPal.DataTransferObjects
 
 @code {
-    private List<DatabaseScheme> templates = new List<DatabaseScheme>
+    private List<DatabaseSchema> templates = new List<DatabaseSchema>
     {
-        new DatabaseScheme { Name = "Music Streaming", Id = 1 },
-        new DatabaseScheme { Name = "Retail Chain", Id = 2 },
-        new DatabaseScheme { Name = "Taxi Service", Id = 3 },
+        new DatabaseSchema { Name = "Music Streaming", Id = 1 },
+        new DatabaseSchema { Name = "Retail Chain", Id = 2 },
+        new DatabaseSchema { Name = "Taxi Service", Id = 3 },
     };
 
-    private void OpenTemplateSchema(DatabaseScheme template)
+    private void OpenTemplateSchema(DatabaseSchema template)
     {
         // Logic to open the schema maker canvas with the selected template
         Navigation.NavigateTo("/schemaMaker?template=" + template.Name);

@@ -1,4 +1,6 @@
-﻿namespace SchemaPal.Pages.SchemaMakerHelpers
+﻿using Microsoft.Extensions.Primitives;
+
+namespace SchemaPal.Pages.SchemaMakerHelpers
 {
     public static class SchemaMakerConstants
     {
@@ -43,5 +45,29 @@
         {
             get { return $"{ColumnFontSize}px"; }
         }
+
+        public const double TableStartingCoordinateX = 50;
+
+        public const double TableStartingCoordinateY = 100;
+
+        public const string DefaultConnectionPointColor = "#bbb";
+
+        public const string ConnectedConnectionPointColor = "rgb(133, 6, 6, 0.7)";
+
+        public const string SelectedConnectionPointColor = "red";
+
+        public const double MinimalZoomLevel = 0.5;
+
+        public const double MaximalZoomLevel = 3.0;
+
+        public const double ZoomLevelStep = 0.1;
+
+        public const double StraightLineRelationshipDelta = 40;
+
+        public const double OverlapMidpointStepForRelationshipLine = 20;
+
+        public const double ColumnFontSizeBuffer = 10;
+
+        public const double ConnectionPointBuffer = 2.5;
     }
 }
