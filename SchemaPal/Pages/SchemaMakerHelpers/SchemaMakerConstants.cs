@@ -62,7 +62,7 @@ namespace SchemaPal.Pages.SchemaMakerHelpers
 
         public const double ZoomLevelStep = 0.1;
 
-        public const double StraightLineRelationshipDelta = 40;
+        public const double StraightLineRelationshipTreshold = 70;
 
         public const double OverlapMidpointStepForRelationshipLine = 20;
 

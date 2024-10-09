@@ -4,10 +4,9 @@ namespace SchemaPal.Services
 {
     public interface ISchemaObjectFactory
     {
-        void CreateNewTable(DatabaseSchema databaseSchema);
+        int CreateNewTable(DatabaseSchema databaseSchema);
 
-        Relationship CreateNewRelationship(ConnectionPoint startingConnectionPoint,
-            Dictionary<string, string> connectionPointColors);
+        Relationship CreateNewRelationship(ConnectionPoint startingConnectionPoint);
 
         void CloseNewRelationship(DatabaseSchema databaseSchema,
             Relationship newRelationship,

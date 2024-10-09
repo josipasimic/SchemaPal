@@ -1,5 +1,4 @@
 ﻿using SchemaPal.DataTransferObjects;
-using SchemaPal.DataTransferObjects.Enums;
 using SchemaPal.Pages.SchemaMakerEnums;
 using SchemaPal.Pages.SchemaMakerHelpers;
 
@@ -22,11 +21,11 @@ namespace SchemaPal.Services
             _coordinatesCalculator = coordinatesCalculator;
         }
 
-        public void CreateNewTable(DatabaseSchema databaseSchema)
+        public int CreateNewTable(DatabaseSchema databaseSchema)
         {
             if (databaseSchema is null)
             {
-                return;
+                return 0;
             }
 
             var newTable = new Table
@@ -54,15 +53,13 @@ namespace SchemaPal.Services
 
             databaseSchema.ConnectionPoints.AddRange(newColumnPoints);
 
-            newColumnPoints.ForEach(
-                cp => databaseSchema.ConnectionPointColors[cp.UniqueIdentifier] = SchemaMakerConstants.DefaultConnectionPointColor);
-
             _tableId++;
             _columnId++;
+
+            return newTable.Id;
         }
 
-        public Relationship CreateNewRelationship(ConnectionPoint startingConnectionPoint, 
-            Dictionary<string, string> connectionPointColors)
+        public Relationship CreateNewRelationship(ConnectionPoint startingConnectionPoint)
         {
             if (startingConnectionPoint is null)
             {
@@ -73,11 +70,8 @@ namespace SchemaPal.Services
             {
                 Id = _relationshipId,
                 SourceTableId = startingConnectionPoint.TableId,
-                SourceColumnId = startingConnectionPoint.ColumnId,
-                RelationshipType = RelationshipType.OneToMany
+                SourceColumnId = startingConnectionPoint.ColumnId
             };
-
-            connectionPointColors[startingConnectionPoint.UniqueIdentifier] = SchemaMakerConstants.SelectedConnectionPointColor;
 
             return newRelationship;
         }
@@ -96,6 +90,10 @@ namespace SchemaPal.Services
 
             // Ako se spajaju atributi iz iste tablice, prekidamo proces.
             var areConnectionPointTablesEqual = newRelationship.SourceTableId == endingConnectionPoint.TableId;
+            if (areConnectionPointTablesEqual)
+            {
+                return;
+            }
 
             var connectingTableIds = new HashSet<int> { newRelationship.SourceTableId, endingConnectionPoint.TableId };
             var connectingColumnIds = new HashSet<int> { newRelationship.SourceColumnId, endingConnectionPoint.ColumnId };
@@ -106,17 +104,8 @@ namespace SchemaPal.Services
                     && connectingTableIds.Contains(x.DestinationTableId)
                     && connectingColumnIds.Contains(x.SourceColumnId)
                     && connectingColumnIds.Contains(x.DestinationColumnId));
-
-            if (areConnectionPointTablesEqual
-                || doesConnectionAlreadyExist)
+            if (doesConnectionAlreadyExist)
             {
-                var isStartingPointConnected = databaseSchema.Relationships
-                    .Any(r => r.ConnectionPointIds.Start == startingConnectionPointId
-                        || r.ConnectionPointIds.End == startingConnectionPointId);
-                databaseSchema.ConnectionPointColors[startingConnectionPointId] = isStartingPointConnected
-                    ? SchemaMakerConstants.ConnectedConnectionPointColor
-                    : SchemaMakerConstants.DefaultConnectionPointColor;
-
                 return;
             }
 
@@ -124,9 +113,6 @@ namespace SchemaPal.Services
             newRelationship.DestinationColumnId = endingConnectionPoint.ColumnId;
 
             newRelationship.ConnectionPointIds = (startingConnectionPointId, endingConnectionPoint.UniqueIdentifier);
-
-            databaseSchema.ConnectionPointColors[endingConnectionPoint.UniqueIdentifier] = SchemaMakerConstants.ConnectedConnectionPointColor;
-            databaseSchema.ConnectionPointColors[startingConnectionPointId] = SchemaMakerConstants.ConnectedConnectionPointColor;
 
             databaseSchema.Relationships.Add(newRelationship);
 

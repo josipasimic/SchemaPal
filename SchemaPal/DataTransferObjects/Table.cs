@@ -10,12 +10,12 @@
 
         public double CoordinateX { get; set; }
 
-        public double CoordinateY { get; set; }
-
         public string LeftPx
         {
             get { return $"{CoordinateX}px"; }
         }
+
+        public double CoordinateY { get; set; }
 
         public string TopPx
         {

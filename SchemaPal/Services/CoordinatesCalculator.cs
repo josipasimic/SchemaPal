@@ -23,7 +23,7 @@ namespace SchemaPal.Services
                         connectionPointCoordinatesX[connectionPoint.UniqueIdentifier] = 0;
                         break;
                     case TableSide.Right:
-                        connectionPointCoordinatesX[connectionPoint.UniqueIdentifier] = SchemaMakerConstants.TableWidth;
+                        connectionPointCoordinatesX[connectionPoint.UniqueIdentifier] = SchemaMakerConstants.TableWidth - SchemaMakerConstants.TablePadding;
                         break;
                     case TableSide.None:
                     default:
@@ -78,7 +78,7 @@ namespace SchemaPal.Services
             var x1 = relationshipData.relationshipStartX;
             var x2 = relationshipData.relationshipEndX;
 
-            var startingPoint = Math.Min(x1, x2);
+            var startingPoint = x1;
             var distanceBetweenPointsX = Math.Abs(x1 - x2);
             var stepMultiplier = relationshipData.indexOfRelationship + 1;
 
@@ -88,7 +88,7 @@ namespace SchemaPal.Services
                 // Ako se tablice vertikalno preklapaju, želimo da linije idu "okolo njih", pa
                 // x-koordinate moramo pomaknuti ulijevo/udesno ovisno o tome koja je strana preklapanja.
                 case TableSide.Left:
-                    var complementaryLeftDistance = Math.Abs((x1 + SchemaMakerConstants.TableWidth) - x2);
+                    var complementaryLeftDistance = Math.Abs(x2 - (x1 + SchemaMakerConstants.TableWidth));
                     pointShiftX = -1 * (Math.Min(distanceBetweenPointsX, complementaryLeftDistance)
                         + stepMultiplier * SchemaMakerConstants.OverlapMidpointStepForRelationshipLine);
                     break;
@@ -101,6 +101,7 @@ namespace SchemaPal.Services
                 // i završne točke x-koordinate dijelimo na ekvidistantne dijelove ovisno o broju veza između tablica, kako bismo dobili pomak za svaku vezu
                 // između tablica. Tada, točki prelamanja pridodijelimo odgovarajući x-pomak ovisno o tome je li trenutna veza bliže početku ili kraju.
                 case TableSide.None:
+                    startingPoint = Math.Min(x1, x2);
                     stepMultiplier = startingPoint == x2 
                         ? relationshipData.relationshipsBetweenTablesCount - relationshipData.indexOfRelationship 
                         : stepMultiplier;

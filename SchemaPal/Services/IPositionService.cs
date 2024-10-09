@@ -7,11 +7,12 @@ namespace SchemaPal.Services
     {
         void UpdateTableCoordinates(
             DatabaseSchema databaseSchema,
-            DragAndDropHelper dragAndDropData,
-            (double NewClientX, double NewClientY) newClientPosition);
+            int tableId,
+            (double StartingX, double StartingY) startingPosition,
+            (double TargetX, double TargetY) targetPosition);
 
         void UpdateRelationshipPositions(
             DatabaseSchema databaseSchema,
-            List<int> tableIds = null);
+            HashSet<int> tableIds = null);
     }
 }

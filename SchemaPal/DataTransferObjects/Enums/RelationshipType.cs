@@ -2,10 +2,8 @@
 {
     public enum RelationshipType
     {
-        None,
         OneToOne,
         OneToMany,
-        ManyToOne,
-        ManyToMany
+        ManyToOne
     }
 }

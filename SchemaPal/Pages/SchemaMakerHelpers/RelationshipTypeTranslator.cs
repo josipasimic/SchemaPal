@@ -14,9 +14,6 @@ namespace SchemaPal.Pages.SchemaMakerHelpers
                     return "1:N";
                 case RelationshipType.ManyToOne:
                     return "N:1";
-                case RelationshipType.ManyToMany:
-                    return "N:N";
-                case RelationshipType.None:
                 default:
                     return string.Empty;
             }

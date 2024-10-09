@@ -8,11 +8,12 @@
 
 @inject ISchemaObjectFactory _schemaObjectFactory;
 @inject IPositionService _positionService;
+@inject IStyleService _styleService;
 
 <div class="layout-grid">
     <div class="sidebar">
         <button class="btn btn-primary" 
-            @onclick="AddNewTable">Dodaj novu tablicu</button>
+                @onclick="AddNewTable">Dodaj novu tablicu</button>
     </div>
     <div class="canvas-container"
          ondragover="event.preventDefault();"
@@ -22,13 +23,16 @@
             <button class="btn btn-secondary" @onclick="() => Zoom(ZoomDirection.Out)">-</button>
         </div>
         <div class="canvas-content"
-             style="transform: scale(@DatabaseSchema.ZoomLevel);">
+             style="transform: scale(@this.DatabaseSchema.ZoomLevel);">
             <svg class="connection-lines">
-                @foreach (var relationship in DatabaseSchema.Relationships)
+                @foreach (var relationship in this.DatabaseSchema.Relationships)
                 {
                     <g @key="relationship.Id">
                         <path id="@($"relationship_{relationship.Id}")"
-                              d="M @relationship.X1 @relationship.Y1 L @relationship.MidX1 @relationship.MidY1 L @relationship.MidX2 @relationship.MidY2 L @relationship.X2 @relationship.Y2"/>
+                              d="M @relationship.X1 @relationship.Y1 
+                                 L @relationship.MidX1 @relationship.MidY1 
+                                 L @relationship.MidX2 @relationship.MidY2 
+                                 L @relationship.X2 @relationship.Y2"/>
 
                         <text class="relationship-type">
                             <textPath href="@($"#relationship_{relationship.Id}")"
@@ -40,37 +44,46 @@
                     </g>
                 }
             </svg>
-            @foreach (var table in DatabaseSchema.Tables)
+            @foreach (var table in this.DatabaseSchema.Tables)
             {
-                <div class="table-wrapper" 
-                    style="top: @table.TopPx; left: @table.LeftPx;">
-                    <div class="connection-border">
-                        @foreach (var connectionPoint in DatabaseSchema.ConnectionPoints.Where(cp => cp.TableId == table.Id))
-                        {
-                            <g @key="connectionPoint.UniqueIdentifier">
-                                <div class="connection-point"
-                                     style="left: @connectionPoint.ConnectionPointLeftCoordinatePx; top: @connectionPoint.ConnectionPointTopCoordinatePx; background-color: @(DatabaseSchema.ConnectionPointColors.GetValueOrDefault(connectionPoint.UniqueIdentifier));"
-                                     @onmouseover="() => SetConnectionPointColorOnMouseOver(connectionPoint)"
-                                     @onmouseout="() => SetConnectionPointColorOnMouseOut(connectionPoint)"
-                                     @onclick="() => OnConnectionPointClick(connectionPoint)"></div>
-                            </g>
-                        }
-                    </div>
+                <g key="table.Id">
+                    <div class="table-wrapper" 
+                         style="top: @table.TopPx; left: @table.LeftPx;">
+                        <div class="connection-border">
+                            @foreach (var connectionPoint in this.DatabaseSchema.ConnectionPoints.Where(cp => cp.TableId == table.Id))
+                            {
+                                <g @key="connectionPoint.UniqueIdentifier">
+                                    <div class="connection-point"
+                                         style="left: @connectionPoint.ConnectionPointLeftCoordinatePx; 
+                                                top: @connectionPoint.ConnectionPointTopCoordinatePx; 
+                                                background-color: @(this.DatabaseSchema.ConnectionPointColors.GetValueOrDefault(connectionPoint.UniqueIdentifier));"
+                                         @onmouseover="() => SetConnectionPointColorOnMouseOver(connectionPoint.UniqueIdentifier)"
+                                         @onmouseout="() => SetConnectionPointColorOnMouseOut(connectionPoint.UniqueIdentifier)"
+                                         @onclick="() => OnConnectionPointClick(connectionPoint)"></div>
+                                </g>
+                            }
+                        </div>
 
-                    <div class="table"
-                        style="width: @SchemaMakerConstants.TableWidthPx; padding: @SchemaMakerConstants.TablePaddingPx; font-size: @SchemaMakerConstants.TableFontSizePx; opacity: @(RelationshipColumnsData.IsDrawingLine ? "0.6" : "1");"
-                        draggable="@(!RelationshipColumnsData.IsDrawingLine ? "true" : "false")"
-                        @ondragstart="(e => OnTableDragStart(e, table.Id))">
-                        <strong>@table.Name</strong>
-                        @foreach (var column in table.Columns)
-                        {
-                            <div class="column"
-                                 style="margin-top: @SchemaMakerConstants.ColumnTopMarginPx;  padding: @SchemaMakerConstants.ColumnPaddingPx; font-size: @SchemaMakerConstants.ColumnFontSizePx;">
-                                @column.Name
-                            </div>
-                        }
+                        <div class="table"
+                             style="width: @SchemaMakerConstants.TableWidthPx; 
+                                    padding: @SchemaMakerConstants.TablePaddingPx; 
+                                    font-size: @SchemaMakerConstants.TableFontSizePx; 
+                                    opacity: @(this.RelationshipCreationAction.IsDrawingLine ? "0.6" : "1");"
+                             draggable="@(this.RelationshipCreationAction.IsDrawingLine ? "false" : "true")"
+                             @ondragstart="(e => OnTableDragStart(e, table.Id))">
+                            <strong>@table.Name</strong>
+                            @foreach (var column in table.Columns)
+                            {
+                                <div class="column"
+                                     style="margin-top: @SchemaMakerConstants.ColumnTopMarginPx;  
+                                            padding: @SchemaMakerConstants.ColumnPaddingPx; 
+                                            font-size: @SchemaMakerConstants.ColumnFontSizePx;">
+                                    @column.Name
+                                </div>
+                            }
+                        </div>
                     </div>
-                </div>
+                </g>
             }
         </div>
     </div>
@@ -79,14 +92,18 @@
 @code {
     private DatabaseSchema DatabaseSchema = new DatabaseSchema();
 
-    private DragAndDropHelper DragAndDropTableData = new DragAndDropHelper();
-    private RelationshipHelper RelationshipColumnsData = new RelationshipHelper();
+    private DragAndDropHelper DragAndDropAction = new DragAndDropHelper();
+    private RelationshipHelper RelationshipCreationAction = new RelationshipHelper();
 
     #region new object creation
 
     private void AddNewTable()
     {
-        _schemaObjectFactory.CreateNewTable(this.DatabaseSchema);
+        var newTableId = _schemaObjectFactory.CreateNewTable(this.DatabaseSchema);
+
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Create,
+            tableIds: new HashSet<int> { newTableId });
     }
 
     #endregion
@@ -97,8 +114,8 @@
     {
         var stepSign = zoomDirection == ZoomDirection.In ? 1 : -1;
 
-        DatabaseSchema.ZoomLevel = Math.Clamp(
-            DatabaseSchema.ZoomLevel + stepSign * SchemaMakerConstants.ZoomLevelStep,
+        this.DatabaseSchema.ZoomLevel = Math.Clamp(
+            this.DatabaseSchema.ZoomLevel + stepSign * SchemaMakerConstants.ZoomLevelStep,
             SchemaMakerConstants.MinimalZoomLevel, 
             SchemaMakerConstants.MaximalZoomLevel); 
     }
@@ -110,68 +127,45 @@
     private void OnTableDragStart(DragEventArgs e, int tableId)
     {
         // Drag and drop tablica ne dozvoljavamo ako je crtanje veze između dva stupca u tijeku.
-        if (RelationshipColumnsData.IsDrawingLine)
+        if (this.RelationshipCreationAction.IsDrawingLine)
         {
             return;
         }
 
-        DragAndDropTableData.TableId = tableId;
-        DragAndDropTableData.StartingClientX = e.ClientX;
-        DragAndDropTableData.StartingClientY = e.ClientY;
+        this.DragAndDropAction.TableId = tableId;
+        this.DragAndDropAction.StartingClientX = e.ClientX;
+        this.DragAndDropAction.StartingClientY = e.ClientY;
     }
 
     private void OnDrop(DragEventArgs e)
     {
         // Drag and drop tablica ne dozvoljavamo ako je crtanje veze između dva stupca u tijeku.
-        if (RelationshipColumnsData.IsDrawingLine)
+        if (this.RelationshipCreationAction.IsDrawingLine)
         {
             return;
         }
 
+        var droppedTableId = this.DragAndDropAction.TableId;
+
         _positionService.UpdateTableCoordinates(
-            DatabaseSchema, 
-            DragAndDropTableData, 
+            this.DatabaseSchema, 
+            droppedTableId,
+            (this.DragAndDropAction.StartingClientX, this.DragAndDropAction.StartingClientY),
             (e.ClientX, e.ClientY));
 
-        var droppedTableId = DragAndDropTableData.TableId;
+        _positionService.UpdateRelationshipPositions(this.DatabaseSchema, tableIds: new HashSet<int> { droppedTableId });
 
-        _positionService.UpdateRelationshipPositions(DatabaseSchema, tableIds: new List<int> { droppedTableId });
-        UpdateTableConnectionPointColorsOnTableDrop(droppedTableId);
-
-        DragAndDropTableData.Reset();
-        StateHasChanged();
-    }
-
-    private void UpdateTableConnectionPointColorsOnTableDrop(int tableId)
-    {
-        var tableRelationships = DatabaseSchema.Relationships
-            .Where(r => r.SourceTableId == tableId || r.DestinationTableId == tableId)
-            .ToList();
-
-        var connectedConnectionPoints = tableRelationships
-            .SelectMany(r => new[] { r.ConnectionPointIds.Start, r.ConnectionPointIds.End })
-            .Distinct()
-            .ToList();
-
-        var affectedTableIds = tableRelationships
+        var connectedTableIds = this.DatabaseSchema.Relationships
+            .Where(r => r.SourceTableId == droppedTableId || r.DestinationTableId == droppedTableId)
             .SelectMany(r => new[] { r.SourceTableId, r.DestinationTableId })
             .ToHashSet();
 
-        var tableConnectionPoints = DatabaseSchema.ConnectionPoints
-            .Where(cp => affectedTableIds.Contains(cp.TableId))
-            .ToList();
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Reset,
+            tableIds: connectedTableIds);
 
-        foreach (var connectionPointColor in tableConnectionPoints)
-        {
-            if (connectedConnectionPoints.Contains(connectionPointColor.UniqueIdentifier))
-            {
-                DatabaseSchema.ConnectionPointColors[connectionPointColor.UniqueIdentifier] = SchemaMakerConstants.ConnectedConnectionPointColor;
-
-                continue;
-            }
-
-            DatabaseSchema.ConnectionPointColors[connectionPointColor.UniqueIdentifier] = SchemaMakerConstants.DefaultConnectionPointColor;
-        }
+        this.DragAndDropAction.Reset();
+        StateHasChanged();
     }
 
     #endregion
@@ -180,64 +174,71 @@
 
     private void OnConnectionPointClick(ConnectionPoint connectionPoint)
     {
-        if (!RelationshipColumnsData.IsDrawingLine)
+        if (!this.RelationshipCreationAction.IsDrawingLine)
         {
-            var newRelationship = _schemaObjectFactory.CreateNewRelationship(connectionPoint, DatabaseSchema.ConnectionPointColors);
+            var newRelationship = _schemaObjectFactory.CreateNewRelationship(connectionPoint);
 
-            RelationshipColumnsData.IsDrawingLine = true;
-            RelationshipColumnsData.StartingConnectionPointId = connectionPoint.UniqueIdentifier;
-            RelationshipColumnsData.CurrentRelationship = newRelationship;
+            this.RelationshipCreationAction.IsDrawingLine = true;
+            this.RelationshipCreationAction.StartingConnectionPointId = connectionPoint.UniqueIdentifier;
+            this.RelationshipCreationAction.CurrentRelationship = newRelationship;
+
+            _styleService.SetConnectionPointsColor(this.DatabaseSchema, 
+                ConnectionPointColorEvent.Select,
+                connectionPointIds: new List<string> { connectionPoint.UniqueIdentifier });
         }
         else
         {
-            _schemaObjectFactory.CloseNewRelationship(DatabaseSchema,
-                RelationshipColumnsData.CurrentRelationship,
+            _schemaObjectFactory.CloseNewRelationship(this.DatabaseSchema,
+                this.RelationshipCreationAction.CurrentRelationship,
                 connectionPoint,
-                RelationshipColumnsData.StartingConnectionPointId);
-            
-            var tableIdsForRelationshipPositionUpdate = new List<int>
+                this.RelationshipCreationAction.StartingConnectionPointId);
+
+            var connectedTableIds = new HashSet<int>
             {
-                RelationshipColumnsData.CurrentRelationship.SourceTableId,
-                RelationshipColumnsData.CurrentRelationship.DestinationTableId
+                this.RelationshipCreationAction.CurrentRelationship.SourceTableId,
+                this.RelationshipCreationAction.CurrentRelationship.DestinationTableId
             };
-            _positionService.UpdateRelationshipPositions(DatabaseSchema, tableIds: tableIdsForRelationshipPositionUpdate);
 
-            RelationshipColumnsData.Reset();
+            _positionService.UpdateRelationshipPositions(this.DatabaseSchema, tableIds: connectedTableIds);
+
+            _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+                ConnectionPointColorEvent.Reset,
+                tableIds: connectedTableIds);
+
+            this.RelationshipCreationAction.Reset();
         }
 
         StateHasChanged();
     }
 
-    private void SetConnectionPointColorOnMouseOver(ConnectionPoint connectionPoint)
+    private void SetConnectionPointColorOnMouseOver(string connectionPointId)
     {
         // Ne želimo mijenjati boju točke ako je crtanje veze u tijeku iz te točke.
-        if (RelationshipColumnsData.IsDrawingLine
-            && RelationshipColumnsData.StartingConnectionPointId.Equals(connectionPoint.UniqueIdentifier, StringComparison.Ordinal))
+        if (this.RelationshipCreationAction.IsDrawingLine
+            && this.RelationshipCreationAction.StartingConnectionPointId.Equals(connectionPointId, StringComparison.Ordinal))
         {
             return;
         }
 
-        DatabaseSchema.ConnectionPointColors[connectionPoint.UniqueIdentifier] = SchemaMakerConstants.SelectedConnectionPointColor;
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Select,
+            connectionPointIds: new List<string> { connectionPointId });
 
         StateHasChanged();
     }
 
-    private void SetConnectionPointColorOnMouseOut(ConnectionPoint connectionPoint)
+    private void SetConnectionPointColorOnMouseOut(string connectionPointId)
     {
         // Ne želimo mijenjati boju točke ako je crtanje veze u tijeku iz te točke.
-        if (RelationshipColumnsData.IsDrawingLine
-            && RelationshipColumnsData.StartingConnectionPointId.Equals(connectionPoint.UniqueIdentifier, StringComparison.Ordinal))
+        if (this.RelationshipCreationAction.IsDrawingLine
+            && this.RelationshipCreationAction.StartingConnectionPointId.Equals(connectionPointId, StringComparison.Ordinal))
         {
             return;
         }
 
-        var isConnectionPointWithinRelationship = DatabaseSchema.Relationships
-            .Any(x => x.ConnectionPointIds.Start.Equals(connectionPoint.UniqueIdentifier, StringComparison.Ordinal)
-                || x.ConnectionPointIds.End.Equals(connectionPoint.UniqueIdentifier, StringComparison.Ordinal));
-
-        DatabaseSchema.ConnectionPointColors[connectionPoint.UniqueIdentifier] = isConnectionPointWithinRelationship
-            ? SchemaMakerConstants.ConnectedConnectionPointColor
-            : SchemaMakerConstants.DefaultConnectionPointColor;
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Reset,
+            connectionPointIds: new List<string> { connectionPointId });
 
         StateHasChanged();
     }

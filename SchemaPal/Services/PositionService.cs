@@ -15,34 +15,34 @@ namespace SchemaPal.Services
 
         public void UpdateTableCoordinates(
             DatabaseSchema databaseSchema,
-            DragAndDropHelper dragAndDropData,
-            (double NewClientX, double NewClientY) newClientPosition)
+            int tableId,
+            (double StartingX, double StartingY) startingPosition,
+            (double TargetX, double TargetY) targetPosition)
         {
-            if (databaseSchema is null
-                || dragAndDropData is null)
+            if (databaseSchema is null)
             {
                 return;
             }
 
-            var draggedTable = databaseSchema.Tables.FirstOrDefault(x => x.Id == dragAndDropData.TableId);
+            var table = databaseSchema.Tables.FirstOrDefault(x => x.Id == tableId);
 
-            if (draggedTable is null)
+            if (table is null)
             {
                 return;
             }
 
-            var coordinateShiftX = (newClientPosition.NewClientX - dragAndDropData.StartingClientX)
+            var coordinateShiftX = (targetPosition.TargetX - startingPosition.StartingX)
                 / databaseSchema.ZoomLevel;
-            var coordinateShiftY = (newClientPosition.NewClientY - dragAndDropData.StartingClientY)
+            var coordinateShiftY = (targetPosition.TargetY - startingPosition.StartingY)
                 / databaseSchema.ZoomLevel;
 
-            draggedTable.CoordinateX = draggedTable.CoordinateX + coordinateShiftX;
-            draggedTable.CoordinateY = draggedTable.CoordinateY + coordinateShiftY;
+            table.CoordinateX = table.CoordinateX + coordinateShiftX;
+            table.CoordinateY = table.CoordinateY + coordinateShiftY;
         }
 
         public void UpdateRelationshipPositions(
             DatabaseSchema databaseSchema,
-            List<int> tableIds = null)
+            HashSet<int> tableIds = null)
         {
             if (databaseSchema is null
                 || databaseSchema.Relationships is null)
@@ -81,7 +81,7 @@ namespace SchemaPal.Services
         private (TableSide FirstTableSide, TableSide SecondTableSide, TableSide OverlapSide) DetermineTableSides(
             Table firstTable, Table secondTable)
         {
-            // Ako se tablice vertikalno preklapaju (jedna su ispod druge vertikalno, tj. x-koordinate su im u preklopnim intervalima),
+            // Ako se tablice vertikalno preklapaju (jedna su ispod druge vertikalno, tj. x-koordinate su im "isprepletene"),
             // želimo da linije idu "okolo njih", a ne dijagonalno ispod njih, pa ih zato želimo spojiti s iste strane.
             var doTablesVerticallyOverlap = firstTable.CoordinateX <= secondTable.CoordinateX + SchemaMakerConstants.TableWidth
                 && secondTable.CoordinateX <= firstTable.CoordinateX + SchemaMakerConstants.TableWidth;
@@ -141,7 +141,7 @@ namespace SchemaPal.Services
 
             // Ako su y-koordinate tablica dovoljno blizu, i tablice se ne preklapaju vertikalno,
             // crtamo samo ravnu liniju između tablica, ne želimo imati točke prelamanja.
-            if (Math.Abs(relationshipToUpdate.Y1 - relationshipToUpdate.Y2) < SchemaMakerConstants.StraightLineRelationshipDelta
+            if (Math.Abs(relationshipToUpdate.Y1 - relationshipToUpdate.Y2) < SchemaMakerConstants.StraightLineRelationshipTreshold
                 && overlapSide == TableSide.None)
             {
                 relationshipToUpdate.MidX1 = relationshipToUpdate.X1;
@@ -159,9 +159,11 @@ namespace SchemaPal.Services
 
                 var indexOfRelationshipToUpdate = relationshipsBetweenTables.IndexOf(relationshipToUpdate);
 
-                relationshipToUpdate.MidX1 = relationshipToUpdate.MidX2 = _coordinatesCalculator.CalculateMidPointX(
+                var midX = _coordinatesCalculator.CalculateMidPointX(
                     (relationshipToUpdate.X1, relationshipToUpdate.X2, relationshipsBetweenTables.Count, indexOfRelationshipToUpdate),
                     overlapSide);
+
+                relationshipToUpdate.MidX1 = relationshipToUpdate.MidX2 = midX;
             }
 
             relationshipToUpdate.MidY1 = relationshipToUpdate.Y1;
