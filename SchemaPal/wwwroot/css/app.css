@@ -6,9 +6,9 @@ h1 {
     color: rgb(133, 6, 6, 0.7);
 }
 
-h1:focus {
-    outline: none;
-}
+    h1:focus {
+        outline: none;
+    }
 
 a, .btn-link {
     color: #0071c1;
@@ -101,6 +101,41 @@ a, .btn-link {
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
     }
+
+.name-input {
+    width: 50%;
+    padding: 5px;
+    font-size: 14px;
+    margin-right: 10px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    height: 32px;
+}
+
+.dropdown {
+    width: 50%;
+    padding: 5px;
+    font-size: 14px;
+    margin: 2px;
+    height: 32px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+}
+
+.checkbox {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    margin-top: 10px
+}
+
+.name-label {
+    padding-right: 5px;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 3px;
+}
 
 code {
     color: #c02d76;

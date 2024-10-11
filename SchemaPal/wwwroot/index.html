@@ -27,6 +27,18 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function exportDivToPng(divId) {
+            var element = document.getElementById(divId);
+            html2canvas(element).then(canvas => {
+                var link = document.createElement('a');
+                link.download = 'export.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
 </body>
 
 </html>

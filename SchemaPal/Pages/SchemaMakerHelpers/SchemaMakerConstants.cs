@@ -69,5 +69,7 @@ namespace SchemaPal.Pages.SchemaMakerHelpers
         public const double ColumnFontSizeBuffer = 10;
 
         public const double ConnectionPointBuffer = 2.5;
+
+        public const double SnapshotContentMargin = 20;
     }
 }

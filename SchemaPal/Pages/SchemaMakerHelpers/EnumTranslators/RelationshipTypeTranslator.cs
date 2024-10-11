@@ -1,10 +1,10 @@
 ﻿using SchemaPal.DataTransferObjects.Enums;
 
-namespace SchemaPal.Pages.SchemaMakerHelpers
+namespace SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators
 {
     public static class RelationshipTypeTranslator
     {
-        public static string MapToTagText(RelationshipType relationshipType)
+        public static string MapToName(RelationshipType relationshipType)
         {
             switch (relationshipType)
             {
@@ -17,6 +17,11 @@ namespace SchemaPal.Pages.SchemaMakerHelpers
                 default:
                     return string.Empty;
             }
+        }
+
+        public static List<string> GetNamesList()
+        {
+            return EnumTranslator.GetNamesList<RelationshipType>(MapToName);
         }
     }
 }

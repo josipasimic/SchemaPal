@@ -14,11 +14,12 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 
-builder.Services.AddScoped<ILoginService, LoginService>();
-builder.Services.AddScoped<ISchemaObjectFactory, SchemaObjectFactory>();
-
 builder.Services.AddSingleton<IPositionService, PositionService>();
 builder.Services.AddSingleton<ICoordinatesCalculator, CoordinatesCalculator>();
 builder.Services.AddSingleton<IStyleService, StyleService>();
+
+builder.Services.AddScoped<ILoginService, LoginService>();
+
+builder.Services.AddTransient<ISchemaObjectFactory, SchemaObjectFactory>();
 
 await builder.Build().RunAsync();

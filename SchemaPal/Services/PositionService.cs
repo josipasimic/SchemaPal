@@ -78,6 +78,8 @@ namespace SchemaPal.Services
             }
         }
 
+        #region helper methods
+
         private (TableSide FirstTableSide, TableSide SecondTableSide, TableSide OverlapSide) DetermineTableSides(
             Table firstTable, Table secondTable)
         {
@@ -169,5 +171,7 @@ namespace SchemaPal.Services
             relationshipToUpdate.MidY1 = relationshipToUpdate.Y1;
             relationshipToUpdate.MidY2 = relationshipToUpdate.Y2;
         }
+
+        #endregion
     }
 }

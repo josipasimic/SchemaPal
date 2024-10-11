@@ -48,7 +48,7 @@ namespace SchemaPal.Services
 
             var spaceBetweenPoints = columnHeight
                 + SchemaMakerConstants.ColumnTopMargin
-                + SchemaMakerConstants.ColumnFontSize;
+                + SchemaMakerConstants.ColumnFontSizeBuffer;
 
             var additionalStartingLength = SchemaMakerConstants.TableFontSize
                 + SchemaMakerConstants.TablePadding

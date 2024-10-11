@@ -1,0 +1,42 @@
+﻿namespace SchemaPal.DataTransferObjects.Enums
+{
+    public enum ColumnDataType
+    {
+        Int,
+        TinyInt,
+        SmallInt,
+        BigInt,
+        Bit,
+        Decimal,
+        Numeric,
+        Money,
+        SmallMoney,
+        Float,
+        Real,
+        Date,
+        Time,
+        DateTime2,
+        DateTimeOffset,
+        DateTime,
+        SmallDateTime,
+        Char,
+        VarChar,
+        Text,
+        NChar,
+        NVarChar,
+        NText,
+        Binary,
+        VarBinary,
+        Image,
+        Cursor,
+        Geography,
+        Geometry,
+        HierarchyId,
+        Json,
+        RowVersion,
+        SqlVariant,
+        Table,
+        UniqueIdentifier,
+        Xml
+    }
+}

@@ -8,6 +8,8 @@
 
         public List<Column> Columns { get; set; }
 
+        public List<Index> Indexes { get; set; }
+
         public double CoordinateX { get; set; }
 
         public string LeftPx
@@ -25,6 +27,7 @@
         public Table()
         {
             Columns = new List<Column>();
+            Indexes = new List<Index>();
             Name = string.Empty;
         }
     }
