@@ -38,6 +38,19 @@
                 link.click();
             });
         }
+
+        window.saveAsFile = function (filename, content) {
+            var blob = new Blob([content], { type: 'application/json' });
+
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+
+            document.body.appendChild(link);
+            link.click();
+
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 

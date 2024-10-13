@@ -17,6 +17,7 @@ builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddSingleton<IPositionService, PositionService>();
 builder.Services.AddSingleton<ICoordinatesCalculator, CoordinatesCalculator>();
 builder.Services.AddSingleton<IStyleService, StyleService>();
+builder.Services.AddSingleton<IExportService, ExportService>();
 
 builder.Services.AddScoped<ILoginService, LoginService>();
 

@@ -12,6 +12,7 @@
 @inject ISchemaObjectFactory _schemaObjectFactory;
 @inject IPositionService _positionService;
 @inject IStyleService _styleService;
+@inject IExportService _exportService;
 
 <div class="layout-grid">
     <div class="sidebar">
@@ -224,13 +225,16 @@
             <button class="btn btn-secondary" @onclick="() => Zoom(ZoomDirection.Out)">                
                 <img style="width: 20px;" src="images/zoomOut.png" />
             </button>
-            <button class="btn" @onclick="ExportAsPng">
-                <div style="height: 24px; width: 20px; font-size: 20px;">&#129035</div>
+            <button class="btn" @onclick="_exportService.ExportSchemaAsPng">
+                <span style="height: 24px; width: 45px; font-size: 15px;">&#129035 png</span>
+            </button>
+            <button class="btn" @onclick="() => _exportService.ExportSchemaAsJson(this.DatabaseSchema)">
+                <span style="height: 24px; width: 45px; font-size: 15px;">&#129035 json</span>
             </button>
         </div>
         <div class="canvas-content"
              style="transform: scale(@this.DatabaseSchema.ZoomLevel);">
-            <div id="snapshot-content" style="height: 800px; width: 1500px;">
+            <div id="@SchemaMakerConstants.ExportPngDivId" style="height: 800px; width: 1500px;">
             <svg class="connection-lines">
                 @foreach (var relationship in this.DatabaseSchema.Relationships)
                 {
@@ -557,10 +561,5 @@
             _schemaObjectFactory.Reset();
             Navigation.NavigateTo("/");
         }
-    }
-
-    private async Task ExportAsPng()
-    {
-        await JSRuntime.InvokeVoidAsync("exportDivToPng", "snapshot-content");
     }
 }

@@ -70,6 +70,6 @@ namespace SchemaPal.Pages.SchemaMakerHelpers
 
         public const double ConnectionPointBuffer = 2.5;
 
-        public const double SnapshotContentMargin = 20;
+        public const string ExportPngDivId = "snapshot-content";
     }
 }
