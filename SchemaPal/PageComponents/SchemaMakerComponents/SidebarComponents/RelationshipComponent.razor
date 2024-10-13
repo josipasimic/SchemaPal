@@ -1,0 +1,29 @@
+﻿@using SchemaPal.DataTransferObjects;
+@using SchemaPal.DataTransferObjects.Enums;
+@using SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators;
+
+<div class="relationship-row">
+    <strong class="name-label">@this.RelationshipName</strong>
+    <select class="dropdown" value="@this.Relationship.RelationshipType" @onchange="HandleTypeChange">
+        @foreach (var type in Enum.GetValues(typeof(RelationshipType)).Cast<RelationshipType>())
+        {
+            <option selected="@(type == this.Relationship.RelationshipType)" value="@type">@RelationshipTypeTranslator.MapToName(type)</option>
+        }
+    </select>
+    <button class="btn large-bold-font" title="Obriši vezu" @onclick="() => this.DeleteRelationship(this.Relationship.Id)">&#128465</button>
+</div>
+
+@code {
+    [Parameter] public Relationship Relationship { get; set; }
+    [Parameter] public string RelationshipName { get; set; }
+
+    [Parameter] public Func<int, Task> DeleteRelationship { get; set; }
+
+    [Parameter] public EventCallback OnRelationshipUpdate { get; set; }
+
+    private async Task HandleTypeChange(ChangeEventArgs e)
+    {
+        this.Relationship.RelationshipType = (RelationshipType)Enum.Parse(typeof(RelationshipType), e.Value.ToString());
+        await this.OnRelationshipUpdate.InvokeAsync();
+    }
+}

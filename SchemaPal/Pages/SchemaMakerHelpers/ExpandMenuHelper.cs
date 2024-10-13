@@ -24,49 +24,5 @@
             ExpandedColumnIds = new HashSet<int>();
             ExpandedIndexIds = new HashSet<int>();
         }
-
-        public void ToggleTablesExpanded() => AreTablesExpanded = !AreTablesExpanded;
-
-        public void ToggleRelationshipsExpanded() => AreRelationshipsExpanded = !AreRelationshipsExpanded;
-
-        public void ToggleTableDetails(int tableId)
-        {
-            if (ExpandedTableIds.Contains(tableId))
-                ExpandedTableIds.Remove(tableId);
-            else
-                ExpandedTableIds.Add(tableId);
-        }
-
-        public void ToggleColumnsExpanded(int tableId)
-        {
-            if (ExpandedColumnsTableIds.Contains(tableId))
-                ExpandedColumnsTableIds.Remove(tableId);
-            else
-                ExpandedColumnsTableIds.Add(tableId);
-        }
-
-        public void ToggleIndexExpanded(int tableId)
-        {
-            if (ExpandedIndexTableIds.Contains(tableId))
-                ExpandedIndexTableIds.Remove(tableId);
-            else
-                ExpandedIndexTableIds.Add(tableId);
-        }
-
-        public void ToggleColumnDetails(int columnId)
-        {
-            if (ExpandedColumnIds.Contains(columnId))
-                ExpandedColumnIds.Remove(columnId);
-            else
-                ExpandedColumnIds.Add(columnId);
-        }
-
-        public void ToggleIndexDetails(int indexId)
-        {
-            if (ExpandedIndexIds.Contains(indexId))
-                ExpandedIndexIds.Remove(indexId);
-            else
-                ExpandedIndexIds.Add(indexId);
-        }
     }
 }

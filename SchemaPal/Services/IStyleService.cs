@@ -5,6 +5,9 @@ namespace SchemaPal.Services
 {
     public interface IStyleService
     {
+        void Zoom(DatabaseSchema databaseSchema,
+            ZoomDirection zoomDirection);
+
         void SetConnectionPointsColor(
             DatabaseSchema databaseSchema,
             ConnectionPointColorEvent connectionPointColorEvent,

@@ -22,6 +22,11 @@
             margin-bottom: 20px;
         }
 
+            .home-grid .sidebar .nav-buttons .selected {
+                background-color: rgb(133, 6, 6, 0.5);
+                color: white;
+            }
+
         .home-grid .sidebar .nav-buttons li {
             background-color: #f0f0f0;
             border: 1px solid #ccc; 
@@ -70,8 +75,8 @@
     }
 
         .home-grid button:hover{
-            background-color: #d6d6d6; /* Darker background on hover */
-            border-color: #aaa; /* Slightly darker border on hover */
+            background-color: #d6d6d6; 
+            border-color: #aaa;
         }
 
         .home-grid button:active {

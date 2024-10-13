@@ -1,0 +1,100 @@
+﻿@using Index = SchemaPal.DataTransferObjects.Index;
+@using SchemaPal.DataTransferObjects;
+@using SchemaPal.DataTransferObjects.Enums;
+@using SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators;
+@using SchemaPal.Services;
+
+<div class="index-row">
+    <span class="name-label">Naziv:</span>
+    <input class="name-input" value="@this.Index.Name" @oninput="HandleNameChange" />
+    <button class="btn large-bold-font" title="Obriši indeks" @onclick="() => this.DeleteIndex(this.Index.TableId, this.Index.Id)">&#128465</button>
+    @if (this.IsExpanded)
+    {
+        <button class="btn expand" title="Sažmi" @onclick="() => ToggleExpanded(Index.Id)">&#11165</button>
+    }
+    else
+    {
+        <button class="btn expand" title="Proširi" @onclick="() => ToggleExpanded(Index.Id)">&#11167</button>
+    }
+</div>
+    
+@if (this.IsExpanded)
+{
+    <div class="expanded-index-details">
+        <div>
+            <span class="name-label">Vrsta indeksa:</span>
+            <select class="dropdown" @onchange="HandleTypeChange">
+                @foreach (var type in Enum.GetValues(typeof(IndexType)).Cast<IndexType>())
+                {
+                    <option selected="@(type == this.Index.Type)" value="@type">@IndexTypeTranslator.MapToName(@type)</option>
+                }
+            </select>
+        </div>
+        <div>
+            <span class="name-label">Vrsta ključa:</span>
+            <select class="dropdown" @onchange="HandleKeyTypeChange">
+                @foreach (var keyType in Enum.GetValues(typeof(KeyType)).Cast<KeyType>())
+                {
+                    <option selected="@(keyType == this.Index.KeyType)" value="@keyType">@KeyTypeTranslator.MapToName(@keyType)</option>
+                }
+            </select>
+        </div>
+        <div>
+            <span class="name-label">Stupci:</span>
+            <CustomMultiSelectDropdown 
+                Options="this.TableColumnIds"
+                OptionNames="this.TableColumnNames"
+                OnSelectionChanged="@(selectedItems => HandleUpdateColumns(selectedItems))" />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Index Index { get; set; }
+    [Parameter] public HashSet<int> ExpandedIndexIds { get; set; }
+    [Parameter] public List<string> TableColumnIds { get; set; }
+    [Parameter] public List<string> TableColumnNames { get; set; }
+
+    [Parameter] public Func<int, int, Task> DeleteIndex { get; set; }
+    [Parameter] public Func<List<int>, int, int, Task> OnUpdateColumns { get; set; }
+
+    [Parameter] public EventCallback OnIndexUpdate { get; set; }
+
+    private bool IsExpanded => this.ExpandedIndexIds.Contains(Index.Id);
+
+    private void ToggleExpanded(int indexId)
+    {
+        if (this.ExpandedIndexIds.Contains(indexId))
+        {
+            this.ExpandedIndexIds.Remove(indexId);
+        }
+        else
+        {
+            this.ExpandedIndexIds.Add(indexId);
+        }
+    }
+
+    private async Task HandleNameChange(ChangeEventArgs e)
+    {
+        this.Index.Name = e.Value.ToString();
+        await this.OnIndexUpdate.InvokeAsync();
+    }
+
+    private async Task HandleTypeChange(ChangeEventArgs e)
+    {
+        this.Index.Type = (IndexType)Enum.Parse(typeof(IndexType), e.Value.ToString());
+        await this.OnIndexUpdate.InvokeAsync();
+    }
+
+    private async Task HandleKeyTypeChange(ChangeEventArgs e)
+    {
+        this.Index.KeyType = (KeyType)Enum.Parse(typeof(KeyType), e.Value.ToString());
+        await this.OnIndexUpdate.InvokeAsync();
+    }
+
+    private void HandleUpdateColumns(List<string> selectedItems)
+    {
+        var selectedColumnIds = selectedItems.Select(int.Parse).ToList();
+        this.OnUpdateColumns(selectedColumnIds, this.Index.TableId, this.Index.Id);
+    }
+}

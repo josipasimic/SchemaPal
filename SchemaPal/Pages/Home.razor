@@ -1,5 +1,7 @@
 ﻿@page "/"
 
+@using SchemaPal.PageComponents.HomePageComponents;
+
 @inject NavigationManager Navigation
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
@@ -7,15 +9,15 @@
 
 <div class="home-grid">
     <div class="sidebar">
-        <h3>Pozdrav, @GetUserName()!</h3>
+        <h3>Glavni izbornik</h3>
         <ul class="nav-buttons">
-            <li @onclick="ShowNewSchema">Izradi novu shemu</li>
-            <li @onclick="ShowTemplateSchemas">Izradi shemu iz predloška</li>
+            <li class="@(currentView == ViewType.NewSchema ? "selected" : string.Empty)" @onclick="ShowNewSchema">Izradi novu shemu</li>
+            <li class="@(currentView == ViewType.TemplateSchemas ? "selected" : string.Empty)" @onclick="ShowTemplateSchemas">Izradi shemu iz predloška</li>
             @if (!isGuest)
             {
-                <li @onclick="ShowMySchemas">Moje sheme</li>
+                <li class="@(currentView == ViewType.MySchemas ? "selected" : string.Empty)" @onclick="ShowMySchemas">Moje sheme</li>
             }
-            <li @onclick="ShowImportSchema">Uvezi shemu</li>
+            <li class="@(currentView == ViewType.ImportSchema ? "selected" : string.Empty)" @onclick="ShowImportSchema">Uvezi shemu</li>
         </ul>
     </div>
     <div class="main-content">
@@ -54,7 +56,7 @@
         if (!isGuest 
             && !isLoggedInUser)
         {
-            Navigation.NavigateTo("/loginRedirect");
+            Navigation.NavigateTo("/login-redirect");
         }
     }
 
@@ -65,11 +67,6 @@
 
     private void OpenSchemaMakerCanvas()
     {
-        Navigation.NavigateTo("/schemaMaker");
-    }
-
-    private string GetUserName()
-    {
-        return isGuest ? "Gost" : userName;
+        Navigation.NavigateTo("/schema-maker");
     }
 }

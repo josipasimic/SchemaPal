@@ -1,4 +1,4 @@
-﻿@page "/loginRedirect"
+﻿@page "/login-redirect"
 
 @inject NavigationManager NavigationManager
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -7,9 +7,9 @@
 
 <div class="main-content">
     <div class="auth-options">
-        <button class="btn btn-primary" @onclick="Login">Prijavi se</button>
-        <button class="btn btn-secondary" @onclick="SignUp">Registriraj se</button>
-        <button class="btn btn-outline-dark" @onclick="ContinueAsGuest">Nastavi kao gost</button>
+        <button class="btn-primary" @onclick="Login">Prijavi se</button>
+        <button class="btn-secondary" @onclick="SignUp">Registriraj se</button>
+        <button class="btn-outline-dark" @onclick="ContinueAsGuest">Nastavi kao gost</button>
     </div>
 </div>
 

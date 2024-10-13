@@ -1,0 +1,114 @@
+﻿@using SchemaPal.DataTransferObjects;
+
+<div class="table-row">
+    <span class="name-label">Naziv:</span>
+    <input value="@this.Table.Name" class="name-input" @onchange="HandleNameChange"/>
+    <button class="btn large-bold-font" title="Obriši tablicu" @onclick="() => this.DeleteTable(this.Table.Id)">&#128465</button>
+    @if (this.IsTableExpanded)
+    {
+        <button class="btn expand" title="Sažmi" @onclick="() => ToggleTableExpanded(this.Table.Id)">&#11165</button>
+    }
+    else
+    {
+        <button class="btn expand" title="Proširi" @onclick="() => ToggleTableExpanded(this.Table.Id)">&#11167</button>
+    }
+</div>
+
+@if (this.IsTableExpanded)
+{
+    <div class="expanded-table-details">
+        <ExpandableSection 
+            Title="Stupci" 
+            OnAddNewItem="() => this.AddNewColumn(this.Table.Id)" 
+            IsExpanded="this.IsColumnsExpanded"
+            ToggleExpand="() => ToggleColumnsExpanded(this.Table.Id)">
+            @foreach (var column in this.Table.Columns)
+            {
+                <ColumnComponent Column="@column"
+                                 ExpandedColumnIds="this.ExpandedColumnIds"
+                                 DeleteColumn="this.DeleteColumn"
+                                 OnUpdateColumn="this.OnUpdateTable" />
+            }
+        </ExpandableSection>
+
+        <ExpandableSection Title="Indeksi" 
+            OnAddNewItem="() => this.AddNewIndex(this.Table.Id)" 
+            IsExpanded="this.IsIndexesExpanded" 
+            ToggleExpand="() => ToggleIndexesExpanded(this.Table.Id)">
+            @foreach (var index in this.Table.Indexes)
+            {
+                <IndexComponent Index="@index"
+                                TableColumnIds="this.Table.Columns.Select(c => c.Id.ToString()).ToList()"
+                                TableColumnNames="this.Table.Columns.Select(c => c.Name).ToList()"
+                                ExpandedIndexIds="this.ExpandedIndexIds"
+                                DeleteIndex="this.DeleteIndex"
+                                OnUpdateColumns="this.OnIndexColumnsUpdate"
+                                OnIndexUpdate="this.OnUpdateTable" />
+            }
+        </ExpandableSection>
+    </div>
+}
+
+@code {
+    [Parameter] public Table Table { get; set; }
+    [Parameter] public HashSet<int> ExpandedTableIds { get; set; }
+    [Parameter] public HashSet<int> ExpandedColumnsTableIds { get; set; }
+    [Parameter] public HashSet<int> ExpandedIndexTableIds { get; set; }
+    [Parameter] public HashSet<int> ExpandedColumnIds { get; set; }
+    [Parameter] public HashSet<int> ExpandedIndexIds { get; set; }
+
+    [Parameter] public Func<int, Task> DeleteTable { get; set; }
+    [Parameter] public Func<int, Task> AddNewColumn { get; set; }
+    [Parameter] public Func<int, Task> AddNewIndex { get; set; }
+    [Parameter] public Func<int, int, Task> DeleteColumn { get; set; }
+    [Parameter] public Func<int, int, Task> DeleteIndex { get; set; }
+    [Parameter] public Func<List<int>, int, int, Task> OnIndexColumnsUpdate { get; set; }
+
+    [Parameter] public EventCallback OnUpdateTable { get; set; }
+
+    private bool IsTableExpanded => ExpandedTableIds.Contains(Table.Id);
+    private bool IsColumnsExpanded => ExpandedColumnsTableIds.Contains(Table.Id);
+    private bool IsIndexesExpanded => ExpandedIndexTableIds.Contains(Table.Id);
+
+    private void ToggleTableExpanded(int tableId)
+    {
+        if (ExpandedTableIds.Contains(tableId))
+        {
+            ExpandedTableIds.Remove(tableId);
+        }
+        else
+        {
+            ExpandedTableIds.Add(tableId);
+        }
+    }
+
+    private void ToggleColumnsExpanded(int tableId)
+    {
+        if (ExpandedColumnsTableIds.Contains(tableId))
+        {
+            ExpandedColumnsTableIds.Remove(tableId);
+        }
+        else
+        {
+            ExpandedColumnsTableIds.Add(tableId);
+        }
+    }
+
+    private void ToggleIndexesExpanded(int tableId)
+    {
+        if (ExpandedIndexTableIds.Contains(tableId))
+        {
+            ExpandedIndexTableIds.Remove(tableId);
+        }
+        else
+        {
+            ExpandedIndexTableIds.Add(tableId);
+        }
+    }
+
+    private async Task HandleNameChange(ChangeEventArgs e)
+    {
+        this.Table.Name = e.Value.ToString();
+        await this.OnUpdateTable.InvokeAsync();
+    }
+}

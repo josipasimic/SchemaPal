@@ -1,0 +1,39 @@
+﻿<div class="expandable-row">
+    <span>@Title</span>
+    @if (this.ShowAddNewButton)
+    {
+        <button class="btn large-bold-font" title="Dodaj" @onclick="() => this.OnAddNewItem()">+</button>
+    }
+
+    @if (this.IsExpanded)
+    {
+        <button class="btn expand" title="Sažmi" @onclick="this.ToggleExpand">&#11165;</button>
+    }
+    else
+    {
+        <button class="btn expand" title="Proširi" @onclick="this.ToggleExpand">&#11167;</button>
+    }
+</div>
+
+@if (this.IsExpanded)
+{
+    <div class="expanded-section">
+        @ChildContent
+    </div>
+}
+
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public bool IsExpanded { get; set; }
+    [Parameter] public EventCallback ToggleExpand { get; set; }
+    [Parameter] public Func<Task> OnAddNewItem { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool ShowAddNewButton
+    { 
+        get
+        {
+            return this.OnAddNewItem != null;
+        }
+    }
+}

@@ -2,7 +2,7 @@
 
 namespace SchemaPal.Pages.SchemaMakerHelpers
 {
-    public class RelationshipHelper
+    public class RelationshipCreationHelper
     {
         public Relationship? CurrentRelationship;
 
@@ -14,7 +14,7 @@ namespace SchemaPal.Pages.SchemaMakerHelpers
 
         public string StartingConnectionPointId { get; set; }
 
-        public RelationshipHelper()
+        public RelationshipCreationHelper()
         {
             StartingConnectionPointId = string.Empty;
         }

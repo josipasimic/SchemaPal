@@ -39,11 +39,11 @@ namespace SchemaPal.DataTransferObjects
             }
         }
 
-        public Column(int id, string name)
+        public Column(int id, string name, int tableId)
         {
             Id = id;
             Name = name;
-            IsNullable = true;
+            TableId = tableId; 
         }
     }
 }

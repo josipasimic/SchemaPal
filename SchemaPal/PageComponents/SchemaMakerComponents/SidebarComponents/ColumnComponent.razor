@@ -1,0 +1,90 @@
+﻿@using SchemaPal.DataTransferObjects;
+@using SchemaPal.DataTransferObjects.Enums;
+@using SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators;
+
+<div class="column-row">
+    <span class="name-label">Naziv:</span>
+    <input class="name-input" value="@this.Column.Name" @oninput="HandleNameChange" />
+    <button class="btn large-bold-font" title="Obriši stupac" @onclick="() => DeleteColumn(this.Column.TableId, this.Column.Id)">&#128465</button>
+    @if (this.IsExpanded)
+    {
+        <button class="btn expand" title="Sažmi" @onclick="() => ToggleExpanded(this.Column.Id)">&#11165</button>
+    }
+    else
+    {
+        <button class="btn expand" title="Proširi" @onclick="() => ToggleExpanded(this.Column.Id)">&#11167</button>
+    }
+</div>
+
+@if (this.IsExpanded)
+{
+    <div class="expanded-column-details">
+        <div>
+            <span class="name-label">Vrsta podatka:</span>
+            <select class="dropdown" @onchange="HandleTypeChange">
+                @foreach (var dataType in Enum.GetValues(typeof(ColumnDataType)).Cast<ColumnDataType>())
+                {
+                    <option selected="@(dataType == this.Column.DataType)" value="@dataType">@ColumnDataTypeTranslator.MapToName(@dataType)</option>
+                }
+            </select>
+        </div>
+        <div>
+            <span class="name-label">Vrsta ključa:</span>
+            <select class="dropdown" @onchange="HandleKeyTypeChange">
+                @foreach (var keyType in Enum.GetValues(typeof(KeyType)).Cast<KeyType>())
+                {
+                    <option selected="@(keyType == this.Column.KeyType)" value="@keyType">@KeyTypeTranslator.MapToName(@keyType)</option>
+                }
+            </select>
+        </div>
+        <div>
+            <span class="name-label">Dopusti NULL vrijednost</span>
+            <input class="checkbox" type="checkbox" checked="@this.Column.IsNullable" @onchange="HandleNullableFlagChange" />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Column Column { get; set; }
+    [Parameter] public HashSet<int> ExpandedColumnIds { get; set; }
+    [Parameter] public Func<int, int, Task> DeleteColumn { get; set; }
+    [Parameter] public EventCallback OnUpdateColumn { get; set; }
+
+    private bool IsExpanded => this.ExpandedColumnIds.Contains(Column.Id);
+
+    private void ToggleExpanded(int columnId)
+    {
+        if (this.ExpandedColumnIds.Contains(columnId))
+        {
+            this.ExpandedColumnIds.Remove(columnId);
+        }
+        else
+        {
+            this.ExpandedColumnIds.Add(columnId);
+        }
+    }
+
+    private async Task HandleNameChange(ChangeEventArgs e)
+    {
+        this.Column.Name = e.Value.ToString();
+        await this.OnUpdateColumn.InvokeAsync();
+    }
+
+    private async Task HandleTypeChange(ChangeEventArgs e)
+    {
+        this.Column.DataType = (ColumnDataType)Enum.Parse(typeof(ColumnDataType), e.Value.ToString());
+        await this.OnUpdateColumn.InvokeAsync();
+    }
+
+    private async Task HandleKeyTypeChange(ChangeEventArgs e)
+    {
+        this.Column.KeyType = (KeyType)Enum.Parse(typeof(KeyType), e.Value.ToString());
+        await this.OnUpdateColumn.InvokeAsync();
+    }
+
+    private async Task HandleNullableFlagChange(ChangeEventArgs e)
+    {
+        this.Column.IsNullable = bool.Parse(e.Value.ToString());
+        await this.OnUpdateColumn.InvokeAsync();
+    }
+}

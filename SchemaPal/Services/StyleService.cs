@@ -6,6 +6,17 @@ namespace SchemaPal.Services
 {
     public class StyleService : IStyleService
     {
+        public void Zoom(DatabaseSchema databaseSchema, 
+            ZoomDirection zoomDirection)
+        {
+            var stepSign = zoomDirection == ZoomDirection.In ? 1 : -1;
+
+            databaseSchema.ZoomLevel = Math.Clamp(
+                databaseSchema.ZoomLevel + stepSign * SchemaMakerConstants.ZoomLevelStep,
+                SchemaMakerConstants.MinimalZoomLevel,
+                SchemaMakerConstants.MaximalZoomLevel);
+        }
+
         public void SetConnectionPointsColor(
             DatabaseSchema databaseSchema, 
             ConnectionPointColorEvent connectionPointColorEvent,

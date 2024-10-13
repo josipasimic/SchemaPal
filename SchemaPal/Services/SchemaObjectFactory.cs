@@ -1,6 +1,7 @@
 ﻿using SchemaPal.DataTransferObjects;
 using SchemaPal.Pages.SchemaMakerEnums;
 using SchemaPal.Pages.SchemaMakerHelpers;
+using System.Collections.Generic;
 
 namespace SchemaPal.Services
 {
@@ -29,7 +30,7 @@ namespace SchemaPal.Services
             {
                 Id = _tableId,
                 Name = $"Tablica {_tableId}",
-                Columns = new List<Column> { CreatePrimaryKeyColumn(_columnId) },
+                Columns = new List<Column> { CreatePrimaryKeyColumn(_columnId, _tableId) },
                 CoordinateX = SchemaMakerConstants.TableStartingCoordinateX,
                 CoordinateY = SchemaMakerConstants.TableStartingCoordinateY
             };
@@ -120,11 +121,11 @@ namespace SchemaPal.Services
             var newColumn = (Column)null;
             if (table.Columns.Count == 0) 
             {
-                newColumn = CreatePrimaryKeyColumn(_columnId);
+                newColumn = CreatePrimaryKeyColumn(_columnId, tableId);
             }
             else
             {
-                newColumn = new Column(_columnId, $"Stupac {_columnId}")
+                newColumn = new Column(_columnId, $"Stupac {_columnId}", tableId)
                 {
                     IsNullable = true
                 };
@@ -180,6 +181,14 @@ namespace SchemaPal.Services
                 return;
             }
 
+            var connectionPointIdsToRemove = databaseSchema.ConnectionPoints
+                .Where(cp => cp.TableId == tableId)
+                .Select(cp => cp.UniqueIdentifier)
+                .ToList();
+
+            connectionPointIdsToRemove.ForEach(cpId => databaseSchema.ConnectionPointColors.Remove(cpId));
+            databaseSchema.ConnectionPoints.RemoveAll(cp => cp.TableId == tableId);
+
             databaseSchema.Tables.RemoveAll(t => t.Id == tableId);
         }
 
@@ -197,8 +206,15 @@ namespace SchemaPal.Services
                 return;
             }
 
-            table.Columns.RemoveAll(c => c.Id == columnId);
+            var connectionPointIdsToRemove = databaseSchema.ConnectionPoints
+                .Where(cp => cp.ColumnId == columnId)
+                .Select(cp => cp.UniqueIdentifier)
+                .ToList();
+
+            connectionPointIdsToRemove.ForEach(cpId => databaseSchema.ConnectionPointColors.Remove(cpId));
             databaseSchema.ConnectionPoints.RemoveAll(c => c.ColumnId == columnId);
+
+            table.Columns.RemoveAll(c => c.Id == columnId);
 
             // Ponovno izračunaj visine točke spajanja za preostale stupce u tablici.
             var remainingTableConnectionPoints = databaseSchema.ConnectionPoints
@@ -294,9 +310,9 @@ namespace SchemaPal.Services
 
         #region helper methods
 
-        private Column CreatePrimaryKeyColumn(int columnId)
+        private Column CreatePrimaryKeyColumn(int columnId, int tableId)
         {
-            return new Column(columnId, "Id")
+            return new Column(columnId, "Id", tableId)
             {
                 KeyType = DataTransferObjects.Enums.KeyType.Primary,
                 IsNullable = false

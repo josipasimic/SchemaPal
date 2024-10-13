@@ -1,0 +1,20 @@
+﻿.expandable-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+    .expandable-row span {
+        flex-grow: 1;
+    }
+
+.expanded-section {
+    padding-left: 15px;
+    background-color: #f1f1f1;
+    margin-bottom: 10px;
+}
