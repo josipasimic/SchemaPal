@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.Pages.SchemaMakerHelpers
+﻿namespace SchemaPal.Helpers.SchemaMakerHelpers
 {
     public class DragAndDropHelper
     {

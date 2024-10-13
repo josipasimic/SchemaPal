@@ -1,6 +1,4 @@
-﻿using SchemaPal.DataTransferObjects.Enums;
-
-namespace SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators
+﻿namespace SchemaPal.Enums.EnumTranslators
 {
     public static class IndexTypeTranslator
     {

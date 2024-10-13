@@ -1,7 +1,4 @@
-﻿using SchemaPal.DataTransferObjects.Enums;
-using System.Data;
-
-namespace SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators
+﻿namespace SchemaPal.Enums.EnumTranslators
 {
     public static class KeyTypeTranslator
     {
@@ -33,11 +30,6 @@ namespace SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators
                 default:
                     return string.Empty;
             }
-        }
-
-        public static List<string> GetNamesList()
-        {
-            return EnumTranslator.GetNamesList(MapToName, excludeValues: KeyType.None);
         }
     }
 }

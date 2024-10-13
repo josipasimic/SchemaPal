@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using SchemaPal.DataTransferObjects;
-using SchemaPal.Pages.SchemaMakerHelpers;
+using SchemaPal.Helpers.SchemaMakerHelpers;
 using System.Text.Json;
 
 namespace SchemaPal.Services

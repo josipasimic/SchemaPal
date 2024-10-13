@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.Pages.SchemaMakerEnums
+﻿namespace SchemaPal.Enums
 {
     public enum TableSide
     {

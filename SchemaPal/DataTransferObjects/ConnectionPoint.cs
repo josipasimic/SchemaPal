@@ -1,5 +1,4 @@
-﻿using SchemaPal.Pages.SchemaMakerEnums;
-using SchemaPal.Pages.SchemaMakerHelpers;
+﻿using SchemaPal.Enums;
 
 namespace SchemaPal.DataTransferObjects
 {

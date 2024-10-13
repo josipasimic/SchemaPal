@@ -1,6 +1,6 @@
 ﻿using SchemaPal.DataTransferObjects;
-using SchemaPal.DataTransferObjects.Enums;
-using SchemaPal.Pages.SchemaMakerHelpers;
+using SchemaPal.Enums;
+using SchemaPal.Helpers.SchemaMakerHelpers;
 
 namespace SchemaPal.Services
 {

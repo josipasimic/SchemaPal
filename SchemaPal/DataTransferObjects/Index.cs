@@ -1,6 +1,6 @@
-﻿using SchemaPal.DataTransferObjects.Enums;
-using SchemaPal.Pages.SchemaMakerHelpers.EnumTranslators;
-using System.Text;
+﻿using System.Text;
+using SchemaPal.Enums;
+using SchemaPal.Enums.EnumTranslators;
 
 namespace SchemaPal.DataTransferObjects
 {

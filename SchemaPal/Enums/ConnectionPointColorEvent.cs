@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.DataTransferObjects.Enums
+﻿namespace SchemaPal.Enums
 {
     public enum ConnectionPointColorEvent
     {

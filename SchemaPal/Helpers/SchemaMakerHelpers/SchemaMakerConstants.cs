@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Primitives;
-
-namespace SchemaPal.Pages.SchemaMakerHelpers
+﻿namespace SchemaPal.Helpers.SchemaMakerHelpers
 {
     public static class SchemaMakerConstants
     {

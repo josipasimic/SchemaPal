@@ -1,7 +1,6 @@
 ﻿using SchemaPal.DataTransferObjects;
-using SchemaPal.Pages.SchemaMakerEnums;
-using SchemaPal.Pages.SchemaMakerHelpers;
-using System.Collections.Generic;
+using SchemaPal.Enums;
+using SchemaPal.Helpers.SchemaMakerHelpers;
 
 namespace SchemaPal.Services
 {
@@ -314,7 +313,7 @@ namespace SchemaPal.Services
         {
             return new Column(columnId, "Id", tableId)
             {
-                KeyType = DataTransferObjects.Enums.KeyType.Primary,
+                KeyType = KeyType.Primary,
                 IsNullable = false
             };
         }

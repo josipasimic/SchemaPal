@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.Pages.SchemaMakerHelpers
+﻿namespace SchemaPal.Helpers.SchemaMakerHelpers
 {
     public class ExpandMenuHelper
     {
@@ -16,7 +16,7 @@
 
         public HashSet<int> ExpandedIndexIds { get; set; }
 
-        public ExpandMenuHelper() 
+        public ExpandMenuHelper()
         {
             ExpandedTableIds = new HashSet<int>();
             ExpandedColumnsTableIds = new HashSet<int>();
