@@ -1,0 +1,28 @@
+﻿@using SchemaPal.DataTransferObjects;
+@using SchemaPal.Enums;
+@using SchemaPal.Enums.EnumTranslators;
+
+<svg class="connection-lines">
+    @foreach (var relationship in Relationships)
+    {
+        <g @key="relationship.Id">
+            <path id="@($"relationship_{relationship.Id}")"
+                  d="M @relationship.X1 @relationship.Y1
+                     L @relationship.MidX1 @relationship.MidY1
+                     L @relationship.MidX2 @relationship.MidY2
+                     L @relationship.X2 @relationship.Y2" />
+
+            <text class="relationship-type">
+                <textPath href="@($"#relationship_{relationship.Id}")"
+                          startOffset="50%"
+                          text-anchor="middle">
+                    @(RelationshipTypeTranslator.MapToName(relationship.RelationshipType))
+                </textPath>
+            </text>
+        </g>
+    }
+</svg>
+
+@code {
+    [Parameter] public List<Relationship> Relationships { get; set; }
+}

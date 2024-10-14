@@ -1,0 +1,16 @@
+﻿.export-controls {
+    margin-top: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+    .export-controls long {
+        margin-right: 2px;
+        width: 100%;
+        height: 100%;
+    }
+
+    .export-controls span {
+        font-size: 15px;
+    }

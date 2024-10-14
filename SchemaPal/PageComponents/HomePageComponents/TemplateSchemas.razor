@@ -1,20 +1,6 @@
 ﻿@inject NavigationManager Navigation
 @using SchemaPal.DataTransferObjects
 
-@code {
-    private List<DatabaseSchema> templates = new List<DatabaseSchema>
-    {
-        new DatabaseSchema { Name = "Music Streaming", Id = 1 },
-        new DatabaseSchema { Name = "Retail Chain", Id = 2 },
-        new DatabaseSchema { Name = "Taxi Service", Id = 3 },
-    };
-
-    private void OpenTemplateSchema(DatabaseSchema template)
-    {
-        Navigation.NavigateTo("/schema-maker?template=" + template.Name);
-    }
-}
-
 <div class="template-grid">
     @foreach (var template in templates)
     {
@@ -24,20 +10,16 @@
     }
 </div>
 
-<style>
-    .template-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-    }
+@code {
+    private List<DatabaseSchema> templates = new List<DatabaseSchema>
+    {
+        new DatabaseSchema { Name = "Glazbena platforma", Id = 1 },
+        new DatabaseSchema { Name = "Lanac dućana", Id = 2 },
+        new DatabaseSchema { Name = "Taksi usluge", Id = 3 },
+    };
 
-    .template-item {
-        padding: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s;
+    private void OpenTemplateSchema(DatabaseSchema template)
+    {
+        Navigation.NavigateTo("/schema-maker?template=" + template.Name);
     }
-
-        .template-item:hover {
-            background-color: #f0f0f0;
-        }
-</style>
+}

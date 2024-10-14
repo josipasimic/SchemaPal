@@ -1,37 +1,37 @@
-﻿@inject NavigationManager Navigation
+﻿@using SchemaPal.DataTransferObjects.API;
+@using SchemaPal.Services;
 
-@code {
-    private List<string> userSchemas = new List<string>
-    {
-        "Schema 1",
-        "Schema 2",
-        "Schema 3"
-    };
-
-    private void OpenUserSchema(string schema)
-    {
-        Navigation.NavigateTo("/schema-maker?schema=" + schema);
-    }
-}
+@inject NavigationManager Navigation
+@inject ISchemaPalApiService _schemaPalApiService;
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <div class="my-schemas">
-    @foreach (var schema in userSchemas)
+    @foreach (var schema in this.UserSchemas)
     {
-        <div class="schema-item" @onclick="() => OpenUserSchema(schema)">
+        <div class="schema-item" @onclick="() => OpenUserSchema(schema.Id)">
             <h4>@schema</h4>
         </div>
     }
 </div>
 
-<style>
-    .my-schemas {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+@code {
+    private List<(int Id, string Name)> UserSchemas = new List<(int Id, string Name)>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserSchemas = await GetUserSchemas();
     }
 
-    .schema-item {
-        padding: 10px;
-        cursor: pointer;
+    private async Task<List<(int Id, string Name)>> GetUserSchemas()
+    {
+        var loggedInUser = await sessionStorage.GetItemAsync<int>("loggedInUserId");
+        var schemas = await _schemaPalApiService.GetDatabaseSchemasForUser(loggedInUser);
+
+        return schemas;
     }
-</style>
+
+    private void OpenUserSchema(int schemaId)
+    {
+        Navigation.NavigateTo("/schema-maker?schemaId=" + schemaId);
+    }
+}

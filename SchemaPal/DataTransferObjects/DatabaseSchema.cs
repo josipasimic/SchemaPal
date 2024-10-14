@@ -6,8 +6,6 @@
 
         public string Name { get; set; }
 
-        public double ZoomLevel { get; set; }
-
         public List<Table> Tables { get; set; }
 
         public List<Relationship> Relationships { get; set; }
@@ -23,7 +21,6 @@
             ConnectionPoints = new List<ConnectionPoint>();
             ConnectionPointColors = new Dictionary<string, string>();
             Name = string.Empty;
-            ZoomLevel = 1.0;
         }
     }
 }

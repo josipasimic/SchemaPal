@@ -1,0 +1,10 @@
+﻿.my-schemas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.schema-item {
+    padding: 10px;
+    cursor: pointer;
+}

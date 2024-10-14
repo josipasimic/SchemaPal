@@ -1,0 +1,126 @@
+﻿@using SchemaPal.DataTransferObjects;
+@using SchemaPal.Enums;
+@using SchemaPal.Enums.EnumTranslators;
+@using SchemaPal.Helpers.SchemaMakerHelpers;
+@using SchemaPal.PageComponents.SchemaMakerComponents.CanvasComponents;
+@using SchemaPal.Services;
+
+@inject IStyleService _styleService;
+
+<div class="table-wrapper" style="top: @this.Table.TopPx; left: @this.Table.LeftPx;">
+    <div class="connection-border">
+        @foreach (var connectionPoint in this.DatabaseSchema.ConnectionPoints.Where(cp => cp.TableId == this.Table.Id))
+        {
+            <div class="connection-point"
+                 style="left: @connectionPoint.ConnectionPointLeftCoordinatePx;
+                        top: @connectionPoint.ConnectionPointTopCoordinatePx;
+                        background-color: @(this.DatabaseSchema.ConnectionPointColors.GetValueOrDefault(connectionPoint.UniqueIdentifier));"
+                 @onmouseover="() => SetConnectionPointColorOnMouseOver(connectionPoint.UniqueIdentifier)"
+                 @onmouseout="() => SetConnectionPointColorOnMouseOut(connectionPoint.UniqueIdentifier)"
+                 @onclick="() => ConnectionPointClick(connectionPoint)">
+            </div>
+        }
+    </div>
+
+    <div class="table"
+         style="width: @SchemaMakerConstants.TableWidthPx;
+                padding: @SchemaMakerConstants.TablePaddingPx;
+                font-size: @SchemaMakerConstants.TableFontSizePx;
+                opacity: @(this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation ? 0.7 : 1);"
+         draggable="true"
+         @ondragstart="(e => OnTableDragStart(e, this.Table.Id))">
+        <strong>@this.Table.Name</strong>
+        @foreach (var column in this.Table.Columns)
+        {
+            <div class="column"
+                 style="margin-top: @SchemaMakerConstants.ColumnTopMarginPx;
+                        padding: @SchemaMakerConstants.ColumnPaddingPx;
+                        font-size: @SchemaMakerConstants.ColumnFontSizePx;">
+                <strong>@column.Name</strong>
+                <span class="properties">@column.ColumnProperties</span>
+            </div>
+        }
+        @foreach (var index in this.Table.Indexes)
+        {
+            <div class="index" style="color: gray;">
+                @index.FullIndexName
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public DatabaseSchema DatabaseSchema { get; set; }
+    [Parameter] public Table Table { get; set; }
+
+    [Parameter] public DragAndDropHelper DragAndDropHelper { get; set; }
+    [Parameter] public RelationshipCreationHelper RelationshipCreationHelper { get; set; }
+
+    [Parameter] public EventCallback OnConnectionPointClicked { get; set; }
+    [Parameter] public EventCallback OnUpdateState { get; set; }
+
+    private async Task SetConnectionPointColorOnMouseOver(string uniqueIdentifier)
+    {
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation
+            && this.RelationshipCreationHelper.StartingConnectionPointId.Equals(uniqueIdentifier, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Select,
+            connectionPointIds: new List<string> { uniqueIdentifier });
+
+        await this.OnUpdateState.InvokeAsync();
+    }
+
+    private async Task SetConnectionPointColorOnMouseOut(string uniqueIdentifier)
+    {
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation
+            && this.RelationshipCreationHelper.StartingConnectionPointId.Equals(uniqueIdentifier, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Reset,
+            connectionPointIds: new List<string> { uniqueIdentifier });
+
+        await this.OnUpdateState.InvokeAsync();
+    }
+
+    private async Task ConnectionPointClick(ConnectionPoint connectionPoint)
+    {
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.None)
+        {
+            this.RelationshipCreationHelper.CreationMode = RelationshipCreationMode.StartCreation;
+            this.RelationshipCreationHelper.StartingConnectionPointId = connectionPoint.UniqueIdentifier;
+        }
+        else if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
+        {
+            this.RelationshipCreationHelper.CreationMode = RelationshipCreationMode.CloseCreation;
+            this.RelationshipCreationHelper.EndingConnectionPointId = connectionPoint.UniqueIdentifier;
+        }
+
+        await this.OnConnectionPointClicked.InvokeAsync();
+
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.CloseCreation)
+        {
+            this.RelationshipCreationHelper.Reset();
+        }
+
+        await this.OnUpdateState.InvokeAsync();
+    }
+
+    private void OnTableDragStart(DragEventArgs e, int tableId)
+    {
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
+        {
+            return;
+        }
+
+        this.DragAndDropHelper.TableId = tableId;
+        this.DragAndDropHelper.StartingClientX = e.ClientX;
+        this.DragAndDropHelper.StartingClientY = e.ClientY;
+    }
+}

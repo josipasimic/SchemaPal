@@ -1,0 +1,23 @@
+﻿<div class="export-controls">
+    <button class="btn long" @onclick="OnExportPngClick">
+        <span>&#129035; png</span>
+    </button>
+    <button class="btn long" @onclick="OnExportJsonClick">
+        <span>&#129035; json</span>
+    </button>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnExportPng { get; set; }
+    [Parameter] public EventCallback OnExportJson { get; set; }
+
+    private async Task OnExportPngClick()
+    {
+        await OnExportPng.InvokeAsync();
+    }
+
+    private async Task OnExportJsonClick()
+    {
+        await OnExportJson.InvokeAsync();
+    }
+}

@@ -2,7 +2,7 @@
 {
     public static class SchemaMakerConstants
     {
-        public const double TableWidth = 200;
+        public const double TableWidth = 250;
 
         public static string TableWidthPx
         {
@@ -37,7 +37,7 @@
             get { return $"{ColumnTopMargin}px"; }
         }
 
-        public const double ColumnFontSize = 17;
+        public const double ColumnFontSize = 14;
 
         public static string ColumnFontSizePx
         {

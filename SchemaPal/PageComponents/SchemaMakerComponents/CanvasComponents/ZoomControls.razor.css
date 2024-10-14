@@ -1,0 +1,16 @@
+﻿.zoom-controls {
+    margin-top: 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+    .zoom-controls button {
+        margin-right: 2px;
+        height: 100%;
+    }
+
+    .zoom-controls img {
+        height: 22px;
+    }

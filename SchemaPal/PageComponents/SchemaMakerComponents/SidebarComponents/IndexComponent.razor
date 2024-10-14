@@ -1,7 +1,8 @@
 ﻿@using Index = SchemaPal.DataTransferObjects.Index;
+@using SchemaPal.DataTransferObjects;
 @using SchemaPal.Enums;
 @using SchemaPal.Enums.EnumTranslators;
-@using SchemaPal.DataTransferObjects;
+@using SchemaPal.PageComponents.GeneralComponents;
 @using SchemaPal.Services;
 
 <div class="index-row">
@@ -67,11 +68,11 @@
         if (this.ExpandedIndexIds.Contains(indexId))
         {
             this.ExpandedIndexIds.Remove(indexId);
+
+            return;
         }
-        else
-        {
-            this.ExpandedIndexIds.Add(indexId);
-        }
+
+        this.ExpandedIndexIds.Add(indexId);
     }
 
     private async Task HandleNameChange(ChangeEventArgs e)

@@ -16,5 +16,12 @@ namespace SchemaPal.Services
             TableSide overlapSide);
 
         double CalculateEdgePointY(Table table, List<ConnectionPoint> schemaConnectionPoints, int columnId);
+
+        (double NewX, double NewY) CalculateTableCoordinates(
+            (double OldX, double OldY) oldCoordinates,
+            (double StartingX, double StartingY) startingPosition,
+            (double TargetX, double TargetY) targetPosition,
+            double zoomLevel);
     }
 }
+ 

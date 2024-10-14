@@ -1,48 +1,62 @@
 ﻿@page "/login"
-@inject NavigationManager Navigation
-@inject Blazored.LocalStorage.ILocalStorageService localStorage
+
+@using SchemaPal.DataTransferObjects
+@using SchemaPal.Services
+
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject ISchemaPalApiService _schemaPalApiService
 
 <PageTitle>Prijava</PageTitle>
 
-<h3>Login</h3>
+<div class="go-back">
+    <button class="btn" @onclick="NavigateToLoginRedirect">&#129032 Natrag na opcije prijave</button>
+</div>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <div>
-        <label for="username">Username:</label>
-        <InputText @bind-Value="loginModel.Username" />
-    </div>
-    <div>
-        <label for="password">Password:</label>
-        <InputText @bind-Value="loginModel.Password" type="password" />
-    </div>
-    <div>
-        <button type="submit">Login</button>
-    </div>
-</EditForm>
+<div class="form">
+    <h3 class="login-label">Prijava</h3>
 
-<p>@loginMessage</p>
+    <EditForm Model="@UserData" OnValidSubmit="HandleLogin">
+        <div class="login-section">
+            <label class="name-label" for="username">Korisničko ime:</label>
+            <InputText class="name-input login-name-input" @bind-Value="UserData.Username" />
+        </div>
+        <div class="login-section">
+            <label class="name-label" for="password">Lozinka:</label>
+            <InputText class="name-input login-name-input" @bind-Value="UserData.Password" type="password" />
+        </div>
+        <div class="login-section">
+            <button class="btn login-button" type="submit">Prijavi se</button>
+        </div>
+    </EditForm>
+
+    <p>@LoginMessage</p>
+</div>
 
 @code {
-    private LoginModel loginModel = new LoginModel();
-    private string loginMessage = string.Empty;
+    private User UserData = new User();
+    private string LoginMessage = string.Empty;
 
     private async Task HandleLogin()
     {
-        if (loginModel.Username == "admin" && loginModel.Password == "password")
-        {
-            await localStorage.SetItemAsync<bool>("isLoggedIn", true);
+        var userId = await _schemaPalApiService.ValidateUser(UserData);
 
-            Navigation.NavigateTo("/");
+        if (userId > 0)
+        {
+            await sessionStorage.SetItemAsync<bool>("isGuest", false);
+            await sessionStorage.SetItemAsync<bool>("isLoggedIn", true);
+            await sessionStorage.SetItemAsync<int>("loggedInUserId", userId);
+
+            NavigationManager.NavigateTo("/");
         }
         else
         {
-            loginMessage = "Invalid username or password.";
+            LoginMessage = "Neispravno korisničko ime ili lozinka.";
         }
     }
 
-    public class LoginModel
+    private void NavigateToLoginRedirect()
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        NavigationManager.NavigateTo("/login-redirect");
     }
 }

@@ -1,0 +1,66 @@
+﻿@page "/signup"
+
+@using SchemaPal.DataTransferObjects
+@using SchemaPal.Services
+
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject ISchemaPalApiService _schemaPalApiService
+
+<PageTitle>Registracija</PageTitle>
+
+<div class="go-back">
+    <button class="btn" @onclick="NavigateToLoginRedirect">&#129032 Natrag na opcije prijave</button>
+</div>
+
+<div class="form">
+    <h3 class="signup-label">Registracija</h3>
+
+    <EditForm Model="@UserData" OnValidSubmit="HandleSignup">
+        <div class="signup-section">
+            <label class="name-label" for="username">E-mail:</label>
+            <InputText class="name-input signup-name-input" @bind-Value="UserData.Email" />
+        </div>
+        <div class="signup-section">
+            <label class="name-label" for="username">Korisničko ime:</label>
+            <InputText class="name-input signup-name-input" @bind-Value="UserData.Username" />
+        </div>
+        <div class="signup-section">
+            <label class="name-label" for="password">Lozinka:</label>
+            <InputText class="name-input signup-name-input" @bind-Value="UserData.Password" type="password" />
+        </div>
+        <div class="signup-section">
+            <button class="btn signup-button" type="submit">Registriraj se</button>
+        </div>
+    </EditForm>
+
+    <p>@SignUpMessage</p>
+</div>
+
+@code {
+    private User UserData = new User();
+    private string SignUpMessage = string.Empty;
+
+    private async Task HandleSignup()
+    {
+        var newUserId = await _schemaPalApiService.CreateUser(UserData);
+
+        if (newUserId > 0)
+        {
+            await sessionStorage.SetItemAsync<bool>("isGuest", false);
+            await sessionStorage.SetItemAsync<bool>("isLoggedIn", true);
+            await sessionStorage.SetItemAsync<int>("loggedInUserId", newUserId);
+
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            SignUpMessage = "Došlo je do pogreške. Molimo pokušajte kasnije.";
+        }
+    }
+
+    private void NavigateToLoginRedirect()
+    {
+        NavigationManager.NavigateTo("/login-redirect");
+    }
+}

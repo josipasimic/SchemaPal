@@ -1,0 +1,15 @@
+﻿.template-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.template-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .template-item:hover {
+        background-color: #f0f0f0;
+    }

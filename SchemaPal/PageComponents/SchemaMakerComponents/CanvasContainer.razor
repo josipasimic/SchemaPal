@@ -1,0 +1,127 @@
+﻿@using SchemaPal.DataTransferObjects;
+@using SchemaPal.Enums;
+@using SchemaPal.Enums.EnumTranslators;
+@using SchemaPal.Helpers.SchemaMakerHelpers;
+@using SchemaPal.PageComponents.SchemaMakerComponents.CanvasComponents;
+@using SchemaPal.Services;
+
+@inject IStyleService _styleService;
+@inject IPositionService _positionService;
+@inject IExportService _exportService;
+
+<div class="canvas-container"
+     ondragover="event.preventDefault();"
+     @ondrop="OnTableDrop">
+    <div class="canvas-buttons">
+        <ZoomControls OnZoomIn="OnZoomIn" OnZoomOut="OnZoomOut" />
+        <ExportControls OnExportPng="OnExportPng" OnExportJson="OnExportJson" />
+    </div>
+
+    <div class="canvas-content" style="transform: scale(@this.ZoomLevel);">
+        <div id="@SchemaMakerConstants.ExportPngDivId" style="height: 800px; width: 1500px;">
+            <RelationshipLines Relationships="this.DatabaseSchema.Relationships" />
+            @foreach (var table in this.DatabaseSchema.Tables)
+            {
+                <TableComponent 
+                    Table="table" 
+                    DatabaseSchema="this.DatabaseSchema"
+                    DragAndDropHelper="this.DragAndDropHelper"
+                    RelationshipCreationHelper="this.RelationshipCreationHelper"
+                    OnConnectionPointClicked="DrawRelationship"
+                    OnUpdateState="this.OnUpdateState" />
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public DatabaseSchema DatabaseSchema { get; set; }
+
+    [Parameter] public RelationshipCreationHelper RelationshipCreationHelper { get; set; }
+
+    [Parameter] public EventCallback OnRelationshipDrawing { get; set; }
+    [Parameter] public EventCallback OnUpdateState { get; set; }
+
+    public DragAndDropHelper DragAndDropHelper { get; set; } = new DragAndDropHelper();
+
+    public double ZoomLevel = 1.0;
+
+    private void OnZoomIn()
+    {
+        ZoomLevel = _styleService.Zoom(this.ZoomLevel, ZoomDirection.In);
+    }
+
+    private void OnZoomOut()
+    {
+        ZoomLevel = _styleService.Zoom(this.ZoomLevel, ZoomDirection.Out);
+    }
+
+    private void OnExportPng()
+    {
+        _exportService.ExportSchemaAsPng();
+    }
+
+    private void OnExportJson()
+    {
+        _exportService.ExportSchemaAsJson(this.DatabaseSchema);
+    }
+
+    private async Task OnTableDrop(DragEventArgs e)
+    {
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
+        {
+            return;
+        }
+
+        var droppedTableId = this.DragAndDropHelper.TableId;
+
+        var droppedTable = this.DatabaseSchema.Tables.Find(t => t.Id == droppedTableId);
+
+        _positionService.UpdateTablePosition(
+            droppedTable,
+            (this.DragAndDropHelper.StartingClientX, this.DragAndDropHelper.StartingClientY),
+            (e.ClientX, e.ClientY),
+            this.ZoomLevel);
+
+        _positionService.UpdateRelationshipPositions(this.DatabaseSchema, tableIds: new HashSet<int> { droppedTableId });
+
+        var connectedTableIds = this.DatabaseSchema.Relationships
+            .Where(r => r.SourceTableId == droppedTableId || r.DestinationTableId == droppedTableId)
+            .SelectMany(r => new[] { r.SourceTableId, r.DestinationTableId })
+            .ToHashSet();
+
+        _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+            ConnectionPointColorEvent.Reset,
+            tableIds: connectedTableIds);
+
+        this.DragAndDropHelper.Reset();
+
+        await this.OnUpdateState.InvokeAsync();
+    }
+
+    private async Task DrawRelationship()
+    {
+        await this.OnRelationshipDrawing.InvokeAsync();
+
+        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
+        {
+            _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+                ConnectionPointColorEvent.Select,
+                connectionPointIds: new List<string> { this.RelationshipCreationHelper.StartingConnectionPointId });
+        }
+        else if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.CloseCreation)
+        {
+            var connectedTableIds = new HashSet<int>
+            {
+                this.RelationshipCreationHelper.CurrentRelationship.SourceTableId,
+                this.RelationshipCreationHelper.CurrentRelationship.DestinationTableId
+            };
+
+            _positionService.UpdateRelationshipPositions(this.DatabaseSchema, tableIds: connectedTableIds);
+
+            _styleService.SetConnectionPointsColor(this.DatabaseSchema,
+                ConnectionPointColorEvent.Reset,
+                tableIds: connectedTableIds);
+        }
+    }
+}

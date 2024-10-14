@@ -13,31 +13,25 @@ namespace SchemaPal.Services
             _coordinatesCalculator = coordinatesCalculator;
         }
 
-        public void UpdateTableCoordinates(
-            DatabaseSchema databaseSchema,
-            int tableId,
+        public void UpdateTablePosition(
+            Table table,
             (double StartingX, double StartingY) startingPosition,
-            (double TargetX, double TargetY) targetPosition)
+            (double TargetX, double TargetY) targetPosition,
+            double zoomLevel)
         {
-            if (databaseSchema is null)
-            {
-                return;
-            }
-
-            var table = databaseSchema.Tables.FirstOrDefault(x => x.Id == tableId);
-
             if (table is null)
             {
                 return;
             }
 
-            var coordinateShiftX = (targetPosition.TargetX - startingPosition.StartingX)
-                / databaseSchema.ZoomLevel;
-            var coordinateShiftY = (targetPosition.TargetY - startingPosition.StartingY)
-                / databaseSchema.ZoomLevel;
+            var newCoordinates = _coordinatesCalculator.CalculateTableCoordinates(
+                (table.CoordinateX, table.CoordinateY),
+                startingPosition,
+                targetPosition,
+                zoomLevel);
 
-            table.CoordinateX = table.CoordinateX + coordinateShiftX;
-            table.CoordinateY = table.CoordinateY + coordinateShiftY;
+            table.CoordinateX = newCoordinates.NewX;
+            table.CoordinateY = newCoordinates.NewY;
         }
 
         public void UpdateRelationshipPositions(
@@ -83,8 +77,8 @@ namespace SchemaPal.Services
         private (TableSide FirstTableSide, TableSide SecondTableSide, TableSide OverlapSide) DetermineTableSides(
             Table firstTable, Table secondTable)
         {
-            // Ako se tablice vertikalno preklapaju (jedna su ispod druge vertikalno, tj. x-koordinate su im "isprepletene"),
-            // želimo da linije idu "okolo njih", a ne dijagonalno ispod njih, pa ih zato želimo spojiti s iste strane.
+            // Ako se tablice vertikalno preklapaju (jedna su ispod druge vertikalno, tj. "intervali" x-koordinata imaju neprazan
+            // presjek), želimo da linije idu "okolo njih", a ne dijagonalno ispod njih, pa ih zato spajamo s iste strane.
             var doTablesVerticallyOverlap = firstTable.CoordinateX <= secondTable.CoordinateX + SchemaMakerConstants.TableWidth
                 && secondTable.CoordinateX <= firstTable.CoordinateX + SchemaMakerConstants.TableWidth;
 

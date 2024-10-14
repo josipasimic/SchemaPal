@@ -140,5 +140,29 @@ namespace SchemaPal.Services
 
             return table.CoordinateY + connectionPointForColumn.ConnectionPointTopCoordinate + SchemaMakerConstants.ConnectionPointBuffer;
         }
+
+        public (double NewX, double NewY) CalculateTableCoordinates(
+            (double OldX, double OldY) oldCoordinates,
+            (double StartingX, double StartingY) startingPosition,
+            (double TargetX, double TargetY) targetPosition,
+            double zoomLevel)
+        {
+            // Neispravni zoom level.
+            if (zoomLevel == 0)
+            {
+                return (0, 0);
+            }
+
+            var coordinateShiftX = (targetPosition.TargetX - startingPosition.StartingX)
+                / zoomLevel;
+
+            var coordinateShiftY = (targetPosition.TargetY - startingPosition.StartingY)
+                / zoomLevel;
+
+            var newX = oldCoordinates.OldX + coordinateShiftX;
+            var newY = oldCoordinates.OldY + coordinateShiftY;
+
+            return (newX, newY);
+        }
     }
 }

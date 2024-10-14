@@ -1,22 +1,14 @@
-﻿@code {
-    private void ImportDDL()
-    {
-    }
+﻿<div class="import-options">
+    @* <button @onclick="ImportDDL">Uvezi iz DDL datoteke.</button> *@ <!-- Vjerojatno neću stići implementirati. -->
+    <button @onclick="ImportSchemaPalJson">Uvezi iz JSON datoteke.</button>
+</div>
+
+@code {
+    // private void ImportDDL()
+    // {
+    // }
 
     private void ImportSchemaPalJson()
     {
     }
 }
-
-<div class="import-options">
-    <button @onclick="ImportDDL">Uvezi iz DDL datoteke.</button>
-    <button @onclick="ImportSchemaPalJson">Uvezi iz JSON datoteke.</button>
-</div>
-
-<style>
-    .import-options {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-</style>

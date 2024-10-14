@@ -1,4 +1,5 @@
 ﻿using SchemaPal.DataTransferObjects;
+using SchemaPal.Enums;
 
 namespace SchemaPal.Helpers.SchemaMakerHelpers
 {
@@ -6,7 +7,7 @@ namespace SchemaPal.Helpers.SchemaMakerHelpers
     {
         public Relationship? CurrentRelationship;
 
-        public bool IsDrawingLine = false;
+        public RelationshipCreationMode CreationMode { get; set; }
 
         public int SourceTableId { get; set; }
 
@@ -14,18 +15,22 @@ namespace SchemaPal.Helpers.SchemaMakerHelpers
 
         public string StartingConnectionPointId { get; set; }
 
+        public string EndingConnectionPointId { get; set; }
+
         public RelationshipCreationHelper()
         {
             StartingConnectionPointId = string.Empty;
+            EndingConnectionPointId = string.Empty;
         }
 
         public void Reset()
         {
             CurrentRelationship = null;
-            IsDrawingLine = false;
             SourceTableId = 0;
             DestinationTableId = 0;
             StartingConnectionPointId = string.Empty;
+            EndingConnectionPointId = string.Empty;
+            CreationMode = RelationshipCreationMode.None;
         }
     }
 }

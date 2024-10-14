@@ -4,11 +4,11 @@ namespace SchemaPal.Services
 {
     public interface IPositionService
     {
-        void UpdateTableCoordinates(
-            DatabaseSchema databaseSchema,
-            int tableId,
+        void UpdateTablePosition(
+            Table table,
             (double StartingX, double StartingY) startingPosition,
-            (double TargetX, double TargetY) targetPosition);
+            (double TargetX, double TargetY) targetPosition,
+            double zoomLevel);
 
         void UpdateRelationshipPositions(
             DatabaseSchema databaseSchema,

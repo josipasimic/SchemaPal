@@ -1,0 +1,23 @@
+﻿<div class="zoom-controls">
+    <button class="btn" @onclick="OnZoomInClick">
+        <img src="images/zoomIn.png" />
+    </button>
+    <button class="btn" @onclick="OnZoomOutClick">
+        <img src="images/zoomOut.png" />
+    </button>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnZoomIn { get; set; }
+    [Parameter] public EventCallback OnZoomOut { get; set; }
+
+    private async Task OnZoomInClick()
+    {
+        await OnZoomIn.InvokeAsync();
+    }
+
+    private async Task OnZoomOutClick()
+    {
+        await OnZoomOut.InvokeAsync();
+    }
+}

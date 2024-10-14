@@ -1,0 +1,36 @@
+﻿.canvas-container {
+    flex-grow: 1;
+    position: relative;
+    overflow: auto;
+    background-color: #fff;
+    border: 1px solid black;
+    margin: 2px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    width: 80%;
+    height: 100%;
+}
+
+    .canvas-container .canvas-buttons {
+        top: 10px;
+        left: 10px;
+        position: sticky;
+        display: flex;
+        flex-direction: row;
+        width: 250px;
+        height: 6%;
+        z-index: 10000000000;
+    }
+
+    .canvas-container .canvas-content {
+        width: 2000px;
+        height: 2000px;
+        background-color: #fafafa;
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        transform-origin: 0 0;
+        transition: transform 0.2s ease-in-out;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }

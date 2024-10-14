@@ -6,13 +6,13 @@ namespace SchemaPal.Services
 {
     public class StyleService : IStyleService
     {
-        public void Zoom(DatabaseSchema databaseSchema, 
+        public double Zoom(double zoomLevel, 
             ZoomDirection zoomDirection)
         {
             var stepSign = zoomDirection == ZoomDirection.In ? 1 : -1;
 
-            databaseSchema.ZoomLevel = Math.Clamp(
-                databaseSchema.ZoomLevel + stepSign * SchemaMakerConstants.ZoomLevelStep,
+            return Math.Clamp(
+                zoomLevel + stepSign * SchemaMakerConstants.ZoomLevelStep,
                 SchemaMakerConstants.MinimalZoomLevel,
                 SchemaMakerConstants.MaximalZoomLevel);
         }

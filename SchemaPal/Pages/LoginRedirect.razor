@@ -3,8 +3,6 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
-<PageTitle>SchemaPal</PageTitle>
-
 <div class="main-content">
     <div class="auth-options">
         <button class="btn-primary" @onclick="Login">Prijavi se</button>
@@ -27,6 +25,7 @@
     private async void ContinueAsGuest()
     {
         await sessionStorage.SetItemAsync<bool>("isGuest", true);
+        await sessionStorage.SetItemAsync<bool>("isLoggedIn", false);
         NavigationManager.NavigateTo("/"); 
     }
 }

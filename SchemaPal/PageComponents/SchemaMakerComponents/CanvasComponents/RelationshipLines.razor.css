@@ -1,0 +1,23 @@
+﻿.connection-lines {
+    width: 2000px;
+    height: 2000px;
+    color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+    .connection-lines .relationship-type {
+        fill: rgb(133, 6, 6, 0.7);
+        font-weight: bold;
+        font-size: 17px;
+        position: relative;
+        z-index: 1000000000000000000;
+    }
+
+svg path {
+    stroke: rgb(133, 6, 6, 0.7);
+    stroke-width: 2px;
+    pointer-events: none;
+    fill: none;
+}

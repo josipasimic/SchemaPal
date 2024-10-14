@@ -13,7 +13,7 @@
         <ul class="nav-buttons">
             <li class="@(currentView == ViewType.NewSchema ? "selected" : string.Empty)" @onclick="ShowNewSchema">Izradi novu shemu</li>
             <li class="@(currentView == ViewType.TemplateSchemas ? "selected" : string.Empty)" @onclick="ShowTemplateSchemas">Izradi shemu iz predloška</li>
-            @if (!isGuest)
+            @if (isLoggedInUser)
             {
                 <li class="@(currentView == ViewType.MySchemas ? "selected" : string.Empty)" @onclick="ShowMySchemas">Moje sheme</li>
             }
@@ -44,7 +44,6 @@
 @code {
     private enum ViewType { NewSchema, TemplateSchemas, MySchemas, ImportSchema }
     private ViewType currentView = ViewType.NewSchema;
-    private string userName = "User";
     private bool isGuest = false;
     private bool isLoggedInUser = false;
 

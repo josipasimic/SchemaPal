@@ -1,0 +1,34 @@
+﻿.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 60%;
+}
+
+.login-label {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+.login-section {
+    margin: 20px;
+    align-content: center;
+    width: 100%;
+}
+
+    .login-section .login-name-input {
+        width: 100%;
+    }
+
+    .login-section .login-button {
+        margin-left: 30%;
+    }
+
+.go-back {
+    top: 120px;
+    left: 10px;
+    position: absolute;
+    width: 20%;
+    height: 10%;
+}

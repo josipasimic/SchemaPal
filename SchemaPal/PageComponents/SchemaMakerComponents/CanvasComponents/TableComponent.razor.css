@@ -1,0 +1,61 @@
+﻿.table-wrapper {
+    position: absolute;
+    z-index: 100000000000000;
+    opacity: 1;
+}
+
+    .table-wrapper .connection-border {
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        width: calc(100% + 10px);
+        height: calc(100%);
+        border: 2px dashed transparent;
+        pointer-events: none;
+    }
+
+        .table-wrapper .connection-border .connection-point {
+            border-radius: 50%;
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            cursor: crosshair;
+            pointer-events: all;
+            z-index: 100000000000000;
+            opacity: 1;
+        }
+
+    .table-wrapper .table {
+        background-color: lightgray;
+        border: 1px solid #bbb;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: grab;
+        transition: box-shadow 0.2s;
+    }
+
+        .table-wrapper .table:active {
+            cursor: grabbing;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-wrapper .table .column {
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+            .table-wrapper .table .column .properties {
+                font-size: 13px;
+                opacity: 0.8;
+            }
+
+        .table-wrapper .table .index {
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 15px;
+            margin-top: 10px;
+            font-style: italic;
+            font-weight: bold;
+            color: gray;
+        }

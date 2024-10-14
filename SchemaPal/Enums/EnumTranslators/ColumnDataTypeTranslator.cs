@@ -4,7 +4,6 @@
     {
         public static string MapToName(ColumnDataType columnDataType)
         {
-
             return columnDataType.ToString().ToLowerInvariant();
         }
     }

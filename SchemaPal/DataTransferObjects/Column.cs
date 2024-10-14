@@ -22,20 +22,20 @@ namespace SchemaPal.DataTransferObjects
         {
             get
             {
-                var fullName = new StringBuilder();
+                var properties = new StringBuilder();
 
                 var dataType = ColumnDataTypeTranslator.MapToName(DataType);
-                fullName.Append($"{dataType} (");
+                properties.Append($"{dataType} (");
 
                 if (KeyType != KeyType.None)
                 {
-                    fullName.Append($"{KeyTypeTranslator.GetAbbreviation(KeyType)}, ");
+                    properties.Append($"{KeyTypeTranslator.GetAbbreviation(KeyType)}, ");
                 }
 
                 var nullableAbbreviation = IsNullable ? "NULL" : "NOT NULL";
-                fullName.Append($"{nullableAbbreviation})");
+                properties.Append($"{nullableAbbreviation})");
 
-                return fullName.ToString();
+                return properties.ToString();
             }
         }
 

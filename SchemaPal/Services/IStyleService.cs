@@ -5,7 +5,7 @@ namespace SchemaPal.Services
 {
     public interface IStyleService
     {
-        void Zoom(DatabaseSchema databaseSchema,
+        double Zoom(double zoomLevel,
             ZoomDirection zoomDirection);
 
         void SetConnectionPointsColor(
