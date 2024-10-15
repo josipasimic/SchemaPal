@@ -2,13 +2,13 @@
 using SchemaPal.Enums;
 using SchemaPal.Helpers.SchemaMakerHelpers;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public class PositionService : IPositionService
     {
         private readonly ICoordinatesCalculator _coordinatesCalculator;
 
-        public PositionService(ICoordinatesCalculator coordinatesCalculator) 
+        public PositionService(ICoordinatesCalculator coordinatesCalculator)
         {
             _coordinatesCalculator = coordinatesCalculator;
         }
@@ -49,7 +49,7 @@ namespace SchemaPal.Services
                 && tableIds.Count > 0)
             {
                 relationshipsToUpdate = databaseSchema.Relationships
-                    .Where(r => tableIds.Contains(r.SourceTableId) 
+                    .Where(r => tableIds.Contains(r.SourceTableId)
                         || tableIds.Contains(r.DestinationTableId))
                     .ToList();
             }

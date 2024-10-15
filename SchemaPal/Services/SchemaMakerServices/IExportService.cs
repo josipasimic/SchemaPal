@@ -1,6 +1,6 @@
 ﻿using SchemaPal.DataTransferObjects;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public interface IExportService
     {

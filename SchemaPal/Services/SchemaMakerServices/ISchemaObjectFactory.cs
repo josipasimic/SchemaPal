@@ -1,6 +1,6 @@
 ﻿using SchemaPal.DataTransferObjects;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public interface ISchemaObjectFactory
     {
@@ -23,9 +23,9 @@ namespace SchemaPal.Services
 
         void DeleteColumn(DatabaseSchema databaseSchema, int tableId, int columnId);
 
-        void DeleteIndexes(DatabaseSchema databaseSchema, 
-            int tableId, 
-            int? indexId = null, 
+        void DeleteIndexes(DatabaseSchema databaseSchema,
+            int tableId,
+            int? indexId = null,
             int? columnId = null);
 
         HashSet<int> DeleteRelationships(DatabaseSchema databaseSchema,

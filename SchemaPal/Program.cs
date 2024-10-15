@@ -4,6 +4,7 @@ using SchemaPal;
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
 using SchemaPal.Services;
+using SchemaPal.Services.SchemaMakerServices;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

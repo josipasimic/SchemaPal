@@ -2,7 +2,7 @@
 using SchemaPal.Enums;
 using SchemaPal.Helpers.SchemaMakerHelpers;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public class CoordinatesCalculator : ICoordinatesCalculator
     {
@@ -102,8 +102,8 @@ namespace SchemaPal.Services
                 // između tablica. Tada, točki prelamanja pridodijelimo odgovarajući x-pomak ovisno o tome je li trenutna veza bliže početku ili kraju.
                 case TableSide.None:
                     startingPoint = Math.Min(x1, x2);
-                    stepMultiplier = startingPoint == x2 
-                        ? relationshipData.relationshipsBetweenTablesCount - relationshipData.indexOfRelationship 
+                    stepMultiplier = startingPoint == x2
+                        ? relationshipData.relationshipsBetweenTablesCount - relationshipData.indexOfRelationship
                         : stepMultiplier;
                     pointShiftX = stepMultiplier * distanceBetweenPointsX / (relationshipData.relationshipsBetweenTablesCount + 1);
                     break;

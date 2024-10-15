@@ -2,11 +2,11 @@
 using SchemaPal.Enums;
 using SchemaPal.Helpers.SchemaMakerHelpers;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public class StyleService : IStyleService
     {
-        public double Zoom(double zoomLevel, 
+        public double Zoom(double zoomLevel,
             ZoomDirection zoomDirection)
         {
             var stepSign = zoomDirection == ZoomDirection.In ? 1 : -1;
@@ -18,9 +18,9 @@ namespace SchemaPal.Services
         }
 
         public void SetConnectionPointsColor(
-            DatabaseSchema databaseSchema, 
+            DatabaseSchema databaseSchema,
             ConnectionPointColorEvent connectionPointColorEvent,
-            List<string> connectionPointIds = null, 
+            List<string> connectionPointIds = null,
             HashSet<int> tableIds = null)
         {
             if (databaseSchema is null

@@ -3,14 +3,14 @@ using Microsoft.JSInterop;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.Helpers.SchemaMakerHelpers;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public class ExportService : IExportService
     {
-        private const string ExportPngJavaScriptFunctionName = "exportDivToPng";  
-        
-        private const string ExportJsnJavaScriptFunctionName = "saveAsFile";    
-        private const string ExportJsnFileName = "schema.json";    
+        private const string ExportPngJavaScriptFunctionName = "exportDivToPng";
+
+        private const string ExportJsnJavaScriptFunctionName = "saveAsFile";
+        private const string ExportJsnFileName = "schema.json";
 
         private readonly IJSRuntime _jsRuntime;
 
@@ -22,7 +22,7 @@ namespace SchemaPal.Services
         public async Task ExportSchemaAsPng()
         {
             await _jsRuntime.InvokeVoidAsync(
-                ExportPngJavaScriptFunctionName, 
+                ExportPngJavaScriptFunctionName,
                 SchemaMakerConstants.ExportPngDivId);
         }
 
@@ -31,8 +31,8 @@ namespace SchemaPal.Services
             var databaseSchemaInJsonFormat = JsonSerializer.Serialize(databaseSchema);
 
             await _jsRuntime.InvokeVoidAsync(
-                ExportJsnJavaScriptFunctionName, 
-                ExportJsnFileName, 
+                ExportJsnJavaScriptFunctionName,
+                ExportJsnFileName,
                 databaseSchemaInJsonFormat);
         }
     }

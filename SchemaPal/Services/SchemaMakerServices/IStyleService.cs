@@ -1,7 +1,7 @@
 ﻿using SchemaPal.DataTransferObjects;
 using SchemaPal.Enums;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public interface IStyleService
     {

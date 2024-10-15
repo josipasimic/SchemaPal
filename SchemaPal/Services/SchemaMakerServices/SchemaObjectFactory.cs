@@ -2,7 +2,7 @@
 using SchemaPal.Enums;
 using SchemaPal.Helpers.SchemaMakerHelpers;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.SchemaMakerServices
 {
     public class SchemaObjectFactory : ISchemaObjectFactory
     {
@@ -61,8 +61,8 @@ namespace SchemaPal.Services
             return newRelationship;
         }
 
-        public void CloseNewRelationship(DatabaseSchema databaseSchema, 
-            Relationship newRelationship, 
+        public void CloseNewRelationship(DatabaseSchema databaseSchema,
+            Relationship newRelationship,
             ConnectionPoint endingConnectionPoint,
             string startingConnectionPointId)
         {
@@ -118,7 +118,7 @@ namespace SchemaPal.Services
             }
 
             var newColumn = (Column)null;
-            if (table.Columns.Count == 0) 
+            if (table.Columns.Count == 0)
             {
                 newColumn = CreatePrimaryKeyColumn(_columnId, tableId);
             }
@@ -223,7 +223,7 @@ namespace SchemaPal.Services
             foreach (var connectionPointsForColumn in remainingTableConnectionPoints)
             {
                 var connectionPointsYCoordinate = _coordinatesCalculator.CalculateConnectionPointY(
-                    connectionPointsForColumn.Key, 
+                    connectionPointsForColumn.Key,
                     table);
 
                 connectionPointsForColumn.ToList()
@@ -231,7 +231,7 @@ namespace SchemaPal.Services
             }
         }
 
-        public void DeleteIndexes(DatabaseSchema databaseSchema, 
+        public void DeleteIndexes(DatabaseSchema databaseSchema,
             int tableId,
             int? indexId = null,
             int? columnId = null)
@@ -285,7 +285,7 @@ namespace SchemaPal.Services
                     .Select(r => r.Id)
                     .ToList();
 
-                relationshipIdsToDelete.AddRange(relationshipIds); 
+                relationshipIdsToDelete.AddRange(relationshipIds);
             }
 
             var affectedTableIds = databaseSchema.Relationships
