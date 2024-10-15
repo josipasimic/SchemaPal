@@ -1,11 +1,16 @@
-﻿using SchemaPal.DataTransferObjects;
+﻿using FluentResults;
+using SchemaPal.DataTransferObjects;
+using SchemaPal.DataTransferObjects.API;
+
 namespace SchemaPal.Services
 {
     public interface ISchemaPalApiService
     {
-        Task<int> ValidateUser(User user);
+        Task<Result> RegisterUser(UserRegistration userRegistration);
 
-        Task<int> CreateUser(User user);
+        Task<Result> LoginUser(UserLogin userLogin);
+
+        // -----------------------------------------
 
         Task<int> SaveDatabaseSchema(DatabaseSchema databaseSchema);
 

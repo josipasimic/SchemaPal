@@ -1,52 +1,80 @@
-﻿using SchemaPal.DataTransferObjects;
+﻿using Blazored.SessionStorage;
+using FluentResults;
+using SchemaPal.DataTransferObjects;
 using SchemaPal.DataTransferObjects.API;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace SchemaPal.Services
 {
     public class SchemaPalApiService : ISchemaPalApiService
     {
-        //private const string ApiUrl = "https://api.schemapal.com";
-
-        //private readonly IHttpClient _httpClient;
-
+        private readonly HttpClient _httpClient;
         private readonly IJsonService _jsonService;
+        private readonly ISessionStorageService _sessionStorage;
 
-        public SchemaPalApiService(IJsonService jsonService) 
+        public SchemaPalApiService(IHttpClientFactory httpClientFactory,    
+            ISessionStorageService sessionStorage,
+            IJsonService jsonService)
         {
+            _httpClient = httpClientFactory.CreateClient("SchemaPalApi");
+            _sessionStorage = sessionStorage;
             _jsonService = jsonService;
         }
 
-        public async Task<int> ValidateUser(User user)
+        public async Task<Result> RegisterUser(UserRegistration userRegistration)
         {
-            //var client = new HttpClient(ApiUrl);
-            //var request = new HttpRequest("users/validate", Method.POST);
-            //request.AddJsonBody(user);
-            //var response = client.Execute(request);
-            //if (response.StatusCode != HttpStatusCode.OK)
-            //{
-            //    throw new Exception("Invalid user");
-            //}
+            var response = await _httpClient.PostAsJsonAsync("Authentication/register", userRegistration);
 
-            if (user.Username == "admin" && user.Password == "admin")
+            try
             {
-               return 1;
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return Result.Fail("Registracija nije uspjela! Podaci za registraciju su neispravni.");
+                }
+
+                return Result.Fail($"Registracija nije uspjela! {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"Registracija nije uspjela! {ex.Message}");
             }
 
-            return 0;
+            return Result.Ok();
         }
 
-        public async Task<int> CreateUser(User user)
+        public async Task<Result> LoginUser(UserLogin userLogin)
         {
-            //var client = new HttpClient(ApiUrl);
-            //var request = new HttpRequest("users/create", Method.POST);
-            //request.AddJsonBody(user);
-            //var response = client.Execute(request);
-            //if (response.StatusCode != HttpStatusCode.OK)
-            //{
-            //    throw new Exception("Invalid user");
-            //}
+            var response = await _httpClient.PostAsJsonAsync("Authentication/login", userLogin);
 
-            return 0;
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.Unauthorized
+                    || ex.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return Result.Fail("Prijava nije uspjela! Podaci za prijavu su neispravni.");
+                }
+
+                return Result.Fail($"Prijava nije uspjela! {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"Prijava nije uspjela! {ex.Message}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<LoginResult>();
+
+            await _sessionStorage.SetItemAsync("authToken", result.Token);
+
+            return Result.Ok();
         }
 
         public async Task<int> SaveDatabaseSchema(DatabaseSchema databaseSchema)
@@ -58,34 +86,34 @@ namespace SchemaPal.Services
 
         public async Task<List<(int Id, string Name)>> GetDatabaseSchemasForUser(int userId)
         {
-            var listFromApi = new List<ShortSchemaRecordDto>
-            {
-                new ShortSchemaRecordDto
-                {
-                    SchemaId = 1,
-                    SchemaName = "Schema 1"
-                },
-                new ShortSchemaRecordDto
-                {
-                    SchemaId = 2,
-                    SchemaName = "Schema 2"
-                },
-                new ShortSchemaRecordDto
-                {
-                    SchemaId = 3,
-                    SchemaName = "Schema 3"
-                }
-            };
+            //var listFromApi = new List<ShortSchemaRecord>
+            //{
+            //    new ShortSchemaRecord
+            //    {
+            //        Id = 1,
+            //        Name = "Schema 1"
+            //    },
+            //    new ShortSchemaRecord
+            //    {
+            //        Id = 2,
+            //        Name = "Schema 2"
+            //    },
+            //    new ShortSchemaRecord
+            //    {
+            //        SchemaId = 3,
+            //        SchemaName = "Schema 3"
+            //    }
+            //};
 
-            var returnList = listFromApi.Select(x => (x.SchemaId, x.SchemaName)).ToList();
+            //var returnList = listFromApi.Select(x => (x.SchemaId, x.SchemaName)).ToList();
 
-            return returnList;
+            return new List<(int Id, string Name)>();
         }
 
         public async Task<DatabaseSchema> GetDatabaseSchema(int id)
         {
-            var resultFromApi = new ExtendedSchemaRecordDto();
-            var databaseSchema = _jsonService.Deserialize<DatabaseSchema>(resultFromApi.SchemaInJsonFormat);
+            var resultFromApi = new ExtendedSchemaRecord();
+            var databaseSchema = _jsonService.Deserialize<DatabaseSchema>(resultFromApi.SchemaJsonFormat);
 
             return databaseSchema;
         }

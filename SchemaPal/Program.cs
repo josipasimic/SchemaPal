@@ -11,6 +11,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+builder.Services.AddHttpClient("SchemaPalApi", client =>
+{
+    var apiBaseAddress = builder.Configuration["SchemaPalApiSettings:BaseAddress"];
+    client.BaseAddress = new Uri(apiBaseAddress);
+});
+
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddBlazoredSessionStorage();
 
@@ -18,10 +24,9 @@ builder.Services.AddSingleton<IPositionService, PositionService>();
 builder.Services.AddSingleton<ICoordinatesCalculator, CoordinatesCalculator>();
 builder.Services.AddSingleton<IStyleService, StyleService>();
 builder.Services.AddSingleton<IExportService, ExportService>();
-builder.Services.AddSingleton<ISchemaPalApiService, SchemaPalApiService>();
 builder.Services.AddSingleton<IJsonService, JsonService>();
 
-builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<ISchemaPalApiService, SchemaPalApiService>();
 
 builder.Services.AddTransient<ISchemaObjectFactory, SchemaObjectFactory>();
 

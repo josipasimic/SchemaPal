@@ -1,10 +1,12 @@
 ﻿@page "/login"
 
 @using SchemaPal.DataTransferObjects
+@using SchemaPal.DataTransferObjects.API
+@using SchemaPal.Helpers
 @using SchemaPal.Services
 
-@inject NavigationManager NavigationManager
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager _navigationManager
+@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
 @inject ISchemaPalApiService _schemaPalApiService
 
 <PageTitle>Prijava</PageTitle>
@@ -16,14 +18,14 @@
 <div class="form">
     <h3 class="login-label">Prijava</h3>
 
-    <EditForm Model="@UserData" OnValidSubmit="HandleLogin">
+    <EditForm Model="@UserLoginData" OnValidSubmit="HandleLogin">
         <div class="login-section">
             <label class="name-label" for="username">Korisničko ime:</label>
-            <InputText class="name-input login-name-input" @bind-Value="UserData.Username" />
+            <InputText class="name-input login-name-input" @bind-Value="UserLoginData.Username" />
         </div>
         <div class="login-section">
             <label class="name-label" for="password">Lozinka:</label>
-            <InputText class="name-input login-name-input" @bind-Value="UserData.Password" type="password" />
+            <InputText class="name-input login-name-input" @bind-Value="UserLoginData.Password" type="password" />
         </div>
         <div class="login-section">
             <button class="btn login-button" type="submit">Prijavi se</button>
@@ -34,29 +36,43 @@
 </div>
 
 @code {
-    private User UserData = new User();
+    private UserLogin UserLoginData = new UserLogin();
     private string LoginMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isLoggedIn = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        if (isLoggedIn)
+        {
+            _navigationManager.NavigateTo("/");
+        };
+    }
 
     private async Task HandleLogin()
     {
-        var userId = await _schemaPalApiService.ValidateUser(UserData);
+        var loginResult = await _schemaPalApiService.LoginUser(UserLoginData);
 
-        if (userId > 0)
+        if (loginResult.IsSuccess)
         {
-            await sessionStorage.SetItemAsync<bool>("isGuest", false);
-            await sessionStorage.SetItemAsync<bool>("isLoggedIn", true);
-            await sessionStorage.SetItemAsync<int>("loggedInUserId", userId);
+            await _sessionStorage.SetItemAsync<bool>("isGuest", false);
 
-            NavigationManager.NavigateTo("/");
+            await _sessionStorage.SetItemAsync<bool>("isLoggedIn", true);
+            await _sessionStorage.SetItemAsync<string>("loggedInUsername", UserLoginData.Username);
+
+            // Ažuriraj komponentu koja prikazuje login/logout gumb i korisničko ime.
+            await UserSectionComponentHelper.NotifyUserStatusChange();
+
+            _navigationManager.NavigateTo("/");
         }
         else
         {
-            LoginMessage = "Neispravno korisničko ime ili lozinka.";
+            var errorMessage = loginResult.Errors.First().Message;
+            LoginMessage = errorMessage;
         }
     }
 
     private void NavigateToLoginRedirect()
     {
-        NavigationManager.NavigateTo("/login-redirect");
+        _navigationManager.NavigateTo("/login-redirect");
     }
 }

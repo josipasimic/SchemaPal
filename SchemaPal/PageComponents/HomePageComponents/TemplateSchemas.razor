@@ -1,5 +1,6 @@
-﻿@inject NavigationManager Navigation
-@using SchemaPal.DataTransferObjects
+﻿@using SchemaPal.DataTransferObjects
+
+@inject NavigationManager _navigationManager
 
 <div class="template-grid">
     @foreach (var template in templates)
@@ -20,6 +21,6 @@
 
     private void OpenTemplateSchema(DatabaseSchema template)
     {
-        Navigation.NavigateTo("/schema-maker?template=" + template.Name);
+        _navigationManager.NavigateTo("/schema-maker?template=" + template.Name);
     }
 }

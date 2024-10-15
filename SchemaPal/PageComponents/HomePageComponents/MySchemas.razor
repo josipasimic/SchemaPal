@@ -1,8 +1,8 @@
 ﻿@using SchemaPal.DataTransferObjects.API;
 @using SchemaPal.Services;
 
-@inject NavigationManager Navigation
-@inject ISchemaPalApiService _schemaPalApiService;
+@inject NavigationManager _navigationManager
+@inject ISchemaPalApiService _schemaPalApiService
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <div class="my-schemas">
@@ -32,6 +32,6 @@
 
     private void OpenUserSchema(int schemaId)
     {
-        Navigation.NavigateTo("/schema-maker?schemaId=" + schemaId);
+        _navigationManager.NavigateTo("/schema-maker?schemaId=" + schemaId);
     }
 }

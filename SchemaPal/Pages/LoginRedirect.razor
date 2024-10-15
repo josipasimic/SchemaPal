@@ -1,7 +1,9 @@
 ﻿@page "/login-redirect"
 
-@inject NavigationManager NavigationManager
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@using SchemaPal.Helpers
+
+@inject NavigationManager _navigationManager
+@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
 
 <div class="main-content">
     <div class="auth-options">
@@ -12,20 +14,33 @@
 </div>
 
 @code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isLoggedIn = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        if (isLoggedIn)
+        {
+            _navigationManager.NavigateTo("/");
+        };
+    }
+
     private void Login()
     {
-        NavigationManager.NavigateTo("/login"); 
+        _navigationManager.NavigateTo("/login"); 
     }
 
     private void SignUp()
     {
-        NavigationManager.NavigateTo("/signup"); 
+        _navigationManager.NavigateTo("/signup"); 
     }
 
     private async void ContinueAsGuest()
     {
-        await sessionStorage.SetItemAsync<bool>("isGuest", true);
-        await sessionStorage.SetItemAsync<bool>("isLoggedIn", false);
-        NavigationManager.NavigateTo("/"); 
+        await _sessionStorage.SetItemAsync<bool>("isGuest", true);
+        await _sessionStorage.SetItemAsync<bool>("isLoggedIn", false);
+
+        await UserSectionComponentHelper.NotifyUserStatusChange();
+
+        _navigationManager.NavigateTo("/"); 
     }
 }

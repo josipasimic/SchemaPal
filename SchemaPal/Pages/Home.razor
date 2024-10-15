@@ -2,8 +2,8 @@
 
 @using SchemaPal.PageComponents.HomePageComponents;
 
-@inject NavigationManager Navigation
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager _navigationManager
+@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
 
 <PageTitle>SchemaPal</PageTitle>
 
@@ -49,13 +49,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        isGuest = await sessionStorage.GetItemAsync<bool>("isGuest");
-        isLoggedInUser = await sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        isGuest = await _sessionStorage.GetItemAsync<bool>("isGuest");
+        isLoggedInUser = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
 
         if (!isGuest 
             && !isLoggedInUser)
         {
-            Navigation.NavigateTo("/login-redirect");
+            _navigationManager.NavigateTo("/login-redirect");
         }
     }
 
@@ -66,6 +66,6 @@
 
     private void OpenSchemaMakerCanvas()
     {
-        Navigation.NavigateTo("/schema-maker");
+        _navigationManager.NavigateTo("/schema-maker");
     }
 }

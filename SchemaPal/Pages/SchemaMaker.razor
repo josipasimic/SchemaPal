@@ -8,7 +8,7 @@
 @using SchemaPal.PageComponents.SchemaMakerComponents.SidebarComponents;
 @using SchemaPal.Services;
 
-@inject NavigationManager NavigationManager;
+@inject NavigationManager _navigationManager;
 @inject ISchemaObjectFactory _schemaObjectFactory;
 @inject IStyleService _styleService;
 @inject ISchemaPalApiService _schemaPalApiService;
@@ -46,7 +46,7 @@
     {
         _schemaObjectFactory.Reset();
 
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
         var schemaId = query["schemaId"];

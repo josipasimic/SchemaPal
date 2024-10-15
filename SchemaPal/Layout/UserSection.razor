@@ -1,0 +1,82 @@
+﻿@using SchemaPal.Enums
+@using SchemaPal.Helpers
+
+@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
+@inject NavigationManager _navigationManager
+
+<div>
+    <div class="user-section"
+        style="display: @SectionDisplay">
+        <span>Koristite aplikaciju kao: <strong>@UsernameText</strong></span>
+        <a class="user-section-btn" @onclick="HandleButtonClick">@(ButtonMode == ButtonMode.Login ? "Prijava" : "Odjava")</a>
+    </div>
+</div>
+
+@code {
+    private ButtonMode ButtonMode;
+    private string UsernameText = string.Empty;
+
+    private string SectionDisplay = "flex";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SetData();
+
+        // Omogući ažuriranje komponente iz drugih stranica (konkretno, ovo pozivamo s Login i LoginRedirect stranica,
+        // kad se korisnik uspješno prijavi ili nastavi kao gost, kako bi se podaci o korisniku ažurirali).
+        UserSectionComponentHelper.OnUserStatusChange += RefreshState;
+    }
+
+    private async Task RefreshState()
+    {
+        await SetData();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SetData()
+    {
+        var isUserLoggedIn = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        var authenticationToken = await _sessionStorage.GetItemAsync<string>("authToken");
+
+        var isLogInValid = isUserLoggedIn && authenticationToken != null;
+
+        var isUserGuest = await _sessionStorage.GetItemAsync<bool>("isGuest");
+
+        SectionDisplay = "flex";
+
+        if (isLogInValid
+            && !isUserGuest)
+        {
+            ButtonMode = ButtonMode.Logout;
+
+            var loggedInUsername = await _sessionStorage.GetItemAsync<string>("loggedInUsername");
+            UsernameText = loggedInUsername;
+        }
+        else if (isUserGuest
+            && !isUserLoggedIn)
+        {
+            ButtonMode = ButtonMode.Login;
+            UsernameText = "gost";
+        }
+        else
+        {
+            SectionDisplay = "none";
+        }
+    }
+
+    private async Task HandleButtonClick()
+    {
+        if (ButtonMode == ButtonMode.Logout)
+        {
+            await _sessionStorage.SetItemAsync("isLoggedIn", false);
+            await _sessionStorage.RemoveItemAsync("authToken");
+            await _sessionStorage.RemoveItemAsync("loggedInUsername");
+
+            await SetData();
+            await RefreshState();
+        }
+
+        _navigationManager.NavigateTo("/login-redirect");
+    }
+}

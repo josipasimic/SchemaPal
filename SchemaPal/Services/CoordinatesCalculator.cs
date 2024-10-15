@@ -147,7 +147,6 @@ namespace SchemaPal.Services
             (double TargetX, double TargetY) targetPosition,
             double zoomLevel)
         {
-            // Neispravni zoom level.
             if (zoomLevel == 0)
             {
                 return (0, 0);
