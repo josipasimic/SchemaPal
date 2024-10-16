@@ -1,6 +1,6 @@
 ﻿.table-wrapper {
     position: absolute;
-    z-index: 100000000000000;
+    z-index: 999;
     opacity: 1;
 }
 
@@ -21,7 +21,7 @@
             height: 15px;
             cursor: crosshair;
             pointer-events: all;
-            z-index: 100000000000000;
+            z-index: 999;
             opacity: 1;
         }
 

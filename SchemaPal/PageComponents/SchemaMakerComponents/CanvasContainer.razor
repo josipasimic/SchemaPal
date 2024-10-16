@@ -14,6 +14,7 @@
      @ondrop="OnTableDrop">
     <div class="canvas-buttons">
         <ZoomControls OnZoomIn="OnZoomIn" OnZoomOut="OnZoomOut" />
+        <SaveSchemaButton OnSaveSchema="@this.OnSaveSchema" />
         <ExportControls OnExportPng="OnExportPng" OnExportJson="OnExportJson" />
     </div>
 
@@ -40,6 +41,7 @@
     [Parameter] public RelationshipCreationHelper RelationshipCreationHelper { get; set; }
 
     [Parameter] public EventCallback OnRelationshipDrawing { get; set; }
+    [Parameter] public EventCallback OnSaveSchema { get; set; }
     [Parameter] public EventCallback OnUpdateState { get; set; }
 
     public DragAndDropHelper DragAndDropHelper { get; set; } = new DragAndDropHelper();

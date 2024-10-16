@@ -1,0 +1,15 @@
+﻿.save-controls {
+    margin-top: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+    .save-controls button {
+        margin-right: 2px;
+        height: 100%;
+    }
+
+    .save-controls img {
+        height: 22px;
+    }

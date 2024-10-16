@@ -1,0 +1,33 @@
+﻿@using SchemaPal.Services;
+
+@inject IUserSessionService _userSessionService
+
+<div class="save-controls" style="display: @ButtonDisplay;">
+    <button class="btn" title="Spremi" @onclick="OnSaveClick">
+        <img src="images/save.png" />
+    </button>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnSaveSchema { get; set; }
+
+    private string ButtonDisplay { get; set; } = "none";
+
+    protected async override Task OnInitializedAsync()
+    {
+        var isUserLoggedIn = await _userSessionService.IsUserLoggedIn();
+
+        if (isUserLoggedIn)
+        {
+            this.ButtonDisplay = "block";
+            return;
+        }
+
+        this.ButtonDisplay = "none";
+    }
+
+    private async Task OnSaveClick()
+    {
+        await OnSaveSchema.InvokeAsync();
+    }
+}

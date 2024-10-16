@@ -1,0 +1,10 @@
+﻿.schema-name-label {
+    width: 15%;
+    margin-right: 0;
+}
+
+.schema-name-input {
+    margin-left: 0;
+    margin-right: 0;
+    width: 80%;
+}

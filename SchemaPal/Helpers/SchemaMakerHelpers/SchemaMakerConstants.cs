@@ -69,5 +69,7 @@
         public const double ConnectionPointBuffer = 2.5;
 
         public const string ExportPngDivId = "snapshot-content";
+
+        public const string DefaultNewSchemaName = "Nova shema";
     }
 }

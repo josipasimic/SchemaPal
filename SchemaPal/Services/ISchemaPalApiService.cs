@@ -1,5 +1,4 @@
 ﻿using FluentResults;
-using SchemaPal.DataTransferObjects;
 using SchemaPal.DataTransferObjects.API;
 
 namespace SchemaPal.Services
@@ -8,16 +7,16 @@ namespace SchemaPal.Services
     {
         Task<Result> RegisterUser(UserRegistration userRegistration);
 
-        Task<Result> LoginUser(UserLogin userLogin);
+        Task<Result<AccessToken>> LoginUser(UserLogin userLogin);
 
         // -----------------------------------------
 
-        Task<int> SaveDatabaseSchema(DatabaseSchema databaseSchema);
+        Task<Result<Guid>> SaveDatabaseSchema(ExtendedSchemaRecord extendedSchemaRecord);
 
-        Task<List<(int Id, string Name)>> GetDatabaseSchemasForUser(int userId);
+        Task<Result<List<ShortSchemaRecord>>> GetDatabaseSchemasForLoggedInUser();
 
-        Task<DatabaseSchema> GetDatabaseSchema(int id);
+        Task<Result<ExtendedSchemaRecord>> GetDatabaseSchema(Guid id);
 
-        Task<bool> DeleteDatabaseSchema(int id);
+        Task<Result> DeleteDatabaseSchema(int id);
     }
 }

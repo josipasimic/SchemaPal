@@ -34,5 +34,7 @@ namespace SchemaPal.Services.SchemaMakerServices
             int? columnId = null);
 
         void Reset();
+
+        void SetWithExistingSchema(DatabaseSchema databaseSchema);
     }
 }

@@ -1,9 +1,10 @@
 ﻿@page "/"
 
 @using SchemaPal.PageComponents.HomePageComponents;
+@using SchemaPal.Services;
 
 @inject NavigationManager _navigationManager
-@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
+@inject IUserSessionService _userSessionService
 
 <PageTitle>SchemaPal</PageTitle>
 
@@ -49,8 +50,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        isGuest = await _sessionStorage.GetItemAsync<bool>("isGuest");
-        isLoggedInUser = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        isGuest = await _userSessionService.IsUserGuest();
+        isLoggedInUser = await _userSessionService.IsUserLoggedIn();
 
         if (!isGuest 
             && !isLoggedInUser)

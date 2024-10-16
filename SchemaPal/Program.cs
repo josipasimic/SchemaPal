@@ -28,6 +28,9 @@ builder.Services.AddSingleton<IExportService, ExportService>();
 builder.Services.AddSingleton<IJsonService, JsonService>();
 
 builder.Services.AddScoped<ISchemaPalApiService, SchemaPalApiService>();
+builder.Services.AddScoped<ISchemaInjectionService, SchemaInjectionService>();
+builder.Services.AddScoped<IUserSessionService, UserSessionService>();
+builder.Services.AddScoped<IResultProcessor, ResultProcessor>();
 
 builder.Services.AddTransient<ISchemaObjectFactory, SchemaObjectFactory>();
 

@@ -6,8 +6,8 @@
 @using SchemaPal.Services
 
 @inject NavigationManager _navigationManager
-@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
 @inject ISchemaPalApiService _schemaPalApiService
+@inject IUserSessionService _userSessionService
 
 <PageTitle>Prijava</PageTitle>
 
@@ -41,7 +41,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var isLoggedIn = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        var isLoggedIn = await _userSessionService.IsUserLoggedIn();
         if (isLoggedIn)
         {
             _navigationManager.NavigateTo("/");
@@ -52,23 +52,18 @@
     {
         var loginResult = await _schemaPalApiService.LoginUser(UserLoginData);
 
-        if (loginResult.IsSuccess)
+        var sessionStartResult = await _userSessionService.StartLoggedInUserSession(UserLoginData.Username, loginResult);
+
+        if (sessionStartResult.IsSuccess)
         {
-            await _sessionStorage.SetItemAsync<bool>("isGuest", false);
-
-            await _sessionStorage.SetItemAsync<bool>("isLoggedIn", true);
-            await _sessionStorage.SetItemAsync<string>("loggedInUsername", UserLoginData.Username);
-
             // Ažuriraj komponentu koja prikazuje login/logout gumb i korisničko ime.
             await UserSectionComponentHelper.NotifyUserStatusChange();
-
             _navigationManager.NavigateTo("/");
+            return;
         }
-        else
-        {
-            var errorMessage = loginResult.Errors.First().Message;
-            LoginMessage = errorMessage;
-        }
+
+        var errorMessage = sessionStartResult.Errors.First().Message;
+        LoginMessage = errorMessage;
     }
 
     private void NavigateToLoginRedirect()

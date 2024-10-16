@@ -2,10 +2,6 @@
 {
     public class DatabaseSchema
     {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
         public List<Table> Tables { get; set; }
 
         public List<Relationship> Relationships { get; set; }
@@ -20,7 +16,6 @@
             Relationships = new List<Relationship>();
             ConnectionPoints = new List<ConnectionPoint>();
             ConnectionPointColors = new Dictionary<string, string>();
-            Name = string.Empty;
         }
     }
 }

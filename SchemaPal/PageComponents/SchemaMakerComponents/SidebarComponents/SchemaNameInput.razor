@@ -1,0 +1,35 @@
+﻿@using SchemaPal.Services
+
+@inject IUserSessionService _userSessionService
+
+<div style="display: @NameInputDisplay">
+    <span class="name-label schema-name-label">Naziv:</span>
+    <input value="@this.SchemaName" class="name-input schema-name-input" @onchange="HandleNameChange" />
+</div>
+
+@code
+{
+    [Parameter] public string SchemaName { get; set; }
+    [Parameter] public EventCallback<string> OnUpdateName { get; set; }
+
+    private string NameInputDisplay { get; set; } = "none";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var isUserLoggedIn = await _userSessionService.IsUserLoggedIn();
+
+        if (isUserLoggedIn)
+        {
+            this.NameInputDisplay = "block";
+            return;
+        }
+
+        this.NameInputDisplay = "none";
+    }
+
+    private async Task HandleNameChange(ChangeEventArgs e)
+    {
+        this.SchemaName = e.Value.ToString();
+        await this.OnUpdateName.InvokeAsync(this.SchemaName);
+    }
+}

@@ -1,22 +1,36 @@
 ﻿@page "/schema-maker"
 
+@using FluentResults
 @using SchemaPal.DataTransferObjects
+@using SchemaPal.DataTransferObjects.API
 @using SchemaPal.Enums
 @using SchemaPal.Enums.EnumTranslators
 @using SchemaPal.Helpers.SchemaMakerHelpers
+@using SchemaPal.PageComponents.GeneralComponents
 @using SchemaPal.PageComponents.SchemaMakerComponents
 @using SchemaPal.PageComponents.SchemaMakerComponents.SidebarComponents
 @using SchemaPal.Services
 @using SchemaPal.Services.SchemaMakerServices
 
-@inject NavigationManager _navigationManager;
-@inject ISchemaObjectFactory _schemaObjectFactory;
-@inject IStyleService _styleService;
-@inject ISchemaPalApiService _schemaPalApiService;
+@inject NavigationManager _navigationManager
+@inject ISchemaObjectFactory _schemaObjectFactory
+@inject ISchemaInjectionService _schemaInjectionService
+@inject ISchemaPalApiService _schemaPalApiService
+@inject IJsonService _jsonService
+@inject IResultProcessor _resultProcessor
+@inject IStyleService _styleService
 
 <div class="layout-grid">
+    <ModalWindow 
+        Message="@this.UserMessage"
+        ButtonMode="@this.ModalWindowButtonMode"
+        OnAccept="@this.OnAccept"
+        OnCancel="@this.OnCancel"/>
+
     <Sidebar
-        Tables="this.DatabaseSchema.Tables"
+        SchemaName="@this.SchemaName"
+        OnUpdateName="UpdateSchemaName"
+        Tables="@this.DatabaseSchema.Tables"
         AddNewTable="AddNewTable"
         DeleteTable="DeleteTable"
         AddNewColumn="AddNewColumn"
@@ -24,45 +38,55 @@
         AddNewIndex="AddNewIndex"
         DeleteIndex="DeleteIndex"
         OnIndexColumnsUpdate="UpdateColumnsOnIndex"
-        Relationships="this.DatabaseSchema.Relationships"
+        Relationships="@this.DatabaseSchema.Relationships"
         DeleteRelationship="DeleteRelationship"
-        OnUpdateState="StateHasChanged">
+        OnUpdateState="StateHasChanged"
+        OnBackToHome="OnBackToHome">
     </Sidebar>
 
     <CanvasContainer
         DatabaseSchema="this.DatabaseSchema"
         RelationshipCreationHelper="this.RelationshipCreationHelper"
         OnRelationshipDrawing="AddNewRelationship"
+        OnSaveSchema="SaveSchema"
         OnUpdateState="StateHasChanged">
     </CanvasContainer>
 </div>
 
 @code {
+    private Guid SchemaId = Guid.Empty;
+    private string SchemaName = SchemaMakerConstants.DefaultNewSchemaName;
     private DatabaseSchema DatabaseSchema = new DatabaseSchema();
 
     private RelationshipCreationHelper RelationshipCreationHelper = new RelationshipCreationHelper();
 
-    // Napravi SchemaInjectionService koji će umetnuti gotove sheme u page, pa će ih page koristiti.
-    protected async override void OnInitialized()
+    private string UserMessage = string.Empty;
+    private ModalWindowButtonMode ModalWindowButtonMode = ModalWindowButtonMode.Accept;
+    private EventCallback OnAccept = EventCallback.Empty;
+    private EventCallback OnCancel = EventCallback.Empty;
+
+    protected override void OnInitialized()
     {
-        _schemaObjectFactory.Reset();
-
-        var uri = _navigationManager.ToAbsoluteUri(_navigationManager.Uri);
-        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-
-        var schemaId = query["schemaId"];
-
-        if (!string.IsNullOrEmpty(schemaId))
+        var injectedSchema = _schemaInjectionService.PopSchema();
+        if (injectedSchema.Schema != null)
         {
-            var isParsingSuccessful = int.TryParse(schemaId, out int schemaIdInt);
-            if (isParsingSuccessful)
-            {
-                this.DatabaseSchema = await _schemaPalApiService.GetDatabaseSchema(schemaIdInt);
-            }
-        };
+            this.SchemaId = injectedSchema.Id;
+            this.SchemaName = injectedSchema.Name;
+            this.DatabaseSchema = injectedSchema.Schema;
+
+            _schemaObjectFactory.SetWithExistingSchema(this.DatabaseSchema);
+
+            return;
+        }
+
+        this.SchemaId = Guid.Empty;
+        this.SchemaName = SchemaMakerConstants.DefaultNewSchemaName;
+        this.DatabaseSchema = new DatabaseSchema();
+
+        _schemaObjectFactory.Reset();
     }
 
-    #region creating schema objects
+    #region kreiranje objekata (dodavanje novih tablica, stupaca, indeksa, veza)
 
     private async Task AddNewTable()
     {
@@ -132,7 +156,7 @@
 
     #endregion
 
-    #region removing schema objects
+    #region brisanje objekata
 
     private async Task DeleteTable(int tableId)
     {
@@ -186,4 +210,48 @@
     }
 
     #endregion
+
+    private void UpdateSchemaName(string name)
+    {
+        this.SchemaName = name;
+    }
+
+    private async Task SaveSchema()
+    {
+        var result = await _schemaPalApiService.SaveDatabaseSchema(new ExtendedSchemaRecord
+        {
+            Id = this.SchemaId,
+            Name = this.SchemaName,
+            SchemaJsonFormat = _jsonService.Serialize(this.DatabaseSchema)
+        });
+
+        this.ModalWindowButtonMode = ModalWindowButtonMode.Accept;
+        this.OnAccept = EventCallback.Factory.Create(this, CloseModalWindow);
+
+        if (result.IsSuccess)
+        {
+            this.SchemaId = result.Value;
+
+            this.UserMessage = "Uspješno ste spremili shemu.";
+            return;
+        }
+
+        this.UserMessage = await _resultProcessor.ProcessFailedResult(result);
+    }
+
+    private void OnBackToHome()
+    {
+        this.UserMessage = "Jeste li sigurni da želite napustiti stranicu? Sve promjene će biti izgubljene.";
+        this.ModalWindowButtonMode = ModalWindowButtonMode.AcceptCancel;
+        this.OnAccept = EventCallback.Factory.Create(this, () => _navigationManager.NavigateTo("/"));
+        this.OnCancel = EventCallback.Factory.Create(this, CloseModalWindow);
+    }
+
+    private void CloseModalWindow()
+    {
+        this.UserMessage = string.Empty;
+        this.ModalWindowButtonMode = ModalWindowButtonMode.Accept;
+        this.OnAccept = EventCallback.Empty;
+        this.OnCancel = EventCallback.Empty;
+    }
 }

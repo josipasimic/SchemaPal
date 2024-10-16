@@ -4,8 +4,8 @@
 @using SchemaPal.Services
 
 @inject NavigationManager _navigationManager
-@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
 @inject ISchemaPalApiService _schemaPalApiService
+@inject IUserSessionService _userSessionService
 
 <PageTitle>Registracija</PageTitle>
 
@@ -47,7 +47,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var isLoggedIn = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
+        var isLoggedIn = await _userSessionService.IsUserLoggedIn();
         if (isLoggedIn)
         {
             _navigationManager.NavigateTo("/");

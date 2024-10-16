@@ -2,11 +2,12 @@
 @using SchemaPal.Helpers.SchemaMakerHelpers;
 @using SchemaPal.PageComponents.SchemaMakerComponents.SidebarComponents;
 
-@inject NavigationManager NavigationManager;
-@inject IJSRuntime JSRuntime;
-
 <div class="sidebar">
-    <button class="btn" @onclick="NavigateToHome">&#129032 Natrag na glavni izbornik</button>
+    <button class="btn" @onclick="OnBackToHome">&#129032 Natrag na glavni izbornik</button>
+
+    <SchemaNameInput 
+        SchemaName="@this.SchemaName" 
+        OnUpdateName="this.OnUpdateName" />
 
     <ExpandableSection 
         Title="Tablice" 
@@ -48,6 +49,8 @@
 
 @code 
 {
+    [Parameter] public string SchemaName { get; set; }
+
     [Parameter] public List<Table> Tables { get; set; }
     [Parameter] public List<Relationship> Relationships { get; set; }
 
@@ -60,13 +63,15 @@
     [Parameter] public Func<List<int>, int, int, Task> OnIndexColumnsUpdate { get; set; }
     [Parameter] public Func<int, Task> DeleteRelationship { get; set; }
 
+    [Parameter] public EventCallback<string> OnUpdateName { get; set; }
+    [Parameter] public EventCallback OnBackToHome { get; set; }
     [Parameter] public EventCallback OnUpdateState { get; set; }
 
-    public ExpandMenuHelper ExpandMenuHelper { get; set; } = new ExpandMenuHelper();
+    private ExpandMenuHelper ExpandMenuHelper { get; set; } = new ExpandMenuHelper();
 
-    public void ToggleTablesExpanded() => this.ExpandMenuHelper.AreTablesExpanded = !this.ExpandMenuHelper.AreTablesExpanded;
+    private void ToggleTablesExpanded() => this.ExpandMenuHelper.AreTablesExpanded = !this.ExpandMenuHelper.AreTablesExpanded;
 
-    public void ToggleRelationshipsExpanded() => this.ExpandMenuHelper.AreRelationshipsExpanded = !this.ExpandMenuHelper.AreRelationshipsExpanded;
+    private void ToggleRelationshipsExpanded() => this.ExpandMenuHelper.AreRelationshipsExpanded = !this.ExpandMenuHelper.AreRelationshipsExpanded;
 
     private string GenerateRelationshipName(int sourceTableId, 
         int destinationTableId, 
@@ -80,14 +85,5 @@
         var destinationColumnName = destinationTable?.Columns?.Find(c => c.Id == destinationColumnId)?.Name ?? string.Empty;
 
         return $"{sourceColumnName} - {destinationColumnName}";
-    }
-
-    private async Task NavigateToHome()
-    {
-        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Jeste li sigurni da želite napustiti stranicu?");
-        if (confirm)
-        {
-            NavigationManager.NavigateTo("/");
-        }
     }
 }

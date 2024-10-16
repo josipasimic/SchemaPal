@@ -1,37 +1,56 @@
 ﻿@using SchemaPal.DataTransferObjects.API;
 @using SchemaPal.Services;
+@using SchemaPal.Services.SchemaMakerServices;
+@using System.Net
 
 @inject NavigationManager _navigationManager
 @inject ISchemaPalApiService _schemaPalApiService
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject IUserSessionService _userSessionService
+@inject IResultProcessor _resultProcessor
+@inject ISchemaInjectionService _schemaInjectionService
 
+<p style="display: @MessageDisplay">@Message</p>
 <div class="my-schemas">
     @foreach (var schema in this.UserSchemas)
     {
         <div class="schema-item" @onclick="() => OpenUserSchema(schema.Id)">
-            <h4>@schema</h4>
+            <h4><strong>@schema.Name</strong> (Zadnje ažurirano @schema.LastSaved)</h4>
         </div>
     }
 </div>
 
 @code {
-    private List<(int Id, string Name)> UserSchemas = new List<(int Id, string Name)>();
+    private List<ShortSchemaRecord> UserSchemas = new List<ShortSchemaRecord>();
+
+    private string MessageDisplay = "none";
+    private string Message = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        UserSchemas = await GetUserSchemas();
+        await SetData();
     }
 
-    private async Task<List<(int Id, string Name)>> GetUserSchemas()
+    private async Task SetData()
     {
-        var loggedInUser = await sessionStorage.GetItemAsync<int>("loggedInUserId");
-        var schemas = await _schemaPalApiService.GetDatabaseSchemasForUser(loggedInUser);
+        var result = await _schemaPalApiService.GetDatabaseSchemasForLoggedInUser();
 
-        return schemas;
+        if (result.IsSuccess)
+        {
+            MessageDisplay = "none";
+            Message = string.Empty;
+            UserSchemas = result.Value;
+
+            return;
+        }
+
+        MessageDisplay = "block";
+        Message = await _resultProcessor.ProcessFailedResult(result);
+        UserSchemas = [];
     }
 
-    private void OpenUserSchema(int schemaId)
+    private async Task OpenUserSchema(Guid schemaId)
     {
-        _navigationManager.NavigateTo("/schema-maker?schemaId=" + schemaId);
+        await _schemaInjectionService.PushSchemaFromAPI(schemaId);
+        _navigationManager.NavigateTo("/schema-maker");
     }
 }

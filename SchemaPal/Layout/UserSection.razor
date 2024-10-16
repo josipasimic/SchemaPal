@@ -1,8 +1,9 @@
 ﻿@using SchemaPal.Enums
 @using SchemaPal.Helpers
+@using SchemaPal.Services
 
-@inject Blazored.SessionStorage.ISessionStorageService _sessionStorage
 @inject NavigationManager _navigationManager
+@inject IUserSessionService _userSessionService
 
 <div>
     <div class="user-section"
@@ -36,42 +37,36 @@
 
     private async Task SetData()
     {
-        var isUserLoggedIn = await _sessionStorage.GetItemAsync<bool>("isLoggedIn");
-        var authenticationToken = await _sessionStorage.GetItemAsync<string>("authToken");
-
-        var isLogInValid = isUserLoggedIn && authenticationToken != null;
-
-        var isUserGuest = await _sessionStorage.GetItemAsync<bool>("isGuest");
-
         SectionDisplay = "flex";
 
-        if (isLogInValid
-            && !isUserGuest)
+        var isUserGuest = await _userSessionService.IsUserGuest();
+        if (isUserGuest)
         {
+            UsernameText = "gost";
+            ButtonMode = ButtonMode.Login;
+
+            return;
+        }
+
+        var isUserLoggedIn = await _userSessionService.IsUserLoggedIn();
+        if (isUserLoggedIn)
+        {
+            var loggedInUsername = await _userSessionService.GetLoggedInUsername();
+            UsernameText = loggedInUsername;
             ButtonMode = ButtonMode.Logout;
 
-            var loggedInUsername = await _sessionStorage.GetItemAsync<string>("loggedInUsername");
-            UsernameText = loggedInUsername;
+            return;
         }
-        else if (isUserGuest
-            && !isUserLoggedIn)
-        {
-            ButtonMode = ButtonMode.Login;
-            UsernameText = "gost";
-        }
-        else
-        {
-            SectionDisplay = "none";
-        }
+
+        // Sakrij cijeli dio ako korisnik nije ni gost ni prijavljen (prvi pristup aplikaciji).
+        SectionDisplay = "none";
     }
 
     private async Task HandleButtonClick()
     {
         if (ButtonMode == ButtonMode.Logout)
         {
-            await _sessionStorage.SetItemAsync("isLoggedIn", false);
-            await _sessionStorage.RemoveItemAsync("authToken");
-            await _sessionStorage.RemoveItemAsync("loggedInUsername");
+            await _userSessionService.EndUserSession(LogoutReason.UserRequest);
 
             await SetData();
             await RefreshState();

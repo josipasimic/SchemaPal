@@ -1,0 +1,40 @@
+﻿.modal-window {
+    position: absolute;
+    top: 34%;
+    left: 34%;
+    width: 34%;
+    height: 34%;
+    background-color: rgb(254, 249, 249);
+    z-index: 1001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 5px solid rgb(133, 6, 6, 0.5);
+    color: rgb(0, 0, 0, 0.8);
+    border-radius: 5px;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+    .modal-window .message {
+        font-size: 17px;
+        font-weight: bold;
+        margin: 5%;
+        align-content: center;
+    }
+
+    .modal-window .buttons-area {
+        position: absolute;
+        top: 82%;
+        left: 68%;
+        width: 10%;
+        height: 14%;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .modal-window .buttons-area modal-btn {
+        margin-left: 10px;
+        height: 100%;
+        font-size: 17px;
+    }

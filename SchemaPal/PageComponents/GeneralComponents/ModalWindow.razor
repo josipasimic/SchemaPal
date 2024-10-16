@@ -1,0 +1,35 @@
+﻿@using SchemaPal.Enums;
+
+<div class="modal-window" style="display: @ModalWindowDisplay">
+    <p class="message">@Message</p>
+    <div class="buttons-area">
+        <button class="btn modal-btn" @onclick="OnAccept">Prihvati</button>
+        <button class="btn modal-btn" style="display: @CancelButtonDisplay" @onclick="OnCancel">Odustani</button>
+    </div>
+</div
+
+@code {
+    [Parameter] public string Message { get; set; }
+
+    [Parameter] public ModalWindowButtonMode ButtonMode { get; set; }
+
+    [Parameter] public EventCallback OnAccept { get; set; }
+
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private string ModalWindowDisplay
+    {
+        get
+        {
+            return string.IsNullOrWhiteSpace(Message) ? "none" : "flex";
+        }
+    }
+
+    private string CancelButtonDisplay 
+    {
+        get
+        {
+            return ButtonMode == ModalWindowButtonMode.AcceptCancel ? "block" : "none";
+        }
+    }
+}

@@ -6,7 +6,7 @@
     @foreach (var template in templates)
     {
         <div class="template-item" @onclick="() => OpenTemplateSchema(template)">
-            <h4>@template.Name</h4>
+            @* <h4>@template.Name</h4> *@
         </div>
     }
 </div>
@@ -14,13 +14,13 @@
 @code {
     private List<DatabaseSchema> templates = new List<DatabaseSchema>
     {
-        new DatabaseSchema { Name = "Glazbena platforma", Id = 1 },
-        new DatabaseSchema { Name = "Lanac dućana", Id = 2 },
-        new DatabaseSchema { Name = "Taksi usluge", Id = 3 },
+        // new DatabaseSchema { Name = "Glazbena platforma", Id = 1 },
+        // new DatabaseSchema { Name = "Lanac dućana", Id = 2 },
+        // new DatabaseSchema { Name = "Taksi usluge", Id = 3 },
     };
 
     private void OpenTemplateSchema(DatabaseSchema template)
     {
-        _navigationManager.NavigateTo("/schema-maker?template=" + template.Name);
+        // _navigationManager.NavigateTo("/schema-maker?template=" + template.Name);
     }
 }
