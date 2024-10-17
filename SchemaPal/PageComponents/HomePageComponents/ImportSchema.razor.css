@@ -1,5 +1,13 @@
-﻿.import-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+﻿.import-font {
+    font-size: 17px;
+    margin-bottom: 20px;
+    margin-left: -10%;
+    font-weight: bold;
+}
+
+.message {
+    font-size: 15px;
+    color: rgb(0, 0, 0, 0.8);
+    margin-top: 20px;
+    margin-left: -10%;
 }

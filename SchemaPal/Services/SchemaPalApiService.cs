@@ -109,7 +109,7 @@ namespace SchemaPal.Services
             return Result.Ok(schemaRecord);
         }
 
-        public async Task<Result> DeleteDatabaseSchema(int id)
+        public async Task<Result> DeleteDatabaseSchema(Guid id)
         {
             var response = await _httpClient.DeleteAsync($"DatabaseSchemas/{id}");
 

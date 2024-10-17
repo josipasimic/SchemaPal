@@ -7,7 +7,7 @@ namespace SchemaPal.Services.SchemaMakerServices
     {
         Task<Result> PushSchemaFromAPI(Guid schemaId);
 
-        void PushSchemaFromJsonImport(string jsonSchema);
+        Result PushSchemaFromJsonImport(string jsonSchema);
 
         (Guid Id, string Name, DatabaseSchema Schema) PopSchema();
     }

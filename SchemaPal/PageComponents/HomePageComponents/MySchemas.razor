@@ -9,12 +9,16 @@
 @inject IResultProcessor _resultProcessor
 @inject ISchemaInjectionService _schemaInjectionService
 
-<p style="display: @MessageDisplay">@Message</p>
+<p class="message">@Message</p>
 <div class="my-schemas">
     @foreach (var schema in this.UserSchemas)
     {
-        <div class="schema-item" @onclick="() => OpenUserSchema(schema.Id)">
-            <h4><strong>@schema.Name</strong> (Zadnje ažurirano @schema.LastSaved)</h4>
+        <div class="schema-item">
+            <div class="schema-name" @onclick="() => OpenUserSchema(schema.Id)">
+                <h4><strong>@schema.Name</strong></h4>
+                <p>(Zadnje ažurirano @schema.LastSaved)</p>
+            </div>
+            <button class="btn large-bold-font" title="Obriši shemu" @onclick="() => DeleteSchema(schema.Id)">&#128465</button>
         </div>
     }
 </div>
@@ -22,8 +26,7 @@
 @code {
     private List<ShortSchemaRecord> UserSchemas = new List<ShortSchemaRecord>();
 
-    private string MessageDisplay = "none";
-    private string Message = string.Empty;
+    private string Message;
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,14 +39,12 @@
 
         if (result.IsSuccess)
         {
-            MessageDisplay = "none";
             Message = string.Empty;
             UserSchemas = result.Value;
 
             return;
         }
 
-        MessageDisplay = "block";
         Message = await _resultProcessor.ProcessFailedResult(result);
         UserSchemas = [];
     }
@@ -54,8 +55,24 @@
 
         if (result.IsFailed)
         {
-            var errorMessage = result.Errors.First().Message;
+            Message = result.Errors.First().Message;
+            return;
         }
+
         _navigationManager.NavigateTo("/schema-maker");
+    }
+
+    private async Task DeleteSchema(Guid schemaId)
+    {
+        var result = await _schemaPalApiService.DeleteDatabaseSchema(schemaId);
+
+        if (result.IsFailed)
+        {
+            Message = result.Errors.First().Message;
+            return;
+        }
+
+        await SetData();
+        Message = "Shema je uspješno obrisana.";
     }
 }

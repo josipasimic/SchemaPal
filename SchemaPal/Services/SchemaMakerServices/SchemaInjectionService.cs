@@ -1,12 +1,13 @@
 ﻿using FluentResults;
 using SchemaPal.DataTransferObjects;
+using SchemaPal.Helpers.SchemaMakerHelpers;
 
 namespace SchemaPal.Services.SchemaMakerServices
 {
     public class SchemaInjectionService : ISchemaInjectionService
     {
         private readonly ISchemaPalApiService _schemaPalApiService;
-        private readonly IJsonConverter _jsonService;
+        private readonly IJsonConverter _jsonConverter;
         private readonly IResultProcessor _resultProcessor;
 
         public Guid InjectedSchemaId { get; set; } = Guid.Empty;
@@ -14,11 +15,11 @@ namespace SchemaPal.Services.SchemaMakerServices
         public DatabaseSchema InjectedSchema { get; set; } = null;
 
         public SchemaInjectionService(ISchemaPalApiService schemaPalApiService, 
-            IJsonConverter jsonService,
+            IJsonConverter jsonConverter,
             IResultProcessor resultProcessor)
         {
             _schemaPalApiService = schemaPalApiService;
-            _jsonService = jsonService;
+            _jsonConverter = jsonConverter;
             _resultProcessor = resultProcessor;
         }
 
@@ -29,7 +30,7 @@ namespace SchemaPal.Services.SchemaMakerServices
             if (result.IsSuccess)
             {
                 var schemaRecord = result.Value;
-                var schema = _jsonService.Deserialize<DatabaseSchema>(schemaRecord.SchemaJsonFormat);
+                var schema = _jsonConverter.Deserialize<DatabaseSchema>(schemaRecord.SchemaJsonFormat);
 
                 InjectedSchema = schema;
                 InjectedSchemaId = schemaRecord.Id;
@@ -42,9 +43,29 @@ namespace SchemaPal.Services.SchemaMakerServices
             return Result.Fail(errorMessage);
         }
 
-        public void PushSchemaFromJsonImport(string jsonSchema)
+        public Result PushSchemaFromJsonImport(string jsonSchema)
         {
+            var databaseSchema = (DatabaseSchema)null;
 
+            try
+            {
+                databaseSchema = _jsonConverter.Deserialize<DatabaseSchema>(jsonSchema);
+            }
+            catch (Exception ex)
+            {
+                return Result.Fail($"Došlo je do pogreške kod obrade sadržaja datoteke: {ex.Message}");
+            }
+
+            if (databaseSchema is null)
+            {
+                return Result.Fail("Došlo je do pogreške kod obrade sadržaja datoteke.");
+            }
+
+            InjectedSchema = databaseSchema;
+            InjectedSchemaId = Guid.Empty;
+            InjectedSchemaName = SchemaMakerConstants.DefaultNewSchemaName;
+
+            return Result.Ok();
         }
 
         public (Guid Id, string Name, DatabaseSchema Schema) PopSchema()

@@ -16,7 +16,7 @@
 @inject ISchemaObjectFactory _schemaObjectFactory
 @inject ISchemaInjectionService _schemaInjectionService
 @inject ISchemaPalApiService _schemaPalApiService
-@inject IJsonConverter _jsonService
+@inject IJsonConverter _jsonConverter
 @inject IResultProcessor _resultProcessor
 @inject IStyleService _styleService
 
@@ -218,7 +218,7 @@
         {
             Id = this.SchemaId,
             Name = this.SchemaName,
-            SchemaJsonFormat = _jsonService.Serialize(this.DatabaseSchema)
+            SchemaJsonFormat = _jsonConverter.Serialize(this.DatabaseSchema)
         });
 
         var userMessage = string.Empty;

@@ -12,12 +12,12 @@ namespace SchemaPal.Services.SchemaMakerServices
         private const string ExportJsnFileName = "schema.json";
 
         private readonly IJSRuntime _jsRuntime;
-        private readonly IJsonConverter _jsonService;
+        private readonly IJsonConverter _jsonConverter;
 
-        public ExportService(IJSRuntime jsRuntime, IJsonConverter jsonService)
+        public ExportService(IJSRuntime jsRuntime, IJsonConverter jsonConverter)
         {
             _jsRuntime = jsRuntime;
-            _jsonService = jsonService;
+            _jsonConverter = jsonConverter;
         }
 
         public async Task ExportSchemaAsPng()
@@ -29,7 +29,7 @@ namespace SchemaPal.Services.SchemaMakerServices
 
         public async Task ExportSchemaAsJson(DatabaseSchema databaseSchema)
         {
-            var databaseSchemaInJsonFormat = _jsonService.Serialize(databaseSchema);
+            var databaseSchemaInJsonFormat = _jsonConverter.Serialize(databaseSchema);
 
             await _jsRuntime.InvokeVoidAsync(
                 ExportJsnJavaScriptFunctionName,

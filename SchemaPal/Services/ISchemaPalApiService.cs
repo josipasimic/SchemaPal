@@ -9,14 +9,12 @@ namespace SchemaPal.Services
 
         Task<Result<AccessToken>> LoginUser(UserLogin userLogin);
 
-        // -----------------------------------------
-
         Task<Result<Guid>> SaveDatabaseSchema(ExtendedSchemaRecord extendedSchemaRecord);
 
         Task<Result<List<ShortSchemaRecord>>> GetDatabaseSchemasForLoggedInUser();
 
         Task<Result<ExtendedSchemaRecord>> GetDatabaseSchema(Guid id);
 
-        Task<Result> DeleteDatabaseSchema(int id);
+        Task<Result> DeleteDatabaseSchema(Guid id);
     }
 }
