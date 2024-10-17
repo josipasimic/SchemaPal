@@ -6,9 +6,8 @@
 @inject IUserSessionService _userSessionService
 
 <div>
-    <div class="user-section"
-        style="display: @SectionDisplay">
-        <span>Koristite aplikaciju kao: <strong>@UsernameText</strong></span>
+    <div class="user-section">
+        <span style="display: @UsernameDisplay">Koristite aplikaciju kao: <strong>@UsernameText</strong></span>
         <a class="user-section-btn" @onclick="HandleButtonClick">@(ButtonMode == ButtonMode.Login ? "Prijava" : "Odjava")</a>
     </div>
 </div>
@@ -17,7 +16,7 @@
     private ButtonMode ButtonMode;
     private string UsernameText = string.Empty;
 
-    private string SectionDisplay = "flex";
+    private string UsernameDisplay = "block";
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,14 +36,13 @@
 
     private async Task SetData()
     {
-        SectionDisplay = "flex";
+        UsernameDisplay = "block";
+        ButtonMode = ButtonMode.Login;
 
         var isUserGuest = await _userSessionService.IsUserGuest();
         if (isUserGuest)
         {
             UsernameText = "gost";
-            ButtonMode = ButtonMode.Login;
-
             return;
         }
 
@@ -58,8 +56,8 @@
             return;
         }
 
-        // Sakrij cijeli dio ako korisnik nije ni gost ni prijavljen (prvi pristup aplikaciji).
-        SectionDisplay = "none";
+        // Sakrij korisničko ime ako korisnik nije ni gost ni prijavljen (prvi pristup aplikaciji ili istekla sesija).
+        UsernameDisplay = "none";
     }
 
     private async Task HandleButtonClick()
