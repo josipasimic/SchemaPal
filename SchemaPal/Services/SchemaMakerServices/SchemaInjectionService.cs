@@ -6,7 +6,7 @@ namespace SchemaPal.Services.SchemaMakerServices
     public class SchemaInjectionService : ISchemaInjectionService
     {
         private readonly ISchemaPalApiService _schemaPalApiService;
-        private readonly IJsonService _jsonService;
+        private readonly IJsonConverter _jsonService;
         private readonly IResultProcessor _resultProcessor;
 
         public Guid InjectedSchemaId { get; set; } = Guid.Empty;
@@ -14,7 +14,7 @@ namespace SchemaPal.Services.SchemaMakerServices
         public DatabaseSchema InjectedSchema { get; set; } = null;
 
         public SchemaInjectionService(ISchemaPalApiService schemaPalApiService, 
-            IJsonService jsonService,
+            IJsonConverter jsonService,
             IResultProcessor resultProcessor)
         {
             _schemaPalApiService = schemaPalApiService;

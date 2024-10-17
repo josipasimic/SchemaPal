@@ -1,7 +1,7 @@
 ﻿using Blazored.SessionStorage;
 using FluentResults;
-using Microsoft.AspNetCore.Components;
 using SchemaPal.DataTransferObjects.API;
+using SchemaPal.Helpers;
 
 namespace SchemaPal.Services
 {
@@ -11,16 +11,12 @@ namespace SchemaPal.Services
         private const string IsLoggedInKey = "isLoggedIn";
         private const string UsernameKey = "loggedInUsername";
         private const string AccessTokenKey = "accessToken";
-        private const string AccessTokenExpirationKey = "accessTokenExpirationUtc";
 
         private readonly ISessionStorageService _sessionStorage;
-        private readonly NavigationManager _navigationManager;
 
-        public UserSessionService(ISessionStorageService sessionStorageService,
-            NavigationManager navigationManager) 
+        public UserSessionService(ISessionStorageService sessionStorageService) 
         { 
             _sessionStorage = sessionStorageService;
-            _navigationManager = navigationManager;
         }
 
         public async Task StartGuestUserSession()
@@ -28,7 +24,6 @@ namespace SchemaPal.Services
             await _sessionStorage.SetItemAsync(IsLoggedInKey, false);
             await _sessionStorage.RemoveItemAsync(UsernameKey);
             await _sessionStorage.RemoveItemAsync(AccessTokenKey);
-            await _sessionStorage.RemoveItemAsync(AccessTokenExpirationKey);
 
             await _sessionStorage.SetItemAsync(IsGuestKey, true);
         }
@@ -48,7 +43,6 @@ namespace SchemaPal.Services
 
             var accessToken = apiLoginResult.Value;
             await _sessionStorage.SetItemAsync(AccessTokenKey, accessToken.Token);
-            await _sessionStorage.SetItemAsync(AccessTokenExpirationKey, accessToken.ExpirationDateUtc);
 
             return Result.Ok();
         }
@@ -64,15 +58,12 @@ namespace SchemaPal.Services
         {
             var isLoggedIn = await _sessionStorage.GetItemAsync<bool>(IsLoggedInKey);
             var accessToken = await _sessionStorage.GetItemAsync<string>(AccessTokenKey);
-            var accessTokenExpirationUtc = await _sessionStorage.GetItemAsync<DateTime>(AccessTokenExpirationKey);
 
             if (isLoggedIn
-                && !string.IsNullOrEmpty(accessToken)
-                && accessTokenExpirationUtc > DateTime.UtcNow)
+                && !string.IsNullOrEmpty(accessToken))
             {
                 return true;
             }
-
 
             return false;
         }
@@ -85,23 +76,13 @@ namespace SchemaPal.Services
             return username;
         }
 
-        public async Task EndUserSession(LogoutReason logoutReason)
+        public async Task EndUserSession()
         {
             await _sessionStorage.SetItemAsync(IsLoggedInKey, false);
             await _sessionStorage.RemoveItemAsync(UsernameKey);
             await _sessionStorage.RemoveItemAsync(AccessTokenKey);
-            await _sessionStorage.RemoveItemAsync(AccessTokenExpirationKey);
 
-            if (logoutReason == LogoutReason.TokenExpired)
-            {
-                _navigationManager.NavigateTo("/login-redirect?sessionExpired=1");
-            }
+            await UserSectionComponentHelper.NotifyUserStatusChange();
         }
-    }
-
-    public enum LogoutReason
-    {
-        UserRequest,
-        TokenExpired
     }
 }

@@ -50,7 +50,12 @@
 
     private async Task OpenUserSchema(Guid schemaId)
     {
-        await _schemaInjectionService.PushSchemaFromAPI(schemaId);
+        var result = await _schemaInjectionService.PushSchemaFromAPI(schemaId);
+
+        if (result.IsFailed)
+        {
+            var errorMessage = result.Errors.First().Message;
+        }
         _navigationManager.NavigateTo("/schema-maker");
     }
 }

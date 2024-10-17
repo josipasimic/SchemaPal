@@ -121,7 +121,8 @@ namespace SchemaPal.Services.SchemaMakerServices
                     && x.Side == destinationTableData.Side)
                 .UniqueIdentifier;
 
-            relationship.ConnectionPointIds = (updatedStartingConnectionPointId, updatedEndingConnectionPointId);
+            relationship.ConnectionPointIds.Start = updatedStartingConnectionPointId;
+            relationship.ConnectionPointIds.End = updatedEndingConnectionPointId;
         }
 
         private void UpdateRelationshipMidPoints(

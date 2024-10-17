@@ -16,7 +16,7 @@ namespace SchemaPal.DataTransferObjects
 
         public RelationshipType RelationshipType { get; set; }
 
-        public (string Start, string End) ConnectionPointIds { get; set; }
+        public RelationshipConnectionPointIds ConnectionPointIds { get; set; } = new RelationshipConnectionPointIds();
 
         #region line coordinates 
 
@@ -37,5 +37,12 @@ namespace SchemaPal.DataTransferObjects
         public double Y2 { get; set; }
 
         #endregion
+    }
+
+    public class RelationshipConnectionPointIds
+    {
+        public string Start { get; set;}
+
+        public string End { get; set;}
     }
 }

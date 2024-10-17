@@ -14,22 +14,28 @@ namespace SchemaPal.Services
 
         public async Task<string> ProcessFailedResult<T>(Result<T> result)
         {
-            var isUserLoginValid = await _userSessionService.IsUserLoggedIn();
-            if (!isUserLoginValid)
+            if (result.IsSuccess)
             {
-                await _userSessionService.EndUserSession(LogoutReason.TokenExpired);
-
-                return string.Empty;
+                throw new ArgumentException("Result is not failed.");
             }
 
-            var resultErrorMessage = result.Errors.First().Message;
-            var errorMessage = $"Došlo je do greške: {resultErrorMessage}";
+            var resultError = result.Errors.First();
 
-            var statusCodeBoxed = result.Errors.First().Metadata.GetValueOrDefault(nameof(HttpStatusCode));
-            if (statusCodeBoxed != null)
+            var httpStatusCode = resultError.Metadata.GetValueOrDefault(nameof(HttpStatusCode));
+            var unboxedHttpStatusCode = httpStatusCode != null
+                ? (HttpStatusCode)httpStatusCode
+                : default;
+
+            if (unboxedHttpStatusCode == HttpStatusCode.Unauthorized)
             {
-                var statusCode = (HttpStatusCode)statusCodeBoxed;
-                errorMessage += $" HTTP kod greške: {(int)statusCode} {statusCode}";
+                await _userSessionService.EndUserSession();
+                return "Vaša prijava je istekla. Prijavite se ponovno u sustav.";
+            }
+
+            var errorMessage = $"Došlo je do greške: {resultError.Message}.";
+            if (unboxedHttpStatusCode != default)
+            {
+                errorMessage += $" HTTP kod greške: {(int)unboxedHttpStatusCode}.";
             }
 
             return errorMessage;

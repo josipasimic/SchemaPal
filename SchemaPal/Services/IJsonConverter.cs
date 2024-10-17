@@ -1,6 +1,6 @@
 ﻿namespace SchemaPal.Services
 {
-    public interface IJsonService
+    public interface IJsonConverter
     {
         string Serialize<T>(T obj);
 

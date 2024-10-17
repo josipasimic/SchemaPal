@@ -4,8 +4,8 @@
     left: 34%;
     width: 34%;
     height: 34%;
-    background-color: rgb(254, 249, 249);
-    z-index: 1001;
+    background-color: white;
+    z-index: 1002;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -14,6 +14,7 @@
     border-radius: 5px;
     flex-direction: column;
     overflow: hidden;
+    pointer-events: auto;
 }
 
     .modal-window .message {
@@ -25,9 +26,8 @@
 
     .modal-window .buttons-area {
         position: absolute;
-        top: 82%;
-        left: 68%;
-        width: 10%;
+        bottom: 5%;
+        right: 3%;
         height: 14%;
         display: flex;
         flex-direction: row;

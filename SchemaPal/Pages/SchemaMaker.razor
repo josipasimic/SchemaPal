@@ -16,17 +16,18 @@
 @inject ISchemaObjectFactory _schemaObjectFactory
 @inject ISchemaInjectionService _schemaInjectionService
 @inject ISchemaPalApiService _schemaPalApiService
-@inject IJsonService _jsonService
+@inject IJsonConverter _jsonService
 @inject IResultProcessor _resultProcessor
 @inject IStyleService _styleService
 
-<div class="layout-grid">
-    <ModalWindow 
-        Message="@this.UserMessage"
-        ButtonMode="@this.ModalWindowButtonMode"
-        OnAccept="@this.OnAccept"
-        OnCancel="@this.OnCancel"/>
+<ModalWindow 
+    Message="@this.UserMessage"
+    ButtonMode="@this.ModalWindowButtonMode"
+    OnAccept="@this.OnAccept"
+    OnCancel="@this.OnCancel"/>
 
+<div class="layout-grid" 
+     style="pointer-events: @(string.IsNullOrEmpty(UserMessage) ? "auto" : "none");">
     <Sidebar
         SchemaName="@this.SchemaName"
         OnUpdateName="UpdateSchemaName"
@@ -59,11 +60,6 @@
     private DatabaseSchema DatabaseSchema = new DatabaseSchema();
 
     private RelationshipCreationHelper RelationshipCreationHelper = new RelationshipCreationHelper();
-
-    private string UserMessage = string.Empty;
-    private ModalWindowButtonMode ModalWindowButtonMode = ModalWindowButtonMode.Accept;
-    private EventCallback OnAccept = EventCallback.Empty;
-    private EventCallback OnCancel = EventCallback.Empty;
 
     protected override void OnInitialized()
     {
@@ -225,26 +221,48 @@
             SchemaJsonFormat = _jsonService.Serialize(this.DatabaseSchema)
         });
 
-        this.ModalWindowButtonMode = ModalWindowButtonMode.Accept;
-        this.OnAccept = EventCallback.Factory.Create(this, CloseModalWindow);
-
+        var userMessage = string.Empty;
         if (result.IsSuccess)
         {
             this.SchemaId = result.Value;
 
-            this.UserMessage = "Uspješno ste spremili shemu.";
-            return;
+            userMessage = "Uspješno ste spremili shemu.";
+        }
+        else
+        {
+            userMessage = await _resultProcessor.ProcessFailedResult(result);
         }
 
-        this.UserMessage = await _resultProcessor.ProcessFailedResult(result);
+        OpenModalWindow(userMessage,
+            EventCallback.Factory.Create(this, CloseModalWindow));
     }
 
     private void OnBackToHome()
     {
-        this.UserMessage = "Jeste li sigurni da želite napustiti stranicu? Sve promjene će biti izgubljene.";
-        this.ModalWindowButtonMode = ModalWindowButtonMode.AcceptCancel;
-        this.OnAccept = EventCallback.Factory.Create(this, () => _navigationManager.NavigateTo("/"));
-        this.OnCancel = EventCallback.Factory.Create(this, CloseModalWindow);
+        OpenModalWindow(
+            "Jeste li sigurni da želite napustiti stranicu?",
+            EventCallback.Factory.Create(this, () => _navigationManager.NavigateTo("/")),
+            windowButtonMode: ModalWindowButtonMode.AcceptCancel,
+            onCancel: EventCallback.Factory.Create(this, CloseModalWindow));
+    }
+
+    #region modal window metode
+
+    private string UserMessage = string.Empty;
+    private ModalWindowButtonMode ModalWindowButtonMode = ModalWindowButtonMode.Accept;
+    private EventCallback OnAccept = EventCallback.Empty;
+    private EventCallback OnCancel = EventCallback.Empty;
+
+    private void OpenModalWindow(
+        string userMessage,
+        EventCallback onAccept,
+        ModalWindowButtonMode windowButtonMode = ModalWindowButtonMode.Accept,
+        EventCallback? onCancel = null)
+    {
+        this.UserMessage = userMessage;
+        this.ModalWindowButtonMode = windowButtonMode;
+        this.OnAccept = onAccept;
+        this.OnCancel = onCancel ?? EventCallback.Empty;
     }
 
     private void CloseModalWindow()
@@ -254,4 +272,6 @@
         this.OnAccept = EventCallback.Empty;
         this.OnCancel = EventCallback.Empty;
     }
+
+    #endregion
 }

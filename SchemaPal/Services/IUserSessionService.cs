@@ -16,6 +16,6 @@ namespace SchemaPal.Services
 
         Task<string> GetLoggedInUsername();
 
-        Task EndUserSession(LogoutReason logoutReason);
+        Task EndUserSession();
     }
 }

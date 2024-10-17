@@ -25,7 +25,7 @@ builder.Services.AddSingleton<IPositionService, PositionService>();
 builder.Services.AddSingleton<ICoordinatesCalculator, CoordinatesCalculator>();
 builder.Services.AddSingleton<IStyleService, StyleService>();
 builder.Services.AddSingleton<IExportService, ExportService>();
-builder.Services.AddSingleton<IJsonService, JsonService>();
+builder.Services.AddSingleton<IJsonConverter, JsonConverter>();
 
 builder.Services.AddScoped<ISchemaPalApiService, SchemaPalApiService>();
 builder.Services.AddScoped<ISchemaInjectionService, SchemaInjectionService>();

@@ -26,7 +26,8 @@
          style="width: @SchemaMakerConstants.TableWidthPx;
                 padding: @SchemaMakerConstants.TablePaddingPx;
                 font-size: @SchemaMakerConstants.TableFontSizePx;
-                opacity: @(this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation ? 0.7 : 1);"
+                opacity: @(this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation ? 0.7 : 1);
+                pointer-events: @(this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation ? "none" : "auto");"
          draggable="true"
          @ondragstart="(e => OnTableDragStart(e, this.Table.Id))">
         <strong>@this.Table.Name</strong>
@@ -71,7 +72,7 @@
             ConnectionPointColorEvent.Select,
             connectionPointIds: new List<string> { uniqueIdentifier });
 
-        await this.OnUpdateState.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task SetConnectionPointColorOnMouseOut(string uniqueIdentifier)
@@ -86,7 +87,7 @@
             ConnectionPointColorEvent.Reset,
             connectionPointIds: new List<string> { uniqueIdentifier });
 
-        await this.OnUpdateState.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task ConnectionPointClick(ConnectionPoint connectionPoint)
@@ -114,11 +115,6 @@
 
     private void OnTableDragStart(DragEventArgs e, int tableId)
     {
-        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
-        {
-            return;
-        }
-
         this.DragAndDropHelper.TableId = tableId;
         this.DragAndDropHelper.StartingClientX = e.ClientX;
         this.DragAndDropHelper.StartingClientY = e.ClientY;

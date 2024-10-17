@@ -97,7 +97,8 @@ namespace SchemaPal.Services.SchemaMakerServices
             newRelationship.DestinationTableId = endingConnectionPoint.TableId;
             newRelationship.DestinationColumnId = endingConnectionPoint.ColumnId;
 
-            newRelationship.ConnectionPointIds = (startingConnectionPointId, endingConnectionPoint.UniqueIdentifier);
+            newRelationship.ConnectionPointIds.Start = startingConnectionPointId;
+            newRelationship.ConnectionPointIds.End = endingConnectionPoint.UniqueIdentifier;
 
             databaseSchema.Relationships.Add(newRelationship);
 

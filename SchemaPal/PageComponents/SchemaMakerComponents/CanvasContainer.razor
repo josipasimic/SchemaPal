@@ -70,11 +70,6 @@
 
     private async Task OnTableDrop(DragEventArgs e)
     {
-        if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
-        {
-            return;
-        }
-
         var droppedTableId = this.DragAndDropHelper.TableId;
 
         var droppedTable = this.DatabaseSchema.Tables.Find(t => t.Id == droppedTableId);

@@ -66,7 +66,7 @@
     {
         if (ButtonMode == ButtonMode.Logout)
         {
-            await _userSessionService.EndUserSession(LogoutReason.UserRequest);
+            await _userSessionService.EndUserSession();
 
             await SetData();
             await RefreshState();

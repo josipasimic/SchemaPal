@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.Helpers.SchemaMakerHelpers;
 
@@ -13,10 +12,12 @@ namespace SchemaPal.Services.SchemaMakerServices
         private const string ExportJsnFileName = "schema.json";
 
         private readonly IJSRuntime _jsRuntime;
+        private readonly IJsonConverter _jsonService;
 
-        public ExportService(IJSRuntime jsRuntime)
+        public ExportService(IJSRuntime jsRuntime, IJsonConverter jsonService)
         {
             _jsRuntime = jsRuntime;
+            _jsonService = jsonService;
         }
 
         public async Task ExportSchemaAsPng()
@@ -28,7 +29,7 @@ namespace SchemaPal.Services.SchemaMakerServices
 
         public async Task ExportSchemaAsJson(DatabaseSchema databaseSchema)
         {
-            var databaseSchemaInJsonFormat = JsonSerializer.Serialize(databaseSchema);
+            var databaseSchemaInJsonFormat = _jsonService.Serialize(databaseSchema);
 
             await _jsRuntime.InvokeVoidAsync(
                 ExportJsnJavaScriptFunctionName,
