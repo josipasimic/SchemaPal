@@ -1,9 +1,11 @@
-﻿@using SchemaPal.DataTransferObjects;
-@using SchemaPal.Enums;
-@using SchemaPal.Enums.EnumTranslators;
-@using SchemaPal.Helpers.SchemaMakerHelpers;
-@using SchemaPal.PageComponents.SchemaMakerComponents.CanvasComponents;
-@using SchemaPal.Services.SchemaMakerServices;
+﻿@using Index = SchemaPal.DataTransferObjects.Index
+@using System.Text
+@using SchemaPal.DataTransferObjects
+@using SchemaPal.Enums
+@using SchemaPal.Enums.EnumTranslators
+@using SchemaPal.Helpers.SchemaMakerHelpers
+@using SchemaPal.PageComponents.SchemaMakerComponents.CanvasComponents
+@using SchemaPal.Services.SchemaMakerServices
 
 @inject IStyleService _styleService;
 
@@ -44,7 +46,7 @@
         @foreach (var index in this.Table.Indexes)
         {
             <div class="index" style="color: gray;">
-                @index.FullIndexName
+                @GenerateFullIndexName(index)
             </div>
         }
     </div>
@@ -118,5 +120,23 @@
         this.DragAndDropHelper.TableId = tableId;
         this.DragAndDropHelper.StartingClientX = e.ClientX;
         this.DragAndDropHelper.StartingClientY = e.ClientY;
+    }
+
+    private string GenerateFullIndexName(Index index)
+    {
+        var typeAbbreviations = new StringBuilder();
+
+        if (index.KeyType != KeyType.None)
+        {
+            var keyTypeAbbreviation = KeyTypeTranslator.GetAbbreviation(index.KeyType);
+            typeAbbreviations.Append($"{keyTypeAbbreviation} ");
+        }
+
+        typeAbbreviations.Append(IndexTypeTranslator.GetAbbreviation(index.Type));
+
+        var indexColumns = this.Table.Columns.Where(c => index.ColumnIds.Contains(c.Id));
+        var columnNames = string.Join(", ", indexColumns.Select(c => c.Name));
+
+        return $"{typeAbbreviations} {index.Name} ({columnNames})";
     }
 }

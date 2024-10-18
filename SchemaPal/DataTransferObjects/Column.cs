@@ -25,15 +25,17 @@ namespace SchemaPal.DataTransferObjects
                 var properties = new StringBuilder();
 
                 var dataType = ColumnDataTypeTranslator.MapToName(DataType);
-                properties.Append($"{dataType} (");
+                properties.Append($"{dataType}");
+
+                if (IsNullable)
+                {
+                    properties.Append('?');
+                }
 
                 if (KeyType != KeyType.None)
                 {
-                    properties.Append($"{KeyTypeTranslator.GetAbbreviation(KeyType)}, ");
+                    properties.Append($" ({KeyTypeTranslator.GetAbbreviation(KeyType)})");
                 }
-
-                var nullableAbbreviation = IsNullable ? "NULL" : "NOT NULL";
-                properties.Append($"{nullableAbbreviation})");
 
                 return properties.ToString();
             }

@@ -4,6 +4,7 @@
     {
         None,
         Primary,
+        Foreign,
         Unique
     }
 }

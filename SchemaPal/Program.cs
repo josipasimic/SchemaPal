@@ -1,8 +1,8 @@
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SchemaPal;
-using Blazored.LocalStorage;
-using Blazored.SessionStorage;
 using SchemaPal.Services;
 using SchemaPal.Services.SchemaMakerServices;
 

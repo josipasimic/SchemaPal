@@ -3,6 +3,10 @@
     public enum IndexType
     {
         NonClustered,
-        Clustered
+        Clustered,
+        Hash,
+        Prostorni,
+        XML,
+        FullText
     }
 }

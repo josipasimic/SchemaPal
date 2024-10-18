@@ -27,7 +27,7 @@
     OnCancel="@this.OnCancel"/>
 
 <div class="layout-grid" 
-     style="pointer-events: @(string.IsNullOrEmpty(UserMessage) ? "auto" : "none");">
+     style="pointer-events: @(string.IsNullOrEmpty(this.UserMessage) ? "auto" : "none");">
     <Sidebar
         SchemaName="@this.SchemaName"
         OnUpdateName="UpdateSchemaName"
@@ -60,6 +60,35 @@
     private DatabaseSchema DatabaseSchema = new DatabaseSchema();
 
     private RelationshipCreationHelper RelationshipCreationHelper = new RelationshipCreationHelper();
+
+    #region modal window
+
+    private string UserMessage = string.Empty;
+    private ModalWindowButtonMode ModalWindowButtonMode = ModalWindowButtonMode.Accept;
+    private EventCallback OnAccept = EventCallback.Empty;
+    private EventCallback OnCancel = EventCallback.Empty;
+
+    private void OpenModalWindow(
+        string userMessage,
+        EventCallback onAccept,
+        ModalWindowButtonMode windowButtonMode = ModalWindowButtonMode.Accept,
+        EventCallback? onCancel = null)
+    {
+        this.UserMessage = userMessage;
+        this.ModalWindowButtonMode = windowButtonMode;
+        this.OnAccept = onAccept;
+        this.OnCancel = onCancel ?? EventCallback.Empty;
+    }
+
+    private void CloseModalWindow()
+    {
+        this.UserMessage = string.Empty;
+        this.ModalWindowButtonMode = ModalWindowButtonMode.Accept;
+        this.OnAccept = EventCallback.Empty;
+        this.OnCancel = EventCallback.Empty;
+    }
+
+    #endregion
 
     protected override void OnInitialized()
     {
@@ -207,6 +236,8 @@
 
     #endregion
 
+    #region spremanje sheme
+
     private void UpdateSchemaName(string name)
     {
         this.SchemaName = name;
@@ -244,33 +275,6 @@
             EventCallback.Factory.Create(this, () => _navigationManager.NavigateTo("/")),
             windowButtonMode: ModalWindowButtonMode.AcceptCancel,
             onCancel: EventCallback.Factory.Create(this, CloseModalWindow));
-    }
-
-    #region modal window metode
-
-    private string UserMessage = string.Empty;
-    private ModalWindowButtonMode ModalWindowButtonMode = ModalWindowButtonMode.Accept;
-    private EventCallback OnAccept = EventCallback.Empty;
-    private EventCallback OnCancel = EventCallback.Empty;
-
-    private void OpenModalWindow(
-        string userMessage,
-        EventCallback onAccept,
-        ModalWindowButtonMode windowButtonMode = ModalWindowButtonMode.Accept,
-        EventCallback? onCancel = null)
-    {
-        this.UserMessage = userMessage;
-        this.ModalWindowButtonMode = windowButtonMode;
-        this.OnAccept = onAccept;
-        this.OnCancel = onCancel ?? EventCallback.Empty;
-    }
-
-    private void CloseModalWindow()
-    {
-        this.UserMessage = string.Empty;
-        this.ModalWindowButtonMode = ModalWindowButtonMode.Accept;
-        this.OnAccept = EventCallback.Empty;
-        this.OnCancel = EventCallback.Empty;
     }
 
     #endregion

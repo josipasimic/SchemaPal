@@ -1,26 +1,65 @@
 ﻿@using SchemaPal.DataTransferObjects
+@using SchemaPal.Enums
+@using SchemaPal.Enums.EnumTranslators
+@using SchemaPal.Services
+@using SchemaPal.Services.SchemaMakerServices
 
 @inject NavigationManager _navigationManager
+@inject IJsonConverter _jsonConverter
+@inject ISchemaInjectionService _schemaInjectionService
 
+@inject HttpClient _httpClient
+
+<h4>Predlošci</h4>
 <div class="template-grid">
-    @foreach (var template in templates)
-    {
-        <div class="template-item" @onclick="() => OpenTemplateSchema(template)">
-            @* <h4>@template.Name</h4> *@
-        </div>
-    }
+    <div class="template-item" @onclick="() => OpenTemplate(SchemaTemplates.MusicStreamingApp)">
+        <img src="templateschemas/musicstreamingapp/musicstreamingapp.png" />
+        <h4>Glazbena platforma &#127901</h4>
+    </div>
+    <div class="template-item" @onclick="() => OpenTemplate(SchemaTemplates.OnlineShopApp)">
+        <img src="templateschemas/onlineshopapp/onlineshopapp.png" />
+        <h4>E-trgovina &#128717</h4>
+    </div>
 </div>
+<p>@Message</p>
 
 @code {
-    private List<DatabaseSchema> templates = new List<DatabaseSchema>
-    {
-        // new DatabaseSchema { Name = "Glazbena platforma", Id = 1 },
-        // new DatabaseSchema { Name = "Lanac dućana", Id = 2 },
-        // new DatabaseSchema { Name = "Taksi usluge", Id = 3 },
-    };
+    private string Message = string.Empty;
 
-    private void OpenTemplateSchema(DatabaseSchema template)
+    private async Task OpenTemplate(SchemaTemplates selectedTemplate)
     {
-        // _navigationManager.NavigateTo("/schema-maker?template=" + template.Name);
+        var pathToFile = "templateschemas/";
+
+        switch (selectedTemplate)
+        {
+            case SchemaTemplates.MusicStreamingApp:
+                pathToFile += "musicstreamingapp/musicstreamingapp.json";
+                break;
+            case SchemaTemplates.OnlineShopApp:
+                pathToFile += "onlineshopapp/onlineshopapp.json";
+                break;
+            default:
+                return;
+        }
+
+        var jsonFormatSchema = string.Empty;
+        try
+        {
+            jsonFormatSchema = await _httpClient.GetStringAsync(pathToFile);
+        }
+        catch (Exception ex)
+        {
+            Message = $"Došlo je do pogreške: {ex.Message}";
+            return;
+        }
+
+        var result = _schemaInjectionService.PushSchemaFromJsonImport(jsonFormatSchema);
+        if (result.IsFailed)
+        {
+            Message = result.Errors.First().Message;
+            return;
+        }
+
+        _navigationManager.NavigateTo("/schema-maker");
     }
 }

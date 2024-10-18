@@ -34,7 +34,7 @@
         <div>
             <span class="name-label">Vrsta ključa:</span>
             <select class="dropdown" @onchange="HandleKeyTypeChange">
-                @foreach (var keyType in Enum.GetValues(typeof(KeyType)).Cast<KeyType>())
+                @foreach (var keyType in Enum.GetValues(typeof(KeyType)).Cast<KeyType>().Except([KeyType.Foreign]))
                 {
                     <option selected="@(keyType == this.Index.KeyType)" value="@keyType">@KeyTypeTranslator.MapToName(@keyType)</option>
                 }

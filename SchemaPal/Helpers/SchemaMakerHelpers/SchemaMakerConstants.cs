@@ -2,7 +2,7 @@
 {
     public static class SchemaMakerConstants
     {
-        public const double TableWidth = 250;
+        public const double TableWidth = 300;
 
         public static string TableWidthPx
         {

@@ -161,17 +161,17 @@ namespace SchemaPal.Services.SchemaMakerServices
 
             var columnsToAdd = table.Columns
                 .Where(x => columnIds.Contains(x.Id))
-                .Select(x => (x.Id, x.Name))
+                .Select(x => x.Id)
                 .ToList();
 
             var index = table.Indexes.Find(i => i.Id == indexId);
-            if (index?.Columns is null)
+            if (index?.ColumnIds is null)
             {
                 return;
             }
 
-            index.Columns.Clear();
-            index.Columns.AddRange(columnsToAdd);
+            index.ColumnIds.Clear();
+            index.ColumnIds.AddRange(columnsToAdd);
         }
 
         public void DeleteTable(DatabaseSchema databaseSchema, int tableId)
@@ -249,7 +249,11 @@ namespace SchemaPal.Services.SchemaMakerServices
             }
 
             table.Indexes.RemoveAll(i => i.Id == indexId);
-            table.Indexes.RemoveAll(i => i.Columns.Any(i => i.Id == columnId));
+
+            if (columnId.HasValue)
+            {
+                table.Indexes.RemoveAll(i => i.ColumnIds.Contains(columnId.Value));
+            }
         }
 
         public HashSet<int> DeleteRelationships(DatabaseSchema databaseSchema,
