@@ -1,7 +1,8 @@
-﻿@using SchemaPal.DataTransferObjects.API;
-@using SchemaPal.Services;
-@using SchemaPal.Services.SchemaMakerServices;
-@using System.Net
+﻿@using System.Net
+@using SchemaPal.DataTransferObjects.API
+@using SchemaPal.Services
+@using SchemaPal.Services.SchemaMakerServices
+@using TimeZoneConverter
 
 @inject NavigationManager _navigationManager
 @inject ISchemaPalApiService _schemaPalApiService
@@ -16,7 +17,7 @@
         <div class="schema-item">
             <div class="schema-name" @onclick="() => OpenUserSchema(schema.Id)">
                 <h4><strong>@schema.Name</strong></h4>
-                <p>(Zadnje ažurirano @schema.LastSaved)</p>
+                <p>@FormatLastSavedInfo(schema.LastSaved)</p>
             </div>
             <button class="btn large-bold-font" title="Obriši shemu" @onclick="() => DeleteSchema(schema.Id)">&#128465</button>
         </div>
@@ -39,14 +40,28 @@
 
         if (result.IsSuccess)
         {
-            Message = string.Empty;
-            UserSchemas = result.Value;
+            UserSchemas = result.Value ?? [];
 
+            if (!UserSchemas.Any())
+            {
+                Message = "Nije spremljena nijedna shema.";
+                return;
+            }
+
+            Message = string.Empty;
             return;
         }
 
         Message = await _resultProcessor.ProcessFailedResult(result);
         UserSchemas = [];
+    }
+
+    private string FormatLastSavedInfo(DateTime lastSavedUtc)
+    {
+        var croatianTimeZone = TZConvert.GetTimeZoneInfo("Europe/Zagreb");
+        var croatianTime = TimeZoneInfo.ConvertTimeFromUtc(lastSavedUtc, croatianTimeZone);
+
+        return $"Zadnje ažurirano: {croatianTime.ToString("dd.MM.yyyy. HH:mm")}h";
     }
 
     private async Task OpenUserSchema(Guid schemaId)
