@@ -19,9 +19,9 @@ namespace SchemaPal.Services.SchemaMakerServices
 
         void UpdateColumnsOnIndex(Table table, int indexId, List<int> columnIds);
 
-        void DeleteTable(DatabaseSchema databaseSchema, int tableId);
+        HashSet<int> DeleteTable(DatabaseSchema databaseSchema, int tableId);
 
-        void DeleteColumn(DatabaseSchema databaseSchema, int tableId, int columnId);
+        HashSet<int> DeleteColumn(DatabaseSchema databaseSchema, int tableId, int columnId);
 
         void DeleteIndexes(DatabaseSchema databaseSchema,
             int tableId,

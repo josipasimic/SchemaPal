@@ -48,6 +48,10 @@
                 return;
             }
 
+            UserSchemas = UserSchemas
+                .OrderByDescending(schema => schema.LastSaved)
+                .ToList();
+
             Message = string.Empty;
             return;
         }

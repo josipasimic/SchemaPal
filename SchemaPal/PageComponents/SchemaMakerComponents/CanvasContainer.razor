@@ -71,7 +71,6 @@
     private async Task OnTableDrop(DragEventArgs e)
     {
         var droppedTableId = this.DragAndDropHelper.TableId;
-
         var droppedTable = this.DatabaseSchema.Tables.Find(t => t.Id == droppedTableId);
 
         _positionService.UpdateTablePosition(
@@ -93,7 +92,7 @@
 
         this.DragAndDropHelper.Reset();
 
-        await this.OnUpdateState.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task DrawRelationship()

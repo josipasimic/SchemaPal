@@ -62,12 +62,12 @@
         {
             FormDisplay = "none";
             SignUpMessage = "Uspješno ste se registrirali! Prijavite se u aplikaciju.";
+
+            return;
         }
-        else
-        {
-            var errorMessage = registrationResult.Errors.First().Message;
-            SignUpMessage = errorMessage;
-        }
+
+        var errorMessage = registrationResult.Errors.First().Message;
+        SignUpMessage = errorMessage;
     }
 
     private void NavigateToLoginRedirect()

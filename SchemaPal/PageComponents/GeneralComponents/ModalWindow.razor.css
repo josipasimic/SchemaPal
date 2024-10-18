@@ -33,7 +33,7 @@
         flex-direction: row;
     }
 
-    .modal-window .buttons-area modal-btn {
+    .modal-window .buttons-area .modal-btn {
         margin-left: 10px;
         height: 100%;
         font-size: 17px;

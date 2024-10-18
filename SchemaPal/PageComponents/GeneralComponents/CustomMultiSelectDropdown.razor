@@ -4,12 +4,10 @@
         @for(int i = 0; i < Options.Count; i++)
         {
             int index = i;
-            <g key="@i">
-                <label class="gray-font-color">
-                    <input type="checkbox" @onchange="@(e => OnCheckboxChanged(e, index))" checked="@selectedItems.Contains(Options[index])" />
-                    @OptionNames[index]
-                </label>
-            </g>          
+            <label class="gray-font-color">
+                <input type="checkbox" @onchange="@(e => OnCheckboxChanged(e, index))" checked="@selectedItems.Contains(Options[index])" />
+                @OptionNames[index]
+            </label>        
         }
     </div>
 </div

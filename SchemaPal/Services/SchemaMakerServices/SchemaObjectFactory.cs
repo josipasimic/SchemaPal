@@ -174,12 +174,14 @@ namespace SchemaPal.Services.SchemaMakerServices
             index.ColumnIds.AddRange(columnsToAdd);
         }
 
-        public void DeleteTable(DatabaseSchema databaseSchema, int tableId)
+        public HashSet<int> DeleteTable(DatabaseSchema databaseSchema, int tableId)
         {
             if (databaseSchema?.Tables is null)
             {
-                return;
+                return new HashSet<int>();
             }
+
+            var affectedTableIds = DeleteRelationships(databaseSchema, tableId: tableId);
 
             var connectionPointIdsToRemove = databaseSchema.ConnectionPoints
                 .Where(cp => cp.TableId == tableId)
@@ -190,21 +192,29 @@ namespace SchemaPal.Services.SchemaMakerServices
             databaseSchema.ConnectionPoints.RemoveAll(cp => cp.TableId == tableId);
 
             databaseSchema.Tables.RemoveAll(t => t.Id == tableId);
+
+            return affectedTableIds;
         }
 
-        public void DeleteColumn(DatabaseSchema databaseSchema, int tableId, int columnId)
+        public HashSet<int> DeleteColumn(DatabaseSchema databaseSchema, int tableId, int columnId)
         {
             if (databaseSchema?.Tables is null
                 || databaseSchema?.ConnectionPoints is null)
             {
-                return;
+                return new HashSet<int>();
             }
 
             var table = databaseSchema.Tables.Find(t => t.Id == tableId);
             if (table?.Columns is null)
             {
-                return;
+                return new HashSet<int>();
             }
+
+            var affectedTableIds = DeleteRelationships(databaseSchema,
+                tableId: tableId,
+                columnId: columnId);
+
+            DeleteIndexes(databaseSchema, tableId, columnId: columnId);
 
             var connectionPointIdsToRemove = databaseSchema.ConnectionPoints
                 .Where(cp => cp.ColumnId == columnId)
@@ -230,6 +240,8 @@ namespace SchemaPal.Services.SchemaMakerServices
                 connectionPointsForColumn.ToList()
                     .ForEach(cp => cp.ConnectionPointTopCoordinate = connectionPointsYCoordinate);
             }
+
+            return affectedTableIds;
         }
 
         public void DeleteIndexes(DatabaseSchema databaseSchema,

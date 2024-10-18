@@ -185,9 +185,7 @@
 
     private async Task DeleteTable(int tableId)
     {
-        var affectedTableIds = _schemaObjectFactory.DeleteRelationships(this.DatabaseSchema, tableId: tableId);
-
-        _schemaObjectFactory.DeleteTable(this.DatabaseSchema, tableId);
+        var affectedTableIds = _schemaObjectFactory.DeleteTable(this.DatabaseSchema, tableId);
 
         _styleService.SetConnectionPointsColor(this.DatabaseSchema,
             ConnectionPointColorEvent.Reset,
@@ -198,14 +196,7 @@
 
     private async Task DeleteColumn(int tableId, int columnId)
     {
-        var affectedTableIds = _schemaObjectFactory.DeleteRelationships(
-            this.DatabaseSchema, 
-            tableId: tableId,
-            columnId: columnId);
-
-        _schemaObjectFactory.DeleteIndexes(this.DatabaseSchema, tableId, columnId: columnId);
-
-        _schemaObjectFactory.DeleteColumn(this.DatabaseSchema, tableId, columnId);
+        var affectedTableIds = _schemaObjectFactory.DeleteColumn(this.DatabaseSchema, tableId, columnId);
 
         _styleService.SetConnectionPointsColor(this.DatabaseSchema,
             ConnectionPointColorEvent.Reset,
@@ -236,7 +227,7 @@
 
     #endregion
 
-    #region spremanje sheme
+    #region spremanje/napuštanje sheme
 
     private void UpdateSchemaName(string name)
     {
