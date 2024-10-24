@@ -9,7 +9,7 @@ namespace SchemaPal.Services
 
         public ResultProcessor(IUserSessionService userSessionService)
         {
-            _userSessionService = userSessionService;
+            _userSessionService = userSessionService; ;
         }
 
         public async Task<string> ProcessFailedResult<T>(Result<T> result)
