@@ -3,7 +3,7 @@
     padding: 15px;
     display: flex;
     justify-content: flex-start; 
-    align-items: center;
+    align-items: baseline;
     color: white;
     font-size: 3rem;
     font-weight: bold;
@@ -15,9 +15,15 @@
     }
 
 .app-name {
-    margin-right: 20px; 
     color: dimgray;
     padding: 0px;
+}
+
+.dbms-name {
+    font-size: 1rem;
+    color: dimgray;
+    font-weight: normal;
+    margin-left: 2px;
 }
 
 .main-content {
