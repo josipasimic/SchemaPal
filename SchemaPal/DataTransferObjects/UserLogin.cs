@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.DataTransferObjects.API
+﻿namespace SchemaPal.DataTransferObjects
 {
     public class UserLogin
     {

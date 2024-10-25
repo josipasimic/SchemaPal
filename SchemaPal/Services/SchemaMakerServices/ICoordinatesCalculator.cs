@@ -1,5 +1,5 @@
-﻿using SchemaPal.DataTransferObjects;
-using SchemaPal.Enums;
+﻿using SchemaPal.Enums;
+using SchemaPal.SchemaObjects;
 
 namespace SchemaPal.Services.SchemaMakerServices
 {

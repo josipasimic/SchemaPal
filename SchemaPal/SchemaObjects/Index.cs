@@ -1,8 +1,6 @@
-﻿using System.Text;
-using SchemaPal.Enums;
-using SchemaPal.Enums.EnumTranslators;
+﻿using SchemaPal.Enums;
 
-namespace SchemaPal.DataTransferObjects
+namespace SchemaPal.SchemaObjects
 {
     public class Index
     {

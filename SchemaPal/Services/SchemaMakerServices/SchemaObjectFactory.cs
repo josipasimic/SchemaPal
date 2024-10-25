@@ -1,6 +1,7 @@
-﻿using SchemaPal.DataTransferObjects;
+﻿using Index = SchemaPal.SchemaObjects.Index;
 using SchemaPal.Enums;
 using SchemaPal.Helpers.SchemaMakerHelpers;
+using SchemaPal.SchemaObjects;
 
 namespace SchemaPal.Services.SchemaMakerServices
 {
@@ -146,7 +147,7 @@ namespace SchemaPal.Services.SchemaMakerServices
                 return;
             }
 
-            var newIndex = new DataTransferObjects.Index(_indexId, string.Empty, table.Id);
+            var newIndex = new Index(_indexId, string.Empty, table.Id);
             table.Indexes.Add(newIndex);
 
             _indexId++;

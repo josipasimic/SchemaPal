@@ -1,9 +1,8 @@
 ﻿using FluentResults;
-using SchemaPal.DataTransferObjects.API;
+using SchemaPal.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
-
 namespace SchemaPal.Services
 {
     public class SchemaPalApiService : ISchemaPalApiService

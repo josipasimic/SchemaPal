@@ -1,6 +1,6 @@
 ﻿using SchemaPal.Enums;
 
-namespace SchemaPal.DataTransferObjects
+namespace SchemaPal.SchemaObjects
 {
     public class Relationship
     {

@@ -2,7 +2,7 @@
 using SchemaPal.Enums;
 using SchemaPal.Enums.EnumTranslators;
 
-namespace SchemaPal.DataTransferObjects
+namespace SchemaPal.SchemaObjects
 {
     public class Column
     {
@@ -45,7 +45,7 @@ namespace SchemaPal.DataTransferObjects
         {
             Id = id;
             Name = name;
-            TableId = tableId; 
+            TableId = tableId;
         }
     }
 }

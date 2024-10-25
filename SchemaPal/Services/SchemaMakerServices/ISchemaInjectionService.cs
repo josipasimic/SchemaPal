@@ -1,5 +1,5 @@
 ﻿using FluentResults;
-using SchemaPal.DataTransferObjects;
+using SchemaPal.SchemaObjects;
 
 namespace SchemaPal.Services.SchemaMakerServices
 {

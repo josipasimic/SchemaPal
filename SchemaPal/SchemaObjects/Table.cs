@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.DataTransferObjects
+﻿namespace SchemaPal.SchemaObjects
 {
     public class Table
     {

@@ -1,6 +1,6 @@
 ﻿using Blazored.SessionStorage;
 using FluentResults;
-using SchemaPal.DataTransferObjects.API;
+using SchemaPal.DataTransferObjects;
 using SchemaPal.Helpers;
 
 namespace SchemaPal.Services

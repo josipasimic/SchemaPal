@@ -1,4 +1,6 @@
-﻿namespace SchemaPal.DataTransferObjects
+﻿using SchemaPal.DataTransferObjects;
+
+namespace SchemaPal.SchemaObjects
 {
     public class DatabaseSchema
     {
@@ -6,7 +8,7 @@
 
         public List<Relationship> Relationships { get; set; }
 
-        public List<ConnectionPoint>  ConnectionPoints { get; set; }
+        public List<ConnectionPoint> ConnectionPoints { get; set; }
 
         public Dictionary<string, string> ConnectionPointColors { get; set; }
 

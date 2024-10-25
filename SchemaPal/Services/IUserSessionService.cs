@@ -1,6 +1,5 @@
 ﻿using FluentResults;
-using Microsoft.AspNetCore.Components;
-using SchemaPal.DataTransferObjects.API;
+using SchemaPal.DataTransferObjects;
 
 namespace SchemaPal.Services
 {
