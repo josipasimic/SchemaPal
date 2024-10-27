@@ -61,7 +61,8 @@ namespace SchemaPal.Services
 
             var receivedSchemaId = await response.Content.ReadFromJsonAsync<Guid?>();
 
-            if (!receivedSchemaId.HasValue)
+            if (!receivedSchemaId.HasValue 
+                || receivedSchemaId == Guid.Empty)
             {
                 return Result.Fail("Greška tijekom spremanja sheme. Molimo pokušajte kasnije.");
             }
