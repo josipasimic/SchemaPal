@@ -7,7 +7,7 @@
 @using SchemaPal.SchemaObjects
 @using SchemaPal.Services.SchemaMakerServices
 
-@inject IStyleService _styleService;
+@inject IStyleService _styleService
 
 <div class="table-wrapper" style="top: @this.Table.TopPx; left: @this.Table.LeftPx;">
     <div class="connection-border">
@@ -19,7 +19,7 @@
                         background-color: @(this.DatabaseSchema.ConnectionPointColors.GetValueOrDefault(connectionPoint.UniqueIdentifier));"
                  @onmouseover="() => SetConnectionPointColorOnMouseOver(connectionPoint.UniqueIdentifier)"
                  @onmouseout="() => SetConnectionPointColorOnMouseOut(connectionPoint.UniqueIdentifier)"
-                 @onclick="() => ConnectionPointClick(connectionPoint)">
+                 @onclick="() => ConnectionPointClick(connectionPoint.UniqueIdentifier)">
             </div>
         }
     </div>
@@ -92,17 +92,17 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task ConnectionPointClick(ConnectionPoint connectionPoint)
+    private async Task ConnectionPointClick(string connectionPointId)
     {
         if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.None)
         {
             this.RelationshipCreationHelper.CreationMode = RelationshipCreationMode.StartCreation;
-            this.RelationshipCreationHelper.StartingConnectionPointId = connectionPoint.UniqueIdentifier;
+            this.RelationshipCreationHelper.StartingConnectionPointId = connectionPointId;
         }
         else if (this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation)
         {
             this.RelationshipCreationHelper.CreationMode = RelationshipCreationMode.CloseCreation;
-            this.RelationshipCreationHelper.EndingConnectionPointId = connectionPoint.UniqueIdentifier;
+            this.RelationshipCreationHelper.EndingConnectionPointId = connectionPointId;
         }
 
         await this.OnConnectionPointClicked.InvokeAsync();

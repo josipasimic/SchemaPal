@@ -1,7 +1,8 @@
 ﻿@page "/"
 
-@using SchemaPal.PageComponents.HomePageComponents;
-@using SchemaPal.Services;
+@using SchemaPal.Enums
+@using SchemaPal.PageComponents.HomePageComponents
+@using SchemaPal.Services
 
 @inject NavigationManager _navigationManager
 @inject IUserSessionService _userSessionService
@@ -12,30 +13,30 @@
     <div class="sidebar">
         <h3>Glavni izbornik</h3>
         <ul class="nav-buttons">
-            <li class="@(currentView == ViewType.NewSchema ? "selected" : string.Empty)" @onclick="ShowNewSchema">Izradi novu shemu</li>
-            <li class="@(currentView == ViewType.TemplateSchemas ? "selected" : string.Empty)" @onclick="ShowTemplateSchemas">Izradi shemu iz predloška</li>
+            <li class="@(currentView == HomePageViewType.NewSchema ? "selected" : string.Empty)" @onclick="ShowNewSchema">Izradi novu shemu</li>
+            <li class="@(currentView == HomePageViewType.TemplateSchemas ? "selected" : string.Empty)" @onclick="ShowTemplateSchemas">Izradi shemu iz predloška</li>
             @if (isLoggedInUser)
             {
-                <li class="@(currentView == ViewType.MySchemas ? "selected" : string.Empty)" @onclick="ShowMySchemas">Moje sheme</li>
+                <li class="@(currentView == HomePageViewType.MySchemas ? "selected" : string.Empty)" @onclick="ShowMySchemas">Moje sheme</li>
             }
-            <li class="@(currentView == ViewType.ImportSchema ? "selected" : string.Empty)" @onclick="ShowImportSchema">Uvezi shemu</li>
+            <li class="@(currentView == HomePageViewType.ImportSchema ? "selected" : string.Empty)" @onclick="ShowImportSchema">Uvezi shemu</li>
         </ul>
     </div>
     <div class="main-content">
-        @if (currentView == ViewType.NewSchema)
+        @if (currentView == HomePageViewType.NewSchema)
         {
             <button @onclick="OpenSchemaMakerCanvas">+</button>
             <h3>Izradi novu shemu</h3>
         }
-        else if (currentView == ViewType.TemplateSchemas)
+        else if (currentView == HomePageViewType.TemplateSchemas)
         {
             <TemplateSchemas />
         }
-        else if (currentView == ViewType.MySchemas)
+        else if (currentView == HomePageViewType.MySchemas)
         {
             <MySchemas />
         }
-        else if (currentView == ViewType.ImportSchema)
+        else if (currentView == HomePageViewType.ImportSchema)
         {
             <ImportSchema />
         }
@@ -43,8 +44,7 @@
 </div>
 
 @code {
-    private enum ViewType { NewSchema, TemplateSchemas, MySchemas, ImportSchema }
-    private ViewType currentView = ViewType.NewSchema;
+    private HomePageViewType currentView = HomePageViewType.NewSchema;
     private bool isGuest = false;
     private bool isLoggedInUser = false;
 
@@ -60,10 +60,10 @@
         }
     }
 
-    private void ShowNewSchema() => currentView = ViewType.NewSchema;
-    private void ShowTemplateSchemas() => currentView = ViewType.TemplateSchemas;
-    private void ShowMySchemas() => currentView = ViewType.MySchemas;
-    private void ShowImportSchema() => currentView = ViewType.ImportSchema;
+    private void ShowNewSchema() => currentView = HomePageViewType.NewSchema;
+    private void ShowTemplateSchemas() => currentView = HomePageViewType.TemplateSchemas;
+    private void ShowMySchemas() => currentView = HomePageViewType.MySchemas;
+    private void ShowImportSchema() => currentView = HomePageViewType.ImportSchema;
 
     private void OpenSchemaMakerCanvas()
     {
