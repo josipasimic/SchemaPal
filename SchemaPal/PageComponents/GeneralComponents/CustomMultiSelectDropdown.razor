@@ -1,5 +1,5 @@
 ﻿<div class="multiselect-dropdown">
-    <button class="dropdown width-color-override">@string.Join(", ", selectedItems.Count == 0 ? new[] { "Odaberi" } : selectedItemsNames)</button>
+    <button class="dropdown width-color-override">@string.Join(", ", selectedItemsNames.Count == 0 ? ["Odaberi"] : selectedItemsNames)</button>
     <div class="dropdown-content">
         @for(int i = 0; i < Options.Count; i++)
         {
@@ -10,18 +10,30 @@
             </label>        
         }
     </div>
-</div
+</div>
 
 @code {
     [Parameter] public List<string> Options { get; set; }
 
     [Parameter] public List<string> OptionNames { get; set; }
 
+    [Parameter] public List<string> InitiallySelectedOptions { get; set; }
+
     [Parameter] public EventCallback<List<string>> OnSelectionChanged { get; set; }
 
     private List<string> selectedItems = new List<string>();
 
     private List<string> selectedItemsNames = new List<string>();
+
+    protected override void OnParametersSet()
+    {
+        var initiallySelectedItems = InitiallySelectedOptions ?? new();
+
+        selectedItems = initiallySelectedItems;
+        selectedItemsNames = initiallySelectedItems
+            .Select(isi => OptionNames.ElementAtOrDefault(Options.IndexOf(isi)))
+            .ToList();
+    }
 
     private void OnCheckboxChanged(ChangeEventArgs e, int optionIndex)
     {

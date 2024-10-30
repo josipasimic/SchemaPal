@@ -11,6 +11,7 @@
 .width-color-override {
     width: 100%;
     background-color: white;
+    height: fit-content;
 }
 
 .dropdown-content {

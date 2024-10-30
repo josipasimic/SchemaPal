@@ -1,7 +1,7 @@
 ﻿using FluentResults;
 using SchemaPal.DataTransferObjects;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.UserServices
 {
     public interface IUserSessionService
     {

@@ -3,8 +3,9 @@ using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SchemaPal;
-using SchemaPal.Services;
+using SchemaPal.Services.HelperServices;
 using SchemaPal.Services.SchemaMakerServices;
+using SchemaPal.Services.UserServices;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

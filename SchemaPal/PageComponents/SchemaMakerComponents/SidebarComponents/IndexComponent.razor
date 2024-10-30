@@ -2,7 +2,6 @@
 @using SchemaPal.Enums
 @using SchemaPal.Enums.EnumTranslators
 @using SchemaPal.PageComponents.GeneralComponents
-@using SchemaPal.Services
 
 <div class="index-row">
     <span class="name-label">Naziv:</span>
@@ -44,6 +43,7 @@
             <CustomMultiSelectDropdown 
                 Options="this.TableColumnIds"
                 OptionNames="this.TableColumnNames"
+                InitiallySelectedOptions="@this.Index.ColumnIds.Select(ci => Convert.ToString(ci)).ToList()"
                 OnSelectionChanged="@(selectedItems => HandleUpdateColumns(selectedItems))" />
         </div>
     </div>

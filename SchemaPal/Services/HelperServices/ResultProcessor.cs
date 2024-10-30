@@ -1,7 +1,8 @@
 ﻿using FluentResults;
+using SchemaPal.Services.UserServices;
 using System.Net;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.HelperServices
 {
     public class ResultProcessor : IResultProcessor
     {

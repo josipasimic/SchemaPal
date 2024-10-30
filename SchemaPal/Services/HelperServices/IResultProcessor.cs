@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.HelperServices
 {
     public interface IResultProcessor
     {

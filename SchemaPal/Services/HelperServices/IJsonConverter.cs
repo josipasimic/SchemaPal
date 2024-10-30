@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.Services
+﻿namespace SchemaPal.Services.HelperServices
 {
     public interface IJsonConverter
     {

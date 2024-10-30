@@ -3,7 +3,8 @@ using SchemaPal.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
 using System.Net.Http.Headers;
-namespace SchemaPal.Services
+
+namespace SchemaPal.Services.UserServices
 {
     public class SchemaPalApiService : ISchemaPalApiService
     {
@@ -61,7 +62,7 @@ namespace SchemaPal.Services
 
             var receivedSchemaId = await response.Content.ReadFromJsonAsync<Guid?>();
 
-            if (!receivedSchemaId.HasValue 
+            if (!receivedSchemaId.HasValue
                 || receivedSchemaId == Guid.Empty)
             {
                 return Result.Fail("Greška tijekom spremanja sheme. Molimo pokušajte kasnije.");

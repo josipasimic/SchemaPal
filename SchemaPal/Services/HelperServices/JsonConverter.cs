@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.HelperServices
 {
     public class JsonConverter : IJsonConverter
     {

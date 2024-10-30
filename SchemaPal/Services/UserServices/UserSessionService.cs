@@ -3,7 +3,7 @@ using FluentResults;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.Helpers;
 
-namespace SchemaPal.Services
+namespace SchemaPal.Services.UserServices
 {
     public class UserSessionService : IUserSessionService
     {
@@ -14,8 +14,8 @@ namespace SchemaPal.Services
 
         private readonly ISessionStorageService _sessionStorage;
 
-        public UserSessionService(ISessionStorageService sessionStorageService) 
-        { 
+        public UserSessionService(ISessionStorageService sessionStorageService)
+        {
             _sessionStorage = sessionStorageService;
         }
 
@@ -71,7 +71,7 @@ namespace SchemaPal.Services
         public async Task<string> GetLoggedInUsername()
         {
 
-           var username = await _sessionStorage.GetItemAsync<string>(UsernameKey);
+            var username = await _sessionStorage.GetItemAsync<string>(UsernameKey);
 
             return username;
         }
