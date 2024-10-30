@@ -1,6 +1,6 @@
 ﻿using SchemaPal.DataTransferObjects;
 
-namespace SchemaPal.SchemaObjects
+namespace SchemaPal.SchemaElements
 {
     public class DatabaseSchema
     {

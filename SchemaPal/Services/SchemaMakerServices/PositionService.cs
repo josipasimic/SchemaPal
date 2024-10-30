@@ -1,6 +1,6 @@
 ﻿using SchemaPal.Enums;
 using SchemaPal.Helpers.SchemaMakerHelpers;
-using SchemaPal.SchemaObjects;
+using SchemaPal.SchemaElements;
 
 namespace SchemaPal.Services.SchemaMakerServices
 {

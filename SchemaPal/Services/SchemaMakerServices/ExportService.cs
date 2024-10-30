@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 using SchemaPal.Helpers.SchemaMakerHelpers;
-using SchemaPal.SchemaObjects;
+using SchemaPal.SchemaElements;
 using SchemaPal.Services.HelperServices;
 
 namespace SchemaPal.Services.SchemaMakerServices

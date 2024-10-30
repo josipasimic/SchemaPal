@@ -1,4 +1,4 @@
-﻿using SchemaPal.SchemaObjects;
+﻿using SchemaPal.SchemaElements;
 
 namespace SchemaPal.Services.SchemaMakerServices
 {

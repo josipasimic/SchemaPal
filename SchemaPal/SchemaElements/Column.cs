@@ -2,7 +2,7 @@
 using SchemaPal.Enums;
 using SchemaPal.Enums.EnumTranslators;
 
-namespace SchemaPal.SchemaObjects
+namespace SchemaPal.SchemaElements
 {
     public class Column
     {

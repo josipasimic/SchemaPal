@@ -1,5 +1,5 @@
 ﻿using SchemaPal.Enums;
-using SchemaPal.SchemaObjects;
+using SchemaPal.SchemaElements;
 
 namespace SchemaPal.Helpers.SchemaMakerHelpers
 {

@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using SchemaPal.Helpers.SchemaMakerHelpers;
-using SchemaPal.SchemaObjects;
+using SchemaPal.SchemaElements;
 using SchemaPal.Services.HelperServices;
 using SchemaPal.Services.UserServices;
 

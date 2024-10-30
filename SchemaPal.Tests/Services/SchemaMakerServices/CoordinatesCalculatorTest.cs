@@ -1,6 +1,6 @@
 using FluentAssertions;
 using SchemaPal.Enums;
-using SchemaPal.SchemaObjects;
+using SchemaPal.SchemaElements;
 using SchemaPal.Services.SchemaMakerServices;
 
 namespace Tests.Services.SchemaMakerServices

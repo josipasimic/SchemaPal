@@ -1,4 +1,4 @@
-﻿namespace SchemaPal.SchemaObjects
+﻿namespace SchemaPal.SchemaElements
 {
     public class Table
     {
