@@ -7,10 +7,10 @@ namespace SchemaPal.Services.SchemaMakerServices
 {
     public class SchemaObjectFactory : ISchemaObjectFactory
     {
-        private static int _tableId = 1;
-        private static int _columnId = 1;
-        private static int _indexId = 1;
-        private static int _relationshipId = 1;
+        private int _tableId = 1;
+        private int _columnId = 1;
+        private int _indexId = 1;
+        private int _relationshipId = 1;
 
         private readonly ICoordinatesCalculator _coordinatesCalculator;
 
