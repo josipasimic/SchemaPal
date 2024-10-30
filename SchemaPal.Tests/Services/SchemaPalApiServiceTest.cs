@@ -5,7 +5,7 @@ using FluentResults;
 using Moq;
 using Moq.Protected;
 using SchemaPal.DataTransferObjects;
-using SchemaPal.Services;
+using SchemaPal.Services.UserServices;
 
 namespace Tests.Services
 {

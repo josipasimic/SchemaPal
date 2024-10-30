@@ -1,7 +1,7 @@
 using Blazored.SessionStorage;
 using FluentResults;
 using SchemaPal.DataTransferObjects;
-using SchemaPal.Services;
+using SchemaPal.Services.UserServices;
 using Moq;
 using FluentAssertions;
 
