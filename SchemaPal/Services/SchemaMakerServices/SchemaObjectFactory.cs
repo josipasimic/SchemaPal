@@ -19,6 +19,38 @@ namespace SchemaPal.Services.SchemaMakerServices
             _coordinatesCalculator = coordinatesCalculator;
         }
 
+        public void SetWithExistingSchema(DatabaseSchema databaseSchema)
+        {
+            if (databaseSchema is null)
+            {
+                return;
+            }
+
+            var existingTables = databaseSchema.Tables;
+            _tableId = existingTables?.Any() ?? false
+                ? existingTables.Max(t => t.Id) + 1
+                : 1;
+
+            var existingColumns = existingTables
+                .SelectMany(t => t.Columns)
+                .ToList();
+            _columnId = existingColumns?.Any() ?? false
+                  ? existingColumns.Max(t => t.Id) + 1
+                  : 1;
+
+            var existingIndexes = existingTables
+                .SelectMany(t => t.Indexes)
+                .ToList();
+            _indexId = existingIndexes?.Any() ?? false
+               ? existingIndexes.Max(t => t.Id) + 1
+               : 1;
+
+            var existingRelationships = databaseSchema.Relationships;
+            _relationshipId = existingRelationships?.Any() ?? false
+                ? existingRelationships.Max(t => t.Id) + 1
+                : 1;
+        }
+
         public int CreateNewTable(DatabaseSchema databaseSchema)
         {
             if (databaseSchema is null)
@@ -315,48 +347,6 @@ namespace SchemaPal.Services.SchemaMakerServices
             databaseSchema.Relationships.RemoveAll(r => relationshipIdsToDelete.Contains(r.Id));
 
             return affectedTableIds;
-        }
-
-        public void Reset()
-        {
-            _tableId = 1;
-            _columnId = 1;
-            _indexId = 1;
-            _relationshipId = 1;
-        }
-
-        public void SetWithExistingSchema(DatabaseSchema databaseSchema)
-        {
-            if (databaseSchema is null)
-            {
-                this.Reset();
-
-                return;
-            }
-
-            var existingTables = databaseSchema.Tables;
-            _tableId = existingTables?.Any() ?? false
-                ? existingTables.Max(t => t.Id) + 1
-                : 1;
-
-            var existingColumns = existingTables
-                .SelectMany(t => t.Columns)
-                .ToList();
-            _columnId = existingColumns?.Any() ?? false
-                  ? existingColumns.Max(t => t.Id) + 1
-                  : 1;
-
-            var existingIndexes = existingTables
-                .SelectMany(t => t.Indexes)
-                .ToList();
-            _indexId = existingIndexes?.Any() ?? false
-               ? existingIndexes.Max(t => t.Id) + 1
-               : 1;
-
-            var existingRelationships = databaseSchema.Relationships;
-            _relationshipId = existingRelationships?.Any() ?? false
-                ? existingRelationships.Max(t => t.Id) + 1
-                : 1;
         }
 
         #region helper methods

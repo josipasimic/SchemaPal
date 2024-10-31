@@ -4,6 +4,8 @@ namespace SchemaPal.Services.SchemaMakerServices
 {
     public interface ISchemaObjectFactory
     {
+        void SetWithExistingSchema(DatabaseSchema databaseSchema);
+
         int CreateNewTable(DatabaseSchema databaseSchema);
 
         Relationship CreateNewRelationship(ConnectionPoint startingConnectionPoint);
@@ -32,9 +34,5 @@ namespace SchemaPal.Services.SchemaMakerServices
             int? relationshipId = null,
             int? tableId = null,
             int? columnId = null);
-
-        void Reset();
-
-        void SetWithExistingSchema(DatabaseSchema databaseSchema);
     }
 }
