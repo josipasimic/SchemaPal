@@ -7,9 +7,9 @@ using Moq.Protected;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.Services.UserServices;
 
-namespace Tests.Services
+namespace SchemaPalTests.UnitTests.Services.UserServices
 {
-    public class SchemaPalApiServiceTest 
+    public class SchemaPalApiServiceTests
     {
         [Theory]
         [MemberData(nameof(HttpClientResponseIsSuccessful))]
@@ -20,8 +20,8 @@ namespace Tests.Services
             HttpResponseMessage response,
             Result expectedResult)
         {
-             var httpMessageHandler = new Mock<HttpMessageHandler>();
-            
+            var httpMessageHandler = new Mock<HttpMessageHandler>();
+
             httpMessageHandler.Protected()
                 .Setup<Task<HttpResponseMessage>>(
                     "SendAsync",
@@ -29,14 +29,14 @@ namespace Tests.Services
                     ItExpr.IsAny<CancellationToken>())
                 .ReturnsAsync(response);
 
-             var httpClient = new HttpClient(httpMessageHandler.Object)
-             {
+            var httpClient = new HttpClient(httpMessageHandler.Object)
+            {
                 BaseAddress = new Uri("http://SchemaPalApi")
-             };
+            };
             var httpClientFactory = new Mock<IHttpClientFactory>();
             httpClientFactory.Setup(x => x.CreateClient(It.IsAny<string>()))
                 .Returns(httpClient);
-            
+
             var schemaPalApiService = new SchemaPalApiService(httpClientFactory.Object);
             var result = await schemaPalApiService.SaveDatabaseSchema(extendedSchemaRecord);
             result.Should().BeEquivalentTo(expectedResult);
