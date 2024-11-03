@@ -5,7 +5,7 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaPal", "SchemaPal\SchemaPal.csproj", "{FC0836E5-DE76-4F3A-B190-75A016AC394C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaPal.Tests", "SchemaPal.Tests\SchemaPal.Tests.csproj", "{559D3ADC-B1A3-4AD9-964E-067818440ADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaPalTests", "SchemaPal.Tests\SchemaPalTests.csproj", "{559D3ADC-B1A3-4AD9-964E-067818440ADB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

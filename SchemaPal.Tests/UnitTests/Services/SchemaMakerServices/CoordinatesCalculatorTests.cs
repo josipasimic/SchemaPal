@@ -3,9 +3,9 @@ using SchemaPal.Enums;
 using SchemaPal.SchemaElements;
 using SchemaPal.Services.SchemaMakerServices;
 
-namespace Tests.Services.SchemaMakerServices
+namespace SchemaPalTests.UnitTests.Services.SchemaMakerServices
 {
-    public class CoordinatesCalculatorTest
+    public class CoordinatesCalculatorTests
     {
         [Theory]
         [MemberData(nameof(TableWithThreeColumns))]
@@ -60,9 +60,9 @@ namespace Tests.Services.SchemaMakerServices
         {
             var connectionPoints = new List<ConnectionPoint>
             {
-                new ConnectionPoint(0, 1, SchemaPal.Enums.TableSide.Left),
-                new ConnectionPoint(1, 1, SchemaPal.Enums.TableSide.Left),
-                new ConnectionPoint(2, 1, SchemaPal.Enums.TableSide.Left),
+                new ConnectionPoint(0, 1, TableSide.Left),
+                new ConnectionPoint(1, 1, TableSide.Left),
+                new ConnectionPoint(2, 1, TableSide.Left),
             };
             var expectedCoordinatesX = new Dictionary<string, double>
             {
@@ -80,9 +80,9 @@ namespace Tests.Services.SchemaMakerServices
         {
             var connectionPoints = new List<ConnectionPoint>
             {
-                new ConnectionPoint(0, 1, SchemaPal.Enums.TableSide.Right),
-                new ConnectionPoint(1, 1, SchemaPal.Enums.TableSide.Right),
-                new ConnectionPoint(2, 1, SchemaPal.Enums.TableSide.Right),
+                new ConnectionPoint(0, 1, TableSide.Right),
+                new ConnectionPoint(1, 1, TableSide.Right),
+                new ConnectionPoint(2, 1, TableSide.Right),
             };
             var expectedCoordinatesX = new Dictionary<string, double>
             {
@@ -100,7 +100,7 @@ namespace Tests.Services.SchemaMakerServices
         {
             var connectionPoints = new List<ConnectionPoint>
             {
-                new ConnectionPoint(0, 1, SchemaPal.Enums.TableSide.None),
+                new ConnectionPoint(0, 1, TableSide.None),
             };
             var expectedCoordinatesX = new Dictionary<string, double>();
             return new TheoryData<List<ConnectionPoint>, Dictionary<string, double>>
@@ -113,9 +113,9 @@ namespace Tests.Services.SchemaMakerServices
         {
             var connectionPoints = new List<ConnectionPoint>
             {
-                new ConnectionPoint(0, 1, SchemaPal.Enums.TableSide.Left),
-                new ConnectionPoint(1, 1, SchemaPal.Enums.TableSide.Right),
-                new ConnectionPoint(2, 1, SchemaPal.Enums.TableSide.None),
+                new ConnectionPoint(0, 1, TableSide.Left),
+                new ConnectionPoint(1, 1, TableSide.Right),
+                new ConnectionPoint(2, 1, TableSide.None),
             };
             var expectedCoordinatesX = new Dictionary<string, double>
             {
@@ -142,10 +142,10 @@ namespace Tests.Services.SchemaMakerServices
         [InlineData(55, 78, 5, 1, TableSide.None, 62.666666666666664)]
         public void GivenRelationshipData_WhenCalculatingMidPointX_ThenCalculateCorrectlyAccordingToTheOverlapSide(
             double startX,
-            double startY, 
-            int count, 
+            double startY,
+            int count,
             int index,
-            TableSide overlapSide, 
+            TableSide overlapSide,
             double expectedResult)
         {
             var coordinatesCalculator = new CoordinatesCalculator();
@@ -163,17 +163,17 @@ namespace Tests.Services.SchemaMakerServices
         [MemberData(nameof(TableWithMultipleColumns))]
         [MemberData(nameof(MissingParameters))]
         public void GivenTableAndConnectionPoints_WhenCalculatingEdgePointY_ThenReturnCorrectResult(
-            Table table, 
+            Table table,
             List<ConnectionPoint> connectionPoints,
-             int columnId, 
-             double expectedEdgePointY) 
+             int columnId,
+             double expectedEdgePointY)
         {
             var coordinatesCalculator = new CoordinatesCalculator();
             var edgePointY = coordinatesCalculator.CalculateEdgePointY(
-                table, 
-                connectionPoints, 
+                table,
+                connectionPoints,
                 columnId);
-            
+
             edgePointY.Should().Be(expectedEdgePointY);
         }
 

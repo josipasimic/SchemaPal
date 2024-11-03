@@ -5,25 +5,25 @@ using SchemaPal.Services.UserServices;
 using Moq;
 using FluentAssertions;
 
-namespace Tests.Services 
+namespace SchemaPalTests.UnitTests.Services.UserServices
 {
-    public class UserSessionServiceTest
+    public class UserSessionServiceTests
     {
         [Theory]
         [MemberData(nameof(FailedApiLogIn))]
         [MemberData(nameof(AllowedApiLogiIn))]
         public async Task GivenUsername_WhenStartingLoggedInSession_ThenValidateLogInCorrectly(
-            Result<AccessToken> apiLoginResult, 
+            Result<AccessToken> apiLoginResult,
             Result expectedResult)
         {
             var sessionStorage = new Mock<ISessionStorageService>();
             sessionStorage.Setup(x => x.SetItemAsync(
                 It.IsAny<string>(),
-                It.IsAny<string>(), 
+                It.IsAny<string>(),
                 It.IsAny<CancellationToken>()));
             sessionStorage.Setup(x => x.SetItemAsync(
                 It.IsAny<string>(),
-                It.IsAny<bool>(), 
+                It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()));
 
             var userSessionService = new UserSessionService(sessionStorage.Object);
@@ -61,7 +61,7 @@ namespace Tests.Services
         [InlineData(true, "", false)]
         [InlineData(false, null, false)]
         public async Task GivenSession_WhenCheckingIfUserIsLoggedIn_ThenCorrectlyValidate(
-            bool isLoggedIn, 
+            bool isLoggedIn,
             string accessToken,
             bool expectedResult)
         {
