@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using FluentAssertions;
+using Moq;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.Services.UserServices;
 
@@ -21,28 +22,30 @@ namespace SchemaPal.IntegrationTests.Api.SchemaPalApi
             _schemaPalApiService = new SchemaPalApiService(mockHttpClientFactory.Object);
         }
 
-        protected async Task<AccessToken> LoginUser(
+        protected async Task LoginUser(
             string username,
             string password,
             bool shouldRegister = false)
         {
             if (shouldRegister)
             {
-                await _schemaPalApiService.RegisterUser(new UserRegistration
+                var registrationResult = await _schemaPalApiService.RegisterUser(new UserRegistration
                 {
                     Username = username,
                     Password = password,
                     PasswordConfirmation = password
                 });
+
+                registrationResult.IsSuccess.Should().BeTrue();
             }
 
-            var registrationResult = await _schemaPalApiService.LoginUser(new UserLogin
+            var loginResult = await _schemaPalApiService.LoginUser(new UserLogin
             {
                 Username = username,
                 Password = password
             });
 
-            return registrationResult.Value;
+            loginResult.IsSuccess.Should().BeTrue();
         }
 
         public void Dispose()

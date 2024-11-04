@@ -18,15 +18,13 @@ namespace SchemaPal.IntegrationTests.Api.SchemaPalApi.Authentication
                 PasswordConfirmation = password
             });
 
-            var registrationResult = await _schemaPalApiService.LoginUser(new UserLogin
+            var loginResult = await _schemaPalApiService.LoginUser(new UserLogin
             {
                 Username = username,
                 Password = password
             });
 
-            registrationResult.IsSuccess.Should().BeTrue();
-            registrationResult.Value.Should().NotBeNull();
-            registrationResult.Value.Token.Should().NotBeEmpty();
+            loginResult.IsSuccess.Should().BeTrue();
         }
     }
 }

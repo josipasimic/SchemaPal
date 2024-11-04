@@ -55,14 +55,10 @@ namespace SchemaPal.UnitTests.Services.UserServices
         }
 
         [Theory]
-        [InlineData(true, "token", true)]
-        [InlineData(false, "token", false)]
-        [InlineData(true, null, false)]
-        [InlineData(true, "", false)]
-        [InlineData(false, null, false)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
         public async Task GivenSession_WhenCheckingIfUserIsLoggedIn_ThenCorrectlyValidate(
             bool isLoggedIn,
-            string accessToken,
             bool expectedResult)
         {
             var sessionStorage = new Mock<ISessionStorageService>();
@@ -70,10 +66,6 @@ namespace SchemaPal.UnitTests.Services.UserServices
                 "isLoggedIn",
                 It.IsAny<CancellationToken>()))
                 .Returns(ValueTask.FromResult(isLoggedIn));
-            sessionStorage.Setup(x => x.GetItemAsync<string>(
-                "accessToken",
-                It.IsAny<CancellationToken>()))
-                .Returns(ValueTask.FromResult(accessToken));
 
             var userSessionService = new UserSessionService(sessionStorage.Object);
             var result = await userSessionService.IsUserLoggedIn();

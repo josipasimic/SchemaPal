@@ -1,13 +1,15 @@
 ﻿using FluentResults;
 using SchemaPal.DataTransferObjects;
 using System.Net;
-using System.Net.Http.Json;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace SchemaPal.Services.UserServices
 {
     public class SchemaPalApiService : ISchemaPalApiService
     {
+        private string _accessToken = string.Empty;
+
         private readonly HttpClient _httpClient;
 
         public SchemaPalApiService(IHttpClientFactory httpClientFactory)
@@ -27,7 +29,7 @@ namespace SchemaPal.Services.UserServices
             return Result.Ok();
         }
 
-        public async Task<Result<AccessToken>> LoginUser(UserLogin userLogin)
+        public async Task<Result> LoginUser(UserLogin userLogin)
         {
             var response = await _httpClient.PostAsJsonAsync("Authentication/login", userLogin);
 
@@ -43,13 +45,14 @@ namespace SchemaPal.Services.UserServices
                 return Result.Fail("Prijava nije uspjela! Molimo pokušajte kasnije.");
             }
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
+            _accessToken = accessToken.Token;
 
-            return Result.Ok(accessToken);
+            return Result.Ok();
         }
 
         public async Task<Result<Guid>> SaveDatabaseSchema(ExtendedSchemaRecord schemaRecord)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             var response = await _httpClient.PostAsJsonAsync($"DatabaseSchemas", schemaRecord);
 
             if (!response.IsSuccessStatusCode)
@@ -73,6 +76,7 @@ namespace SchemaPal.Services.UserServices
 
         public async Task<Result<List<ShortSchemaRecord>>> GetDatabaseSchemasForLoggedInUser()
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             var response = await _httpClient.GetAsync("DatabaseSchemas");
 
             if (!response.IsSuccessStatusCode)
@@ -90,6 +94,7 @@ namespace SchemaPal.Services.UserServices
 
         public async Task<Result<ExtendedSchemaRecord>> GetDatabaseSchema(Guid id)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             var response = await _httpClient.GetAsync($"DatabaseSchemas/{id}");
 
             if (!response.IsSuccessStatusCode)
@@ -112,6 +117,7 @@ namespace SchemaPal.Services.UserServices
 
         public async Task<Result> DeleteDatabaseSchema(Guid id)
         {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
             var response = await _httpClient.DeleteAsync($"DatabaseSchemas/{id}");
 
             if (!response.IsSuccessStatusCode)

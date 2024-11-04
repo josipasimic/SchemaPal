@@ -7,7 +7,7 @@ namespace SchemaPal.Services.UserServices
     {
         Task<Result> RegisterUser(UserRegistration userRegistration);
 
-        Task<Result<AccessToken>> LoginUser(UserLogin userLogin);
+        Task<Result> LoginUser(UserLogin userLogin);
 
         Task<Result<Guid>> SaveDatabaseSchema(ExtendedSchemaRecord extendedSchemaRecord);
 

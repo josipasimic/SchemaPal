@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.SchemaElements;
-using System.Net.Http.Headers;
 
 namespace SchemaPal.IntegrationTests.Api.SchemaPalApi.DatabaseSchemas
 {
@@ -11,8 +10,8 @@ namespace SchemaPal.IntegrationTests.Api.SchemaPalApi.DatabaseSchemas
         [Fact]
         public async Task GivenDatabaseSchemaForUser_WhenSavingTheSchema_ThenResultIsSuccessful()
         {
-            var token = await LoginUser(Guid.NewGuid().ToString(), "Password12345!", true);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
+            // Given
+            await LoginUser(Guid.NewGuid().ToString(), "Password12345!", shouldRegister: true);
 
             var databaseSchema = new DatabaseSchema
             {
@@ -36,9 +35,11 @@ namespace SchemaPal.IntegrationTests.Api.SchemaPalApi.DatabaseSchemas
                 SchemaJsonFormat = JsonConvert.SerializeObject(databaseSchema)
             };
 
+            // When
             var result = await _schemaPalApiService.SaveDatabaseSchema(schemaRecord);
 
-            result.IsSuccess.Should().BeTrue();
+            // Then
+            result.IsSuccess.Should().BeTrue(); 
             result.Value.Should().NotBeEmpty();
         }
     }

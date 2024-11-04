@@ -10,7 +10,6 @@ namespace SchemaPal.Services.UserServices
         private const string IsGuestKey = "isGuest";
         private const string IsLoggedInKey = "isLoggedIn";
         private const string UsernameKey = "loggedInUsername";
-        private const string AccessTokenKey = "accessToken";
 
         private readonly ISessionStorageService _sessionStorage;
 
@@ -23,7 +22,6 @@ namespace SchemaPal.Services.UserServices
         {
             await _sessionStorage.SetItemAsync(IsLoggedInKey, false);
             await _sessionStorage.RemoveItemAsync(UsernameKey);
-            await _sessionStorage.RemoveItemAsync(AccessTokenKey);
 
             await _sessionStorage.SetItemAsync(IsGuestKey, true);
         }
@@ -41,9 +39,6 @@ namespace SchemaPal.Services.UserServices
             await _sessionStorage.SetItemAsync(IsLoggedInKey, true);
             await _sessionStorage.SetItemAsync(UsernameKey, username);
 
-            var accessToken = apiLoginResult.Value;
-            await _sessionStorage.SetItemAsync(AccessTokenKey, accessToken.Token);
-
             return Result.Ok();
         }
 
@@ -57,10 +52,7 @@ namespace SchemaPal.Services.UserServices
         public async Task<bool> IsUserLoggedIn()
         {
             var isLoggedIn = await _sessionStorage.GetItemAsync<bool>(IsLoggedInKey);
-            var accessToken = await _sessionStorage.GetItemAsync<string>(AccessTokenKey);
-
-            if (isLoggedIn
-                && !string.IsNullOrEmpty(accessToken))
+            if (isLoggedIn)
             {
                 return true;
             }
@@ -80,7 +72,6 @@ namespace SchemaPal.Services.UserServices
         {
             await _sessionStorage.SetItemAsync(IsLoggedInKey, false);
             await _sessionStorage.RemoveItemAsync(UsernameKey);
-            await _sessionStorage.RemoveItemAsync(AccessTokenKey);
 
             await UserSectionComponentHelper.NotifyUserStatusChange();
         }
