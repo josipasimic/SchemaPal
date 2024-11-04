@@ -1,0 +1,127 @@
+﻿@using SchemaPal.SharedComponents
+
+@inherits ComponentTestsBase
+@code {
+    [Fact]
+    public void GivenOnAddNewItemAction_WhenAddNewItemClicked_ThenActionIsInvoked()
+    {
+        // Given
+        var wasOnAddNewItemCalled = false;
+        Func<Task> onAddNewItem = () =>
+        {
+            wasOnAddNewItemCalled = true;
+            return Task.CompletedTask;
+        };
+
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Demo naslov")
+            .Add(p => p.OnAddNewItem, onAddNewItem)
+        );
+
+        // When
+        var dodajButton = component.Find("button[title=Dodaj]");
+        dodajButton.Click();
+
+        // Then
+        Assert.True(wasOnAddNewItemCalled);
+    }
+
+    [Fact]
+    public void GivenOnAddNewItemIsNotProvided_WhenComponentRenders_ThenDodajButtonIsNotDisplayed()
+    {
+        // Given
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Sample Title")
+            .Add(p => p.OnAddNewItem, (Func<Task>)null)
+        );
+
+        // When & Assert
+        Assert.Empty(component.FindAll("button[title=Dodaj]"));
+    }
+
+    [Fact]
+    public void GivenIsExpandedIsTrue_WhenComponentRenders_ThenExpandedSectionIsDisplayed()
+    {
+        // Given
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Sample Title")
+            .Add(p => p.IsExpanded, true)
+            .AddChildContent("<div class='child-content'>Child Content</div>")
+        );
+
+        // When & Assert
+        Assert.NotNull(component.Find(".expanded-section"));
+        Assert.NotEmpty(component.FindAll(".child-content"));
+    }
+
+    [Fact]
+    public void GivenIsExpandedIsFalse_WhenComponentRenders_ThenExpandedSectionIsNotDisplayed()
+    {
+        // Given
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Sample Title")
+            .Add(p => p.IsExpanded, false)
+        );
+
+        // When & Then
+        Assert.Empty(component.FindAll(".expanded-section"));
+    }
+
+    [Fact]
+    public void GivenToggleExpandCallbackIsProvided_WhenToggleButtonClicked_ThenToggleExpandIsInvoked()
+    {
+        // Arrange
+        var wasToggleExpandCalled = false;
+        var toggleExpandCallback = EventCallback.Factory.Create(this, () =>
+        {
+            wasToggleExpandCalled = true;
+        });
+
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Sample Title")
+            .Add(p => p.IsExpanded, false)
+            .Add(p => p.ToggleExpand, toggleExpandCallback)
+        );
+
+        // Act
+        var toggleButton = component.Find("button[title=Proširi]"); // Initial button when IsExpanded = false
+        toggleButton.Click();
+
+        // Assert
+        Assert.True(wasToggleExpandCalled);
+    }
+
+    [Fact]
+    public void GivenIsExpandedIsTrue_WhenComponentRenders_ThenCorrectToggleButtonIsDisplayed()
+    {
+        // Given
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Sample Title")
+            .Add(p => p.IsExpanded, true)
+        );
+
+        // When
+        var toggleButton = component.Find("button[title=Sažmi]");
+
+        // Then
+        Assert.NotNull(toggleButton);
+        Assert.Equal("Sažmi", toggleButton.GetAttribute("title"));
+    }
+
+    [Fact]
+    public void GivenIsExpandedIsFalse_WhenComponentRenders_ThenCorrectToggleButtonIsDisplayed()
+    {
+        // Given
+        var component = RenderComponent<ExpandableSection>(parameters => parameters
+            .Add(p => p.Title, "Sample Title")
+            .Add(p => p.IsExpanded, false)
+        );
+
+        // When
+        var toggleButton = component.Find("button[title=Proširi]");
+
+        // Then
+        Assert.NotNull(toggleButton);
+        Assert.Equal("Proširi", toggleButton.GetAttribute("title"));
+    }
+}
