@@ -7,7 +7,7 @@ using Moq.Protected;
 using SchemaPal.DataTransferObjects;
 using SchemaPal.Services.UserServices;
 
-namespace SchemaPalTests.UnitTests.Services.UserServices
+namespace SchemaPal.UnitTests.Services.UserServices
 {
     public class SchemaPalApiServiceTests
     {

@@ -6,7 +6,7 @@ using SchemaPal.Helpers.SchemaMakerHelpers;
 using SchemaPal.SchemaElements;
 using SchemaPal.Services.SchemaMakerServices;
 
-namespace SchemaPal.Tests.UnitTests.Services.SchemaMakerServices
+namespace SchemaPal.UnitTests.Services.SchemaMakerServices
 {
     public class SchemaObjectFactoryTests
     {
@@ -97,11 +97,11 @@ namespace SchemaPal.Tests.UnitTests.Services.SchemaMakerServices
             //Then
             databaseSchema.ConnectionPoints.Should()
                 .Satisfy(
-                    cp => cp.UniqueIdentifier == expectedLeftConnectionPointId 
-                        && cp.ConnectionPointLeftCoordinate == mockLeftConnectionPointCoordinateX 
+                    cp => cp.UniqueIdentifier == expectedLeftConnectionPointId
+                        && cp.ConnectionPointLeftCoordinate == mockLeftConnectionPointCoordinateX
                         && cp.ConnectionPointTopCoordinate == mockCoordinateY,
-                    cp => cp.UniqueIdentifier == expectedRightConnectionPointId 
-                        && cp.ConnectionPointLeftCoordinate == mockRightConnectionPointCoordinateX 
+                    cp => cp.UniqueIdentifier == expectedRightConnectionPointId
+                        && cp.ConnectionPointLeftCoordinate == mockRightConnectionPointCoordinateX
                         && cp.ConnectionPointTopCoordinate == mockCoordinateY
                 );
         }

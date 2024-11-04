@@ -1,0 +1,39 @@
+﻿@using Bunit
+@using Microsoft.AspNetCore.Components
+@using Moq
+@using SchemaPal.Helpers.SchemaMakerHelpers
+@using Xunit
+@using SchemaPal.PageComponents.SchemaMakerComponents.CanvasComponents
+@using SchemaPal.SchemaElements
+@using SchemaPal.Enums
+
+@inherits ComponentTestsBase
+@code {
+    [Fact]
+    public void GivenConnectionPoint_WhenClicked_ThenSetCorrectRelationshipCreationData()
+    {
+        // Given
+        var mockTable = new Table { Id = 1 };
+        var mockConnectionPoint = new ConnectionPoint(mockTable.Id, columnId: 10, TableSide.Left);
+        var mockSchema = new DatabaseSchema
+        {
+            Tables = new List<Table> { mockTable },
+            ConnectionPoints = new List<ConnectionPoint> { mockConnectionPoint }
+        };
+
+        var relationshipHelper = new RelationshipCreationHelper { CreationMode = RelationshipCreationMode.None };
+
+        var component = RenderComponent<TableComponent>(parameters => parameters
+            .Add(p => p.DatabaseSchema, mockSchema)
+            .Add(p => p.Table, mockTable)
+            .Add(p => p.RelationshipCreationHelper, relationshipHelper));
+
+        // When
+        var connectionPointElement = component.Find(".connection-point");
+        connectionPointElement.Click();
+
+        // Then
+        Assert.Equal(RelationshipCreationMode.StartCreation, relationshipHelper.CreationMode);
+        Assert.Equal(mockConnectionPoint.UniqueIdentifier, relationshipHelper.StartingConnectionPointId);
+    }
+}

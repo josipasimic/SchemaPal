@@ -1,0 +1,42 @@
+﻿@using SchemaPal.Services.SchemaMakerServices
+@using SchemaPal.Services.HelperServices
+@using SchemaPal.Services.UserServices
+@using Moq
+
+@inherits TestContext
+@code
+{
+    protected Mock<IPositionService> PositionServiceMock = new();
+    protected Mock<ICoordinatesCalculator> CoordinatesCalculatorMock = new();
+    protected Mock<IStyleService> StyleServiceMock = new();
+    protected Mock<IExportService> ExportService = new();
+    protected Mock<IJsonConverter> JsonConverterMock = new();
+
+    protected Mock<ISchemaPalApiService> SchemaPalApiServiceMock = new();
+    protected Mock<ISchemaInjectionService> SchemaInjectionServiceMock = new();
+    protected Mock<IUserSessionService> UserSessionServiceMock = new();
+    protected Mock<IResultProcessor> ResultProcessorMock = new();
+
+    protected Mock<ISchemaObjectFactory> SchemaObjectFactoryMock = new();
+
+    public ComponentTestsBase()
+    {
+        Services.AddSingleton(PositionServiceMock.Object);
+        Services.AddSingleton(CoordinatesCalculatorMock.Object);
+        Services.AddSingleton(StyleServiceMock.Object);
+        Services.AddSingleton(ExportService.Object);
+        Services.AddSingleton(JsonConverterMock.Object);
+
+        Services.AddScoped(_ => SchemaPalApiServiceMock.Object);
+        Services.AddScoped(_ => SchemaInjectionServiceMock.Object);
+        Services.AddScoped(_ => UserSessionServiceMock.Object);
+        Services.AddScoped(_ => ResultProcessorMock.Object);
+
+        Services.AddTransient(_ => SchemaObjectFactoryMock.Object);
+    }
+
+    public void Dispose()
+    {
+        Services.Clear();
+    }
+}

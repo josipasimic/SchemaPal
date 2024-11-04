@@ -55,9 +55,9 @@
 </div>
 
 @code {
-    private Guid SchemaId = Guid.Empty;
-    private string SchemaName = SchemaMakerConstants.DefaultNewSchemaName;
-    private DatabaseSchema DatabaseSchema = new DatabaseSchema();
+    internal Guid SchemaId = Guid.Empty;
+    internal string SchemaName = SchemaMakerConstants.DefaultNewSchemaName;
+    internal DatabaseSchema DatabaseSchema = new DatabaseSchema();
 
     private RelationshipCreationHelper RelationshipCreationHelper = new RelationshipCreationHelper();
 

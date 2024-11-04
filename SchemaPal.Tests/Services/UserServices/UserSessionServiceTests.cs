@@ -5,7 +5,7 @@ using SchemaPal.Services.UserServices;
 using Moq;
 using FluentAssertions;
 
-namespace SchemaPalTests.UnitTests.Services.UserServices
+namespace SchemaPal.UnitTests.Services.UserServices
 {
     public class UserSessionServiceTests
     {

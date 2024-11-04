@@ -3,7 +3,7 @@ using SchemaPal.Enums;
 using SchemaPal.SchemaElements;
 using SchemaPal.Services.SchemaMakerServices;
 
-namespace SchemaPalTests.UnitTests.Services.SchemaMakerServices
+namespace SchemaPal.UnitTests.Services.SchemaMakerServices
 {
     public class CoordinatesCalculatorTests
     {
