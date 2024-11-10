@@ -5,8 +5,10 @@
 @using SchemaPal.Helpers.SchemaMakerHelpers
 @using SchemaPal.PageComponents.SchemaMakerComponents.CanvasComponents
 @using SchemaPal.SchemaElements
+@using SchemaPal.Services.HelperServices
 @using SchemaPal.Services.SchemaMakerServices
 
+@inject IComponentActionsStorage _componentActionsStorage
 @inject IStyleService _styleService
 
 <div class="table-wrapper" style="top: @this.Table.TopPx; left: @this.Table.LeftPx;">
@@ -31,21 +33,24 @@
                 opacity: @(this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation ? 0.7 : 1);
                 pointer-events: @(this.RelationshipCreationHelper.CreationMode == RelationshipCreationMode.StartCreation ? "none" : "auto");"
          draggable="true"
-         @ondragstart="(e => OnTableDragStart(e, this.Table.Id))">
+         @ondragstart="(e => OnTableDragStart(e, this.Table.Id))"
+         @ondblclick="@(() => _componentActionsStorage.InvokeCanvasComponentDoubleClick(this.Table.Id, SidebarExpandableElementType.Table))">
         <strong>@this.Table.Name</strong>
         @foreach (var column in this.Table.Columns)
         {
             <div class="column"
                  style="margin-top: @SchemaMakerConstants.ColumnTopMarginPx;
                         padding: @SchemaMakerConstants.ColumnPaddingPx;
-                        font-size: @SchemaMakerConstants.ColumnFontSizePx;">
+                        font-size: @SchemaMakerConstants.ColumnFontSizePx;"
+                 @ondblclick="@(() => _componentActionsStorage.InvokeCanvasComponentDoubleClick(column.Id, SidebarExpandableElementType.Column))">
                 <strong>@column.Name</strong>
                 <span class="properties">@column.ColumnProperties</span>
             </div>
         }
         @foreach (var index in this.Table.Indexes)
         {
-            <div class="index">
+            <div class="index"
+                 @ondblclick="@(() => _componentActionsStorage.InvokeCanvasComponentDoubleClick(index.Id, SidebarExpandableElementType.Index))">
                 @GenerateFullIndexName(index)
             </div>
         }

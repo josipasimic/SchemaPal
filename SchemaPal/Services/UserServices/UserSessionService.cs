@@ -1,7 +1,7 @@
 ﻿using Blazored.SessionStorage;
 using FluentResults;
 using SchemaPal.DataTransferObjects;
-using SchemaPal.Helpers;
+using SchemaPal.Services.HelperServices;
 
 namespace SchemaPal.Services.UserServices
 {
@@ -12,10 +12,13 @@ namespace SchemaPal.Services.UserServices
         private const string UsernameKey = "loggedInUsername";
 
         private readonly ISessionStorageService _sessionStorage;
+        private readonly IComponentActionsStorage _componentActionsStorage;
 
-        public UserSessionService(ISessionStorageService sessionStorageService)
+        public UserSessionService(ISessionStorageService sessionStorageService,
+            IComponentActionsStorage componentActionsStorage)
         {
             _sessionStorage = sessionStorageService;
+            _componentActionsStorage = componentActionsStorage;
         }
 
         public async Task StartGuestUserSession()
@@ -73,7 +76,7 @@ namespace SchemaPal.Services.UserServices
             await _sessionStorage.SetItemAsync(IsLoggedInKey, false);
             await _sessionStorage.RemoveItemAsync(UsernameKey);
 
-            await UserSectionComponentHelper.NotifyUserStatusChange();
+            await _componentActionsStorage.InvokeUserSessionTypeChange();
         }
     }
 }

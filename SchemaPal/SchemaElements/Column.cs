@@ -4,7 +4,7 @@ using SchemaPal.Enums.EnumTranslators;
 
 namespace SchemaPal.SchemaElements
 {
-    public class Column
+    public class Column : SidebarExpandableElement
     {
         public int Id { get; set; }
 

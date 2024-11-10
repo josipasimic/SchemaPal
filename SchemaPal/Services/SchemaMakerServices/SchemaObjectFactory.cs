@@ -61,7 +61,7 @@ namespace SchemaPal.Services.SchemaMakerServices
             var newTable = new Table
             {
                 Id = _tableId,
-                Name = $"Tablica {_tableId}",
+                Name = $"tablica_{_tableId}",
                 Columns = new List<Column> { CreatePrimaryKeyColumn(_columnId, _tableId) },
                 CoordinateX = SchemaMakerConstants.TableStartingCoordinateX,
                 CoordinateY = SchemaMakerConstants.TableStartingCoordinateY
@@ -158,7 +158,7 @@ namespace SchemaPal.Services.SchemaMakerServices
             }
             else
             {
-                newColumn = new Column(_columnId, $"Stupac {_columnId}", tableId)
+                newColumn = new Column(_columnId, $"stupac_{_columnId}", tableId)
                 {
                     IsNullable = true
                 };
@@ -353,7 +353,7 @@ namespace SchemaPal.Services.SchemaMakerServices
 
         private Column CreatePrimaryKeyColumn(int columnId, int tableId)
         {
-            return new Column(columnId, "Id", tableId)
+            return new Column(columnId, "id", tableId)
             {
                 KeyType = KeyType.Primary,
                 IsNullable = false

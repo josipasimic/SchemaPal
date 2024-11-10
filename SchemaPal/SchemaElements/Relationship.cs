@@ -2,7 +2,7 @@
 
 namespace SchemaPal.SchemaElements
 {
-    public class Relationship
+    public class Relationship : SidebarExpandableElement
     {
         public int Id { get; set; }
 

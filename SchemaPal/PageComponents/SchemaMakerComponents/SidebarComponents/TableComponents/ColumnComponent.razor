@@ -2,7 +2,7 @@
 @using SchemaPal.Enums.EnumTranslators
 @using SchemaPal.SchemaElements
 
-<div class="column-row">
+<div class="column-row" style="background-color: @this.Column.BackgroundColorOnSidebar;">
     <span class="name-label">Naziv:</span>
     <input class="name-input" value="@this.Column.Name" @oninput="HandleNameChange" />
     <button class="btn large-bold-font" title="Obriši stupac" @onclick="() => DeleteColumn(this.Column.TableId, this.Column.Id)">&#128465</button>

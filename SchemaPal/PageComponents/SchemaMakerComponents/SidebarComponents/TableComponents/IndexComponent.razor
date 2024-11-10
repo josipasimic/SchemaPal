@@ -3,7 +3,7 @@
 @using SchemaPal.Enums.EnumTranslators
 @using SchemaPal.SharedComponents
 
-<div class="index-row">
+<div class="index-row" style="background-color: @this.Index.BackgroundColorOnSidebar;">
     <span class="name-label">Naziv:</span>
     <input class="name-input" value="@this.Index.Name" @oninput="HandleNameChange" />
     <button class="btn large-bold-font" title="Obriši indeks" @onclick="() => this.DeleteIndex(this.Index.TableId, this.Index.Id)">&#128465</button>

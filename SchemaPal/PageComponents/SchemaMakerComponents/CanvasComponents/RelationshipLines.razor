@@ -1,6 +1,9 @@
 ﻿@using SchemaPal.Enums
 @using SchemaPal.Enums.EnumTranslators
 @using SchemaPal.SchemaElements
+@using SchemaPal.Services.HelperServices
+
+@inject IComponentActionsStorage _componentActionsStorage
 
 <svg class="connection-lines">
     @foreach (var relationship in Relationships)
@@ -12,7 +15,8 @@
                      L @relationship.MidX2 @relationship.MidY2
                      L @relationship.X2 @relationship.Y2" />
 
-            <text class="relationship-type">
+            <text class="relationship-type"
+                  @ondblclick="@(() => _componentActionsStorage.InvokeCanvasComponentDoubleClick(relationship.Id, SidebarExpandableElementType.Relationship))">
                 <textPath href="@($"#relationship_{relationship.Id}")"
                           startOffset="50%"
                           text-anchor="middle">

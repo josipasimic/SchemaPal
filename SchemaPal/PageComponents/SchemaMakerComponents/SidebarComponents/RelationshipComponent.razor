@@ -2,14 +2,16 @@
 @using SchemaPal.Enums.EnumTranslators
 @using SchemaPal.SchemaElements
 
-<div class="relationship-row">
-    <strong class="name-label">@this.RelationshipName</strong>
-    <select class="dropdown" value="@this.Relationship.RelationshipType" @onchange="HandleTypeChange">
-        @foreach (var type in Enum.GetValues(typeof(RelationshipType)).Cast<RelationshipType>())
-        {
-            <option selected="@(type == this.Relationship.RelationshipType)" value="@type">@RelationshipTypeTranslator.MapToName(type)</option>
-        }
-    </select>
+<div class="relationship-row" style="background-color: @this.Relationship.BackgroundColorOnSidebar;">
+    <div class="relationship-data">
+        <strong class="name-label">@this.RelationshipName</strong>
+        <select class="dropdown" value="@this.Relationship.RelationshipType" @onchange="HandleTypeChange">
+            @foreach (var type in Enum.GetValues(typeof(RelationshipType)).Cast<RelationshipType>())
+            {
+                <option selected="@(type == this.Relationship.RelationshipType)" value="@type">@RelationshipTypeTranslator.MapToName(type)</option>
+            }
+        </select>
+    </div>
     <button class="btn large-bold-font" title="Obriši vezu" @onclick="() => this.DeleteRelationship(this.Relationship.Id)">&#128465</button>
 </div>
 

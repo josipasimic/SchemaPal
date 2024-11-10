@@ -1,9 +1,11 @@
 ﻿@using SchemaPal.Enums
 @using SchemaPal.Helpers
+@using SchemaPal.Services.HelperServices
 @using SchemaPal.Services.UserServices
 
 @inject NavigationManager _navigationManager
 @inject IUserSessionService _userSessionService
+@inject IComponentActionsStorage _componentActionsStorage
 
 <div>
     <div class="user-section">
@@ -24,7 +26,7 @@
 
         // Omogući ažuriranje komponente iz drugih stranica (konkretno, ovo pozivamo s Login i LoginRedirect stranica,
         // kad se korisnik uspješno prijavi ili nastavi kao gost, kako bi se podaci o korisniku ažurirali).
-        UserSectionComponentHelper.OnUserStatusChange += RefreshState;
+        _componentActionsStorage.OnUserSessionTypeChange += RefreshState;
     }
 
     private async Task RefreshState()
@@ -65,9 +67,6 @@
         if (ButtonMode == ButtonMode.Logout)
         {
             await _userSessionService.EndUserSession();
-
-            await SetData();
-            await RefreshState();
         }
 
         _navigationManager.NavigateTo("/login-redirect");

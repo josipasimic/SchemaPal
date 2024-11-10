@@ -3,11 +3,13 @@
 @using SchemaPal.DataTransferObjects
 @using SchemaPal.Helpers
 @using SchemaPal.SchemaElements
+@using SchemaPal.Services.HelperServices
 @using SchemaPal.Services.UserServices
 
 @inject NavigationManager _navigationManager
 @inject ISchemaPalApiService _schemaPalApiService
 @inject IUserSessionService _userSessionService
+@inject IComponentActionsStorage _componentActionsStorage
 
 <PageTitle>Prijava</PageTitle>
 
@@ -57,7 +59,7 @@
         if (sessionStartResult.IsSuccess)
         {
             // Ažuriraj komponentu koja prikazuje login/logout gumb i korisničko ime.
-            await UserSectionComponentHelper.NotifyUserStatusChange();
+            await _componentActionsStorage.InvokeUserSessionTypeChange();
             _navigationManager.NavigateTo("/");
             return;
         }

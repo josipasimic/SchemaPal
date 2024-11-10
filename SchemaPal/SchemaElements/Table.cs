@@ -1,6 +1,6 @@
 ﻿namespace SchemaPal.SchemaElements
 {
-    public class Table
+    public class Table : SidebarExpandableElement
     {
         public int Id { get; set; }
 

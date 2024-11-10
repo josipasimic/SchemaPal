@@ -1,7 +1,11 @@
-﻿@using SchemaPal.Helpers.SchemaMakerHelpers
+﻿@using SchemaPal.Enums
+@using SchemaPal.Helpers.SchemaMakerHelpers
 @using SchemaPal.PageComponents.SchemaMakerComponents.SidebarComponents
 @using SchemaPal.SchemaElements
+@using SchemaPal.Services.HelperServices
 @using SchemaPal.SharedComponents
+
+@inject IComponentActionsStorage _componentActionsStorage
 
 <div class="sidebar">
     <button class="btn" @onclick="OnBackToHome">&#129032 Natrag na glavni izbornik</button>
@@ -70,6 +74,11 @@
 
     private ExpandMenuHelper ExpandMenuHelper { get; set; } = new ExpandMenuHelper();
 
+    protected override void OnInitialized()
+    {
+        _componentActionsStorage.OnCanvasComponentDoubleClick += ExpandSidebarElement;
+    }
+
     private void ToggleTablesExpanded() => this.ExpandMenuHelper.AreTablesExpanded = !this.ExpandMenuHelper.AreTablesExpanded;
 
     private void ToggleRelationshipsExpanded() => this.ExpandMenuHelper.AreRelationshipsExpanded = !this.ExpandMenuHelper.AreRelationshipsExpanded;
@@ -85,6 +94,71 @@
         var destinationTable = this.Tables.Find(t => t.Id == destinationTableId);
         var destinationColumnName = destinationTable?.Columns?.Find(c => c.Id == destinationColumnId)?.Name ?? string.Empty;
 
-        return $"{sourceColumnName} - {destinationColumnName}";
+        return $"{sourceTable?.Name ?? string.Empty}.{sourceColumnName} ⇋ {destinationTable?.Name ?? string.Empty}.{destinationColumnName}";
+    }
+
+    private async Task ExpandSidebarElement(int elementId, SidebarExpandableElementType elementType)
+    {
+        SidebarExpandableElement element;
+
+        switch (elementType)
+        {
+            case SidebarExpandableElementType.Table:
+                var table = this.Tables.Find(t => t.Id == elementId);
+                if (table is null)
+                {
+                    return;
+                }
+                element = table;
+                this.ExpandMenuHelper.AreTablesExpanded = true;
+                this.ExpandMenuHelper.ExpandedTableIds.Add(elementId);
+                break;
+            case SidebarExpandableElementType.Column:
+                var column = this.Tables.SelectMany(t => t.Columns).FirstOrDefault(c => c.Id == elementId);
+                if (column is null)
+                {
+                    return;
+                }
+                element = column;
+                this.ExpandMenuHelper.AreTablesExpanded = true;
+                this.ExpandMenuHelper.ExpandedColumnsTableIds.Add(column.TableId);
+                this.ExpandMenuHelper.ExpandedColumnIds.Add(elementId);
+                break;
+            case SidebarExpandableElementType.Index:
+                var index = this.Tables.SelectMany(t => t.Indexes).FirstOrDefault(i => i.Id == elementId);
+                if (index is null)
+                {
+                    return;
+                }
+                element = index;
+                this.ExpandMenuHelper.AreTablesExpanded = true;
+                this.ExpandMenuHelper.ExpandedIndexTableIds.Add(index.TableId);
+                this.ExpandMenuHelper.ExpandedIndexIds.Add(elementId);
+                break;
+            case SidebarExpandableElementType.Relationship:
+                var relationship = this.Relationships.Find(t => t.Id == elementId);
+                if (relationship is null)
+                {
+                    return;
+                }
+                element = relationship;
+                this.ExpandMenuHelper.AreRelationshipsExpanded = true;
+                break;
+            default:
+                return;
+        }
+
+        await HighlightSidebarExpandableElement(element);
+    }
+
+    private async Task HighlightSidebarExpandableElement(SidebarExpandableElement element)
+    {
+        element.BackgroundColorOnSidebar = SchemaMakerConstants.HighlightSidebarBackgroundColor;
+        await InvokeAsync(StateHasChanged);
+
+        await Task.Delay(1000);
+
+        element.BackgroundColorOnSidebar = SchemaMakerConstants.DefaultSidebarBackgroundColor;
+        await InvokeAsync(StateHasChanged);
     }
 }

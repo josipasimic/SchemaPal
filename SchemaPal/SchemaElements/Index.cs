@@ -2,7 +2,7 @@
 
 namespace SchemaPal.SchemaElements
 {
-    public class Index
+    public class Index : SidebarExpandableElement
     {
         public int Id { get; set; }
 

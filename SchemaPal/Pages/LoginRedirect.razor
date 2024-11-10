@@ -1,10 +1,12 @@
 ﻿@page "/login-redirect"
 
 @using SchemaPal.Helpers
+@using SchemaPal.Services.HelperServices
 @using SchemaPal.Services.UserServices
 
 @inject NavigationManager _navigationManager
 @inject IUserSessionService _userSessionService
+@inject IComponentActionsStorage _componentActionsStorage
 
 <div class="main-content">
     <div class="auth-options">
@@ -39,7 +41,7 @@
     {
         await _userSessionService.StartGuestUserSession();
 
-        await UserSectionComponentHelper.NotifyUserStatusChange();
+        await _componentActionsStorage.InvokeUserSessionTypeChange();
 
         _navigationManager.NavigateTo("/"); 
     }

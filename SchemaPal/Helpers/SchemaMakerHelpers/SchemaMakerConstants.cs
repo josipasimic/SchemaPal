@@ -71,5 +71,9 @@
         public const string ExportPngDivId = "snapshot-content";
 
         public const string DefaultNewSchemaName = "Nova shema";
+
+        public const string DefaultSidebarBackgroundColor = "transparent";
+
+        public const string HighlightSidebarBackgroundColor = "lightyellow";
     }
 }
