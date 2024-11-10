@@ -4,6 +4,7 @@ using SchemaPal.DataTransferObjects;
 using SchemaPal.Services.UserServices;
 using Moq;
 using FluentAssertions;
+using SchemaPal.Services.HelperServices;
 
 namespace SchemaPal.UnitTests.Services.UserServices
 {
@@ -26,7 +27,7 @@ namespace SchemaPal.UnitTests.Services.UserServices
                 It.IsAny<bool>(),
                 It.IsAny<CancellationToken>()));
 
-            var userSessionService = new UserSessionService(sessionStorage.Object);
+            var userSessionService = new UserSessionService(sessionStorage.Object, Mock.Of<IComponentActionsStorage>());
             var result = await userSessionService.StartLoggedInUserSession("username", apiLoginResult);
             result.Should().BeEquivalentTo(expectedResult);
         }
@@ -67,7 +68,7 @@ namespace SchemaPal.UnitTests.Services.UserServices
                 It.IsAny<CancellationToken>()))
                 .Returns(ValueTask.FromResult(isLoggedIn));
 
-            var userSessionService = new UserSessionService(sessionStorage.Object);
+            var userSessionService = new UserSessionService(sessionStorage.Object, Mock.Of<IComponentActionsStorage>());
             var result = await userSessionService.IsUserLoggedIn();
             result.Should().Be(expectedResult);
         }

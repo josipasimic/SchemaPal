@@ -31,7 +31,7 @@ namespace SchemaPal.UnitTests.Services.SchemaMakerServices
             {
                 var table = databaseSchema.Tables.Find(t => t.Id == expectedTableId);
                 table.Should().NotBeNull();
-                table.Name.Should().Be($"Tablica {expectedTableId}");
+                table.Name.Should().Be($"tablica_{expectedTableId}");
                 table.CoordinateX.Should().Be(SchemaMakerConstants.TableStartingCoordinateX);
                 table.CoordinateY.Should().Be(SchemaMakerConstants.TableStartingCoordinateY);
             }
@@ -59,7 +59,7 @@ namespace SchemaPal.UnitTests.Services.SchemaMakerServices
                 var table = databaseSchema.Tables.Single();
                 table.Columns.Should().HaveCount(1);
                 table.Columns[0].Id.Should().Be(expectedColumnId);
-                table.Columns[0].Name.Should().Be("Id");
+                table.Columns[0].Name.Should().Be("id");
                 table.Columns[0].KeyType.Should().Be(KeyType.Primary);
                 table.Columns[0].IsNullable.Should().BeFalse();
             }
