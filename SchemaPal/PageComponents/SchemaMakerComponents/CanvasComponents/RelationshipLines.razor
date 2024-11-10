@@ -16,7 +16,7 @@
                      L @relationship.X2 @relationship.Y2" />
 
             <text class="relationship-type"
-                  @ondblclick="@(() => _componentActionsStorage.InvokeCanvasComponentDoubleClick(relationship.Id, SidebarExpandableElementType.Relationship))">
+                  @onclick="@(() => _componentActionsStorage.InvokeCanvasComponentDoubleClick(relationship.Id, SidebarExpandableElementType.Relationship))">
                 <textPath href="@($"#relationship_{relationship.Id}")"
                           startOffset="50%"
                           text-anchor="middle">
